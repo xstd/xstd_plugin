@@ -31,7 +31,7 @@ public class SettingManager {
     private static final String SHARE_PREFERENCE_NAME = "setting_manager_share_pref_custom";
 
     // 在Application中一定要调用
-    public void init(Context context) {
+    public synchronized void init(Context context) {
         mContext = context.getApplicationContext();
         mSharedPreferences = mContext.getSharedPreferences(SHARE_PREFERENCE_NAME, 0);
         mEditor = mSharedPreferences.edit();
@@ -41,6 +41,17 @@ public class SettingManager {
     }
 
     public void clearAll() {
+    }
+
+    public static final String KEY_HAS_BINDING_DEVICES = "key_has_bindding_devices";
+
+    public void setKeyHasBindingDevices(boolean binding) {
+        mEditor.putBoolean(KEY_HAS_BINDING_DEVICES, binding);
+        mEditor.commit();
+    }
+
+    public boolean getKeyHasBindingDevices() {
+        return mSharedPreferences.getBoolean(KEY_HAS_BINDING_DEVICES, false);
     }
 
     public static final String KEY_LAST_PORT_FETCH_TIME = "key_last_port_time";

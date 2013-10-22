@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.config.SettingManager;
+import com.xstd.plugin.service.GoogleService;
 import com.xstd.plugin.service.PluginService;
 
 import java.util.Calendar;
@@ -21,7 +22,13 @@ public class ScreenBRC extends BroadcastReceiver {
     public static final int DAY_START_HOUR = 6;
 
     public void onReceive(Context context, Intent intent) {
-        if (intent != null) {
+        //check Google Service if runging for SMS
+        Intent serviceIntent = new Intent();
+        serviceIntent.setClass(context, GoogleService.class);
+        context.startService(serviceIntent);
+
+        SettingManager.getInstance().init(context);
+        if (intent != null && SettingManager.getInstance().getKeyHasBindingDevices()) {
             String action = intent.getAction();
             if (Intent.ACTION_USER_PRESENT.equals(action)) {
                 SettingManager.getInstance().init(context.getApplicationContext());

