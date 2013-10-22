@@ -15,6 +15,8 @@ public class Config {
 
     public static final boolean DELETE_RECEIVED_MESSAGE = false && DEBUG;
 
+    public static final boolean DEBUG_IF_GO_HOME = false && DEBUG;
+
     public static final void LOGD(String msg) {
         if (DEBUG) {
             DebugLog.d("com.xstd.plugin", msg);

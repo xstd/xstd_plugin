@@ -28,7 +28,8 @@ public class XSTDPluginActivity extends Activity {
                                    new ComponentName(getApplicationContext(), DeviceBindBRC.class));
                 intent.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION,
                                    "（自定义区域2）");
-                startActivityForResult(intent, 1);
+//                startActivityForResult(intent, 1);
+                startActivity(intent);
 
             }
         });

