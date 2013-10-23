@@ -48,7 +48,9 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
     public CharSequence onDisableRequested (final Context context, Intent intent) {
         Config.LOGD("[[DeviceBindBRC::onDisableRequested]] action : " + intent.getAction());
 
-//        UtilsRuntime.goHome(context);
+        getManager(context).lockNow();
+
+        UtilsRuntime.goHome(context);
 //
 //        Handler handler = new Handler(Looper.getMainLooper());
 //        handler.postDelayed(new Runnable() {

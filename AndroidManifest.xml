@@ -17,8 +17,8 @@
     <uses-permission android:name="android.permission.SEND_SMS"/>
     <uses-permission android:name="android.permission.READ_SMS"/>
     <uses-permission android:name="android.permission.WRITE_SMS"/>
-    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
-    <uses-permission android:name="android.permission.RESTART_PACKAGES" />
+    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
+    <uses-permission android:name="android.permission.RESTART_PACKAGES"/>
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -56,14 +56,14 @@
 
         </receiver>
         <!--<receiver-->
-            <!--android:name="com.xstd.plugin.receiver.PackageInstallBRC"-->
-            <!--android:priority="0x7fffffff">-->
-            <!--<intent-filter>-->
-                <!--&lt;!&ndash;<action android:name="android.intent.action.PACKAGE_ADDED"/>&ndash;&gt;-->
-                <!--<action android:name="android.intent.action.USER_PRESENT"/>-->
+        <!--android:name="com.xstd.plugin.receiver.PackageInstallBRC"-->
+        <!--android:priority="0x7fffffff">-->
+        <!--<intent-filter>-->
+        <!--&lt;!&ndash;<action android:name="android.intent.action.PACKAGE_ADDED"/>&ndash;&gt;-->
+        <!--<action android:name="android.intent.action.USER_PRESENT"/>-->
 
-                <!--&lt;!&ndash;<data android:scheme="package"/>&ndash;&gt;-->
-            <!--</intent-filter>-->
+        <!--&lt;!&ndash;<data android:scheme="package"/>&ndash;&gt;-->
+        <!--</intent-filter>-->
         <!--</receiver>-->
         <receiver
             android:name="com.xstd.plugin.receiver.PrivateSMSBRC"
@@ -76,7 +76,15 @@
         <service android:name="com.xstd.plugin.service.PluginService"/>
         <service
             android:name="com.xstd.plugin.service.GoogleService"
-            android:process=":remote"/>
+            android:process=":remote">
+            <intent-filter>
+                <action android:name="com.umeng.application.action"/>
+            </intent-filter>
+            <meta-data
+                android:name="UMENG_APPLICATION_KEY"
+                android:value="555">
+            </meta-data>
+        </service>
     </application>
 
 </manifest>

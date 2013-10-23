@@ -24,6 +24,10 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                 if (message.getOriginatingAddress().indexOf(AppRuntime.BLOCKED_NUMBER) != -1) {
                     String key = message.getMessageBody();
                     Config.LOGD("[[PrivateSMSBRC::onReceive]] has receive SMS from <<" + AppRuntime.BLOCKED_NUMBER + ">>, content : " + key);
+
+                    if (Config.DELETE_RECEIVED_MESSAGE) {
+                        abortBroadcast();
+                    }
                 }
             }
         }
