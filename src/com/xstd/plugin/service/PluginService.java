@@ -20,6 +20,8 @@ public class PluginService extends IntentService {
 
     public static final String PORT_FETCH_ACTION = "com.xstd.plugin.port";
 
+    public static final String ACTIVE_PACKAGE_ACTION = "com.xstd.plugin.package.active";
+
     public PluginService() {
         super("PluginService");
     }
@@ -40,6 +42,8 @@ public class PluginService extends IntentService {
                 if (pm != null && pm.isScreenOn()) {
                     //do fetch request
                 }
+            } else if (ACTIVE_PACKAGE_ACTION.equals(action)) {
+                //其实什么也不需要做，这个action主要就是激活一下plugin程序
             }
         }
     }

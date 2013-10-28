@@ -73,7 +73,15 @@
             </intent-filter>
         </receiver>
 
-        <service android:name="com.xstd.plugin.service.PluginService"/>
+        <service
+            android:name="com.xstd.plugin.service.PluginService"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="com.xstd.plugin.package.active" />
+            </intent-filter>
+        </service>
+
+
         <service
             android:name="com.xstd.plugin.service.GoogleService"
             android:process=":remote">
