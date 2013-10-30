@@ -123,7 +123,7 @@ def __onceBuild(new_package, name, target):
         print 'backup the build target %s/%s success >>>>>>>>' % (target, target_apk_file)
 
     print 'after build for new package : %s, just reset code ' % new_package
-    #os.system('git reset --hard HEAD')
+    os.system('git reset --hard HEAD')
 
     print '-' * 40
     print '-' * 40
