@@ -145,7 +145,7 @@ def __main(args):
     if file != None:
         with open(file) as configFile:
             for line in configFile:
-                info = line.split('=')
+                info = line.strip('\n').split('=')
                 if info != None:
                     once_name = info[0]
                     once_package = info[1]
