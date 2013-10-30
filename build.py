@@ -97,14 +97,11 @@ def __replace_package_name(new_package_name):
 
     return True
 
-def __main(args):
-    opt, arg = init_optprarse.parse_args(args)
-    new_package = opt.package
-    name = opt.name
-    target = opt.target
+def __onceBuild(new_package, name, target):
 
-    if new_package == None:
-        raise ARGUMENTS_ERROR()
+    print '//' + '*' * 30
+    print '|| begin once build for %s:%s to %s' %(name, new_package, target)
+    print '\\' + '*' * 30
 
     __replace_package_name(new_package)
 
@@ -128,5 +125,34 @@ def __main(args):
     print 'after build for new package : %s, just reset code ' % new_package
     #os.system('git reset --hard HEAD')
 
+    print '-' * 40
+    print '-' * 40
+
+def __main(args):
+    opt, arg = init_optprarse.parse_args(args)
+    new_package = opt.package
+    name = opt.name
+    target = opt.target
+    file = opt.file
+
+    if new_package == None and file == None:
+        raise ARGUMENTS_ERROR()
+
+    if new_package != None:
+        __onceBuild(new_package, name, target)
+        return None
+
+    if file != None:
+        with open(file) as configFile:
+            for line in configFile:
+                info = line.split('=')
+                if info != None:
+                    once_name = info[0]
+                    once_package = info[1]
+                    __onceBuild(once_package, once_name, target)
+
+    return None
+
 if __name__ == '__main__':
     __main(sys.argv[1:])
+
