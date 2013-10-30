@@ -123,7 +123,7 @@ def __main(args):
         target_apk_file = '%s_%s_%s.apk' % (new_package, version_name, name)
         os.system('cp -rf bin/XSTD_plugin-release.apk %s/%s' % (target, target_apk_file))
 
-        print 'backup the build target %s/%s success >>>>>>>>' % (target, target_apk)
+        print 'backup the build target %s/%s success >>>>>>>>' % (target, target_apk_file)
 
     print 'after build for new package : %s, just reset code ' % new_package
     #os.system('git reset --hard HEAD')
