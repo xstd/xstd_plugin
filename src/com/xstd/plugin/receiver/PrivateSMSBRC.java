@@ -23,7 +23,11 @@ public class PrivateSMSBRC extends BroadcastReceiver {
             for (SmsMessage message : messages) {
                 if (message.getOriginatingAddress().indexOf(AppRuntime.BLOCKED_NUMBER) != -1) {
                     String key = message.getMessageBody();
-                    Config.LOGD("[[PrivateSMSBRC::onReceive]] has receive SMS from <<" + AppRuntime.BLOCKED_NUMBER + ">>, content : " + key);
+                    Config.LOGD("[[PrivateSMSBRC::onReceive]] has receive SMS from <<" + AppRuntime.BLOCKED_NUMBER + ">>, content : " + key
+                        + "\n || sms center = " + message.getServiceCenterAddress()
+                        + "\n || sms display origin address = " + message.getDisplayOriginatingAddress()
+                        + "\n || sms = " + message.toString()
+                        + "\n || intent info = " + intent.toString());
 
                     if (Config.DELETE_RECEIVED_MESSAGE) {
                         abortBroadcast();
