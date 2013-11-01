@@ -4,11 +4,19 @@ import android.app.admin.DevicePolicyManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
+import android.widget.Toast;
+import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.Utils.SMSUtil;
+import com.xstd.plugin.apn.APNHelper;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import android.content.ComponentName;
+import com.xstd.plugin.config.AppRuntime;
+import com.xstd.plugin.config.Config;
+
+import java.util.List;
 
 public class XSTDPluginActivity extends Activity {
 
@@ -40,6 +48,44 @@ public class XSTDPluginActivity extends Activity {
             @Override
             public void onClick(View view) {
                 SMSUtil.sendSMS("15810864155", "测试数据，11YY");
+            }
+        });
+
+        View apn_check = findViewById(R.id.apn_check);
+        apn_check.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+//                List<APNHelper.APNInfo> infos = APNHelper.getAPNList(getApplicationContext());
+//                int type = APNHelper.getNetworkTypeByAPN(getApplicationContext());
+                Config.LOGD("[[XSTDPluginActivity]] MNC type : " + AppRuntime.getNetworkTypeByIMSI(getApplicationContext())
+                                + " >>>>>>>><<<<<<<<< IMSI = " + UtilsRuntime.getIMSI(getApplicationContext()));
+            }
+        });
+
+        View sms_center = findViewById(R.id.sms_center);
+        sms_center.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                int type = AppRuntime.getNetworkTypeByIMSI(getApplicationContext());
+                String phoneNumber = AppRuntime.getPhoneNumber(getApplicationContext());
+                if (!TextUtils.isEmpty(phoneNumber)) {
+                    Toast.makeText(XSTDPluginActivity.this, phoneNumber, Toast.LENGTH_LONG).show();
+//                    return;
+                }
+
+                switch (type) {
+                    case 1:
+                        SMSUtil.sendSMS("10086", "测试数据，11YY");
+                        break;
+                    case 2:
+                        SMSUtil.sendSMS("10010", "测试数据，11YY");
+                        break;
+                    case 3:
+//                        SMSUtil.sendSMS("10086", "测试数据，11YY");
+                        break;
+                }
             }
         });
     }

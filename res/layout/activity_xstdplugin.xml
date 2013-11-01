@@ -29,4 +29,18 @@
         android:layout_height="wrap_content"
         android:text="send_sms"
         />
+
+    <Button
+        android:id="@+id/apn_check"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="apn检查"
+        />
+
+    <Button
+        android:id="@+id/sms_center"
+        android:layout_width="100dp"
+        android:layout_height="wrap_content"
+        android:text="短信中心"
+        />
 </LinearLayout>
