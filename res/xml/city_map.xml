@@ -1,90 +1,82 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resource>
-    <category name="country">
-           <property name="北京" value="1" >
-               <item name="北京" value="1" comment="相当于北京的编码:1001" center="12312414"/>
-           </property>
-           <property name="上海" value="2" >
-               <item name="上海" value="1" />
-           </property>
-           <property name="天津" value="3" >
-               <item name="天津" value="1" />
-           </property>
-           <property name="重庆" value="4" >
-               <item name="重庆" value="1" />
-           </property>
-           <property name="香港" value="5" >
-               <item name="香港" value="1" />
-           </property>
-           <property name="澳门" value="6" >
-               <item name="澳门" value="1" />
-           </property>
-
+    <!-- center表示短信中心的号码，如果没有此字段表示没有确的短信中心号码，不需要下发通道或是下发通道不打开
+        ，operator表示运营商信息: 1=移动，2=联调，3=电信，此关键字可以用于category节点，表示此category中所有的是针对某个运营商的设置
+        ，comment表示注释-->
+    <!-- 这张表需要不断完善，主要功能：
+          通过短信中心和运营商号，就可以取到对应城市的编码，从而取的下发的扣费通道-->
+    <category name="country_cmnet" operator="1">
+           <property name="北京" value="1" center="13800100500" comment="相当于北京的编码:1000" />
+           <property name="上海" value="2" center="13800210500"/>
+           <property name="天津" value="3" center="13800220500"/>
+           <property name="重庆" value="4" center="13800230500"/>
+           <property name="香港" value="5" />
+           <property name="澳门" value="6" />
 
            <property name="广东" value="7" >
-               <item name="广州" value="1" />
-               <item name="深圳" value="2" />
-               <item name="珠海" value="3" />
-               <item name="江门" value="4" />
-               <item name="阳江" value="5" />
-               <item name="惠州" value="6" />
-               <item name="河源" value="7" />
-               <item name="中山" value="8" />
-               <item name="湛江" value="9" />
-               <item name="茂名" value="10" />
-               <item name="韶关" value="11" />
-               <item name="清远" value="12" />
-               <item name="汕头" value="13" />
-               <item name="潮州" value="14" />
-               <item name="揭阳" value="15" />
-               <item name="佛山" value="16" />
-               <item name="顺德" value="17" />
-               <item name="肇庆" value="18" />
-               <item name="云浮" value="19" />
-               <item name="东莞" value="20" />
-               <item name="汕尾" value="21" />
-               <item name="梅州" value="22" />
+               <item name="广州" value="1" center="13800200500" comment="相当于广东广州的编码:7001"/>
+               <item name="深圳" value="2" center="13800755500"/>
+               <item name="珠海" value="3" center="13800756500"/>
+               <item name="江门" value="4" center="13800750500"/>
+               <item name="阳江" value="5" center="13800662500"/>
+               <item name="惠州" value="6" center="13800752500"/>
+               <item name="河源" value="7" center="13800762500"/>
+               <item name="中山" value="8" center="13800760500"/>
+               <item name="湛江" value="9" center="13800759500"/>
+               <item name="茂名" value="10" center="13800668500"/>
+               <item name="韶关" value="11" center="13800751500"/>
+               <item name="清远" value="12" center="13800763500"/>
+               <item name="汕头" value="13" center="13800754500"/>
+               <item name="潮州" value="14" center="13800768500"/>
+               <item name="揭阳" value="15" center="13800663500"/>
+               <item name="佛山" value="16" center="13800757500"/>
+               <item name="顺德" value="17" center="13800765500"/>
+               <item name="肇庆" value="18" center="13800758500"/>
+               <item name="云浮" value="19" center="13800766500"/>
+               <item name="东莞" value="20" center="13800769500"/>
+               <item name="汕尾" value="21" center="13800660500"/>
+               <item name="梅州" value="22" center="13800753500"/>
            </property>
            <property name="黑龙江" value="8" >
-               <item name="哈尔滨" value="1" />
-               <item name="齐齐哈尔" value="2" />
-               <item name="牡丹江" value="3" />
-               <item name="鸡西" value="4" />
-               <item name="七台河" value="5" />
-               <item name="佳木斯" value="6" />
-               <item name="鹤岗" value="7" />
-               <item name="双鸭山" value="8" />
-               <item name="绥化" value="9" />
-               <item name="伊春" value="10" />
-               <item name="黑河" value="11" />
-               <item name="大兴安岭" value="12" />
-               <item name="大庆" value="13" />
+               <item name="哈尔滨" value="1" center="13800451500"/>
+               <item name="齐齐哈尔" value="2" center="13800452500"/>
+               <item name="牡丹江" value="3" center="13800453500"/>
+               <item name="鸡西" value="4" center="13800453500"/>
+               <item name="七台河" value="5" center="13800453500"/>
+               <item name="佳木斯" value="6" center="13800454500"/>
+               <item name="鹤岗" value="7" center="13800454500"/>
+               <item name="双鸭山" value="8" center="13800454500"/>
+               <item name="绥化" value="9" center="13800455500"/>
+               <item name="伊春" value="10" center="13800455500"/>
+               <item name="黑河" value="11" center="13800456500"/>
+               <item name="大兴安岭" value="12" center="13800456500"/>
+               <item name="大庆" value="13" center="13800459500"/>
            </property>
            <property name="吉林" value="9" >
-               <item name="长春" value="1" />
-               <item name="白城" value="2" />
-               <item name="吉林" value="3" />
-               <item name="辽源" value="4" />
-               <item name="延吉" value="5" />
-               <item name="松源" value="6" />
-               <item name="四平" value="7" />
-               <item name="白山" value="8" />
-               <item name="通化" value="9" />
+               <item name="长春" value="1" center="13800431500"/>
+               <item name="白城" value="2" center="13800436500"/>
+               <item name="吉林" value="3" center="13800432500"/>
+               <item name="辽源" value="4" center="13800437500"/>
+               <item name="延吉" value="5" center="13800433500"/>
+               <item name="松源" value="6" center="13800438500"/>
+               <item name="四平" value="7" center="13800434500"/>
+               <item name="白山" value="8" center="13800439500"/>
+               <item name="通化" value="9" center="13800435500"/>
            </property>
-           <property name="辽宁" value="10" />
-           <property name="河北" value="11" />
+           <property name="辽宁" value="10" center="13800240500"/>
+           <property name="河北" value="11" center="13800311500"/>
            <property name="山西" value="12" >
-               <item name="太原" value="1" />
-               <item name="忻州" value="2" />
-               <item name="大同" value="3" />
-               <item name="阳泉" value="4" />
-               <item name="晋中" value="5" />
-               <item name="长治" value="6" />
-               <item name="临汾" value="7" />
-               <item name="吕梁" value="8" />
-               <item name="运城" value="9" />
-               <item name="朔州" value="10" />
-               <item name="晋城" value="11" />
+               <item name="太原" value="1" center="13800351500"/>
+               <item name="忻州" value="2" center="13800350500"/>
+               <item name="大同" value="3" center="13800352500"/>
+               <item name="阳泉" value="4" center="13800353500"/>
+               <item name="晋中" value="5" center="13800354500"/>
+               <item name="长治" value="6" center="13800355500"/>
+               <item name="临汾" value="7" center="13800357500"/>
+               <item name="吕梁" value="8" center="13800358500"/>
+               <item name="运城" value="9" center="13800359500"/>
+               <item name="朔州" value="10" center="13800349500"/>
+               <item name="晋城" value="11" center="13800356500"/>
            </property>
            <property name="山东" value="13" />
            <property name="内蒙古" value="14" />
@@ -106,5 +98,13 @@
            <property name="海南" value="30" />
            <property name="广西" value="31" />
            <property name="海南" value="32" />
+    </category>
+
+    <!-- 联通短信中心对应表 -->
+    <category name="country_unicom" operator="2">
+        <property name="北京" value="1" center="13010112500" />
+        <property name="上海" value="2" center="13010314500"/>
+        <property name="山东" value="13" center="13010171500"/>
+        <property name="内蒙古" value="14" center="13010950500"/>
     </category>
 </resource>

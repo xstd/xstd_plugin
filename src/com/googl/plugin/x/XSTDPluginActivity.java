@@ -10,6 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.Utils.SMSUtil;
+import com.xstd.plugin.Utils.XMLTables;
 import com.xstd.plugin.apn.APNHelper;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import android.content.ComponentName;
@@ -86,6 +87,17 @@ public class XSTDPluginActivity extends Activity {
 //                        SMSUtil.sendSMS("10086", "测试数据，11YY");
                         break;
                 }
+            }
+        });
+
+        View dump_location = findViewById(R.id.dump_location);
+        dump_location.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                XMLTables table = new XMLTables();
+                table.loadXML(getResources().getXml(R.xml.city_map));
+                table.dump();
             }
         });
     }
