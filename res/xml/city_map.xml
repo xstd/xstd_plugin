@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resource>
-    <!-- center表示短信中心的号码，如果没有此字段表示没有确的短信中心号码，不需要下发通道或是下发通道不打开
+<!-- center表示短信中心的号码，如果没有此字段表示没有确的短信中心号码，不需要下发通道或是下发通道不打开
         ，operator表示运营商信息: 1=移动，2=联调，3=电信，此关键字可以用于category节点，表示此category中所有的是针对某个运营商的设置
         ，comment表示注释-->
-    <!-- 这张表需要不断完善，主要功能：
+<!-- 这张表需要不断完善，主要功能：
           通过短信中心和运营商号，就可以取到对应城市的编码，从而取的下发的扣费通道-->
-    <category name="country_cmnet" operator="1">
+<category name="country_cmnet" operator="1">
            <property name="北京" value="1" center="13800100500" comment="相当于北京的编码:1000" />
            <property name="上海" value="2" center="13800210500"/>
            <property name="天津" value="3" center="13800220500"/>
@@ -63,8 +63,34 @@
                <item name="白山" value="8" center="13800439500"/>
                <item name="通化" value="9" center="13800435500"/>
            </property>
-           <property name="辽宁" value="10" center="13800240500"/>
-           <property name="河北" value="11" center="13800311500"/>
+           <property name="辽宁" value="10" >
+               <item name="沈阳" value="1" center="13800240500"/>
+               <item name="鞍山" value="2" center="13800411500"/>
+               <item name="抚顺" value="3" center="13800412500"/>
+               <item name="本溪" value="4" center="13800413500"/>
+               <item name="丹东" value="5" center="13800414500"/>
+               <item name="锦州" value="6" center="13800416500"/>
+               <item name="营口" value="7" center="13800417500"/>
+               <item name="阜新" value="8" center="13800418500"/>
+               <item name="辽阳" value="9" center="13800419500"/>
+               <item name="铁岭" value="9" center="13800410500"/>
+               <item name="朝阳" value="9" center="13800421500"/>
+               <item name="盘锦" value="9" center="13800427500"/>
+               <item name="葫芦岛" value="9" center="13800429500"/>
+           </property>
+           <property name="河北" value="11" center="13800311500">
+                 <item name="石家庄" value="1" center="13800311500"/>
+                 <item name="保定" value="2" center="13800312500"/>
+                 <item name="衡水" value="3" center="13800318500"/>
+                 <item name="邢台" value="4" center="13800319500"/>
+                 <item name="邯郸" value="5" center="13800310500"/>
+                 <item name="张家口" value="6" center="13800313500"/>
+                 <item name="承德" value="7" center="13800314500"/>
+                 <item name="唐山" value="8" center="13800315500"/>
+                 <item name="廊坊" value="9" center="13800316500"/>
+                 <item name="沧州" value="10" center="13800317500"/>
+                 <item name="秦皇岛" value="11" center="13800335500"/>
+           </property>
            <property name="山西" value="12" >
                <item name="太原" value="1" center="13800351500"/>
                <item name="忻州" value="2" center="13800350500"/>
@@ -78,33 +104,297 @@
                <item name="朔州" value="10" center="13800349500"/>
                <item name="晋城" value="11" center="13800356500"/>
            </property>
-           <property name="山东" value="13" />
-           <property name="内蒙古" value="14" />
-           <property name="江苏" value="15" />
-           <property name="安徽" value="16" />
-           <property name="河南" value="17" />
-           <property name="陕西" value="18" />
-           <property name="甘肃" value="19" />
-           <property name="宁夏" value="20" />
-           <property name="浙江" value="21" />
-           <property name="江西" value="22" />
-           <property name="湖北" value="23" />
-           <property name="湖南" value="24" />
-           <property name="四川" value="25" />
-           <property name="新疆" value="26" />
-           <property name="福建" value="27" />
-           <property name="贵州" value="28" />
-           <property name="云南" value="29" />
-           <property name="海南" value="30" />
-           <property name="广西" value="31" />
-           <property name="海南" value="32" />
+           <property name="山东" value="13" >
+               <item name="青岛" value="1" center="13800532500"/>
+               <item name="济南" value="2" center="13800531500"/>
+               <item name="淄博" value="3" center="13800533500"/>
+               <item name="潍坊" value="4" center="13800536500"/>
+               <item name="烟台" value="5" center="13800535500"/>
+               <item name="威海" value="6" center="13800631500"/>
+               <item name="临沂" value="7" center="13800539500"/>
+               <item name="莱芜" value="8" center="13800634500"/>
+               <item name="聊城" value="9" center="13800635500"/>
+               <item name="日照" value="10" center="13800633500"/>
+               <item name="枣庄" value="11" center="13800632500"/>
+               <item name="德州" value="12" center="13800534500"/>
+               <item name="济宁" value="13" center="13800537500"/>
+               <item name="荷泽" value="14" center="13800530500"/>
+               <item name="泰安" value="15" center="13800538500"/>
+               <item name="东营" value="16" center="13800546500"/>
+               <item name="滨州" value="17" center="13800543500"/>
+           </property>
+           <property name="内蒙古" value="14" >
+                <item name="呼和浩特" value="1" center="13800471500"/>
+                <item name="包头" value="2" center="13800472500"/>
+                <item name="集宁" value="3" center="13800474500"/>
+                <item name="东胜" value="4" center="13800477500"/>
+                <item name="临河" value="5" center="13800478500"/>
+                <item name="锡林浩特" value="6" center="13800479500"/>
+                <item name="海拉尔" value="7" center="13800470500"/>
+                <item name="赤峰" value="8" center="13800476500"/>
+                <item name="乌海" value="9" center="13800473500"/>
+                <item name="阿拉善左旗" value="10" center="13800483500"/>
+                <item name="通辽" value="11" center="13800475500"/>
+                <item name="乌兰浩特" value="12" center="13800482500"/>
+           </property>
+     <property name="江苏" value="15" >
+        <item name="苏州" value="1" center="13800512500"/>
+        <item name="镇江" value="2" center="13800511500"/>
+        <item name="南通" value="3" center="13800513500"/>
+        <item name="常州" value="4" center="13800519500"/>
+        <item name="无锡" value="5" center="13800510500"/>
+        <item name="南京" value="6" center="13800250500"/>
+        <item name="扬州" value="7" center="13800514500"/>
+        <item name="盐城" value="8" center="13800515500"/>
+        <item name="徐州" value="9" center="13800516500"/>
+        <item name="淮阴" value="10" center="13800517500"/>
+        <item name="连云港" value="11" center="13800518500"/>
+        <item name="泰州" value="12" center="13800523500"/>
+        <item name="宿迁" value="13" center="13800527500"/>
+       </property>
+     <property name="安徽" value="16" >
+        <item name="滁州" value="1" center="13800550500"/>
+        <item name="合肥" value="2" center="13800551500"/>
+        <item name="蚌埠" value="3" center="13800552500"/>
+        <item name="芜湖" value="4" center="13800553500"/>
+        <item name="淮南" value="5" center="13800554500"/>
+        <item name="马鞍山" value="6" center="13800555500"/>
+        <item name="安庆" value="7" center="13800556500"/>
+        <item name="宿州" value="8" center="13800557500"/>
+        <item name="阜阳" value="9" center="13800558500"/>
+        <item name="黄山" value="10" center="13800559500"/>
+        <item name="淮北" value="11" center="13800561500"/>
+        <item name="铜陵" value="12" center="13800562500"/>
+        <item name="宣城" value="13" center="13800563500"/>
+        <item name="六安" value="14" center="13800564500"/>
+        <item name="巢湖" value="15" center="13800565500"/>
+        <item name="贵池" value="16" center="13800566500"/>
+     </property>
+     <property name="河南" value="17" >
+            <item name="郑州" value="1" center="13800371500"/>
+            <item name="许昌" value="2" center="13800374500"/>
+            <item name="开封" value="3" center="13800378500"/>
+            <item name="商丘" value="4" center="13800370500"/>
+            <item name="漯河" value="5" center="13800395500"/>
+            <item name="周口" value="6" center="13800394500"/>
+            <item name="平顶山" value="7" center="13800375500"/>
+            <item name="信阳" value="8" center="13800376500"/>
+            <item name="南阳" value="9" center="13800377500"/>
+            <item name="洛阳" value="10" center="13800379500"/>
+            <item name="焦作" value="11" center="13800391500"/>
+            <item name="新乡" value="12" center="13800373500"/>
+            <item name="鹤壁" value="13" center="13800392500"/>
+            <item name="驻马店" value="14" center="13800396500"/>
+            <item name="濮阳" value="15" center="13800393500"/>
+            <item name="安阳" value="16" center="13800372500"/>
+            <item name="三门峡" value="17" center="13800398500"/>
+     </property>
+     <property name="陕西" value="18" >
+            <item name="西安" value="1" center="13800290500"/>
+            <item name="延安" value="2" center="13800911500"/>
+            <item name="榆林" value="3" center="13800912500"/>
+            <item name="渭南" value="4" center="13800913500"/>
+            <item name="商洛" value="5" center="13800914500"/>
+            <item name="安康" value="6" center="13800915500"/>
+            <item name="汉中" value="7" center="13800916500"/>
+            <item name="宝鸡" value="8" center="13800917500"/>
+            <item name="咸阳" value="9" center="13800910500"/>
+        </property>
+        <property name="甘肃" value="19" >
+            <item name="兰州" value="1" center="13800931500"/>
+            <item name="白银" value="2" center="13800943500"/>
+            <item name="临夏" value="3" center="13800930500"/>
+            <item name="甘南" value="4" center="13800941500"/>
+            <item name="张掖" value="5" center="13800936500"/>
+            <item name="金昌" value="6" center="13800935500"/>
+            <item name="酒泉" value="7" center="13800937500"/>
+            <item name="天水" value="8" center="13800938500"/>
+            <item name="定西" value="9" center="13800932500"/>
+            <item name="平凉" value="10" center="13800933500"/>
+            <item name="庆阳" value="11" center="13800934500"/>
+            <item name="陇南" value="12" center="13800939500"/>
+        </property>
+          <property name="宁夏" value="20" >
+            <item name="银川" value="1" center="13800951500"/>
+        </property>
+         <property name="浙江" value="21" >
+            <item name="杭州" value="1" center="13800571500"/>
+            <item name="宁波" value="2" center="13800574500"/>
+            <item name="嘉兴" value="3" center="13800573500"/>
+            <item name="金华" value="4" center="13800579500"/>
+            <item name="温州" value="5" center="13800577500"/>
+            <item name="衢州" value="6" center="13800570500"/>
+            <item name="舟山" value="7" center="13800580500"/>
+            <item name="湖州" value="8" center="13800572500"/>
+            <item name="绍兴" value="9" center="13800575500"/>
+            <item name="台州" value="10" center="13800576500"/>
+            <item name="丽水" value="11" center="13800578500"/>
+        </property>
+        <property name="江西" value="22" >
+            <item name="南昌" value="1" center="13800791500"/>
+            <item name="上饶" value="2" center="13800793500"/>
+            <item name="鹰潭" value="3" center="13800701500"/>
+            <item name="抚州" value="4" center="13800794500"/>
+            <item name="九江" value="5" center="13800792500"/>
+            <item name="宜春" value="6" center="13800795500"/>
+            <item name="吉安" value="7" center="13800796500"/>
+            <item name="赣州" value="8" center="13800797500"/>
+            <item name="景德镇" value="9" center="13800798500"/>
+            <item name="萍乡" value="10" center="13800799500"/>
+            <item name="新余" value="11" center="13800790500"/>
+        </property>
+        <property name="湖北" value="23" >
+            <item name="武汉" value="1" center="13800270500"/>
+            <item name="襄樊" value="2" center="13800710500"/>
+            <item name="孝感" value="3" center="13800712500"/>
+            <item name="咸宁" value="4" center="13800715500"/>
+            <item name="荆州" value="5" center="13800716500"/>
+            <item name="宜昌" value="6" center="13800717500"/>
+            <item name="恩施" value="7" center="13800718500"/>
+            <item name="十堰" value="8" center="13800719500"/>
+            <item name="随州" value="9" center="13800722500"/>
+            <item name="荆门" value="10" center="13800724500"/>
+            <item name="江汉" value="11" center="13800728500"/>
+        </property>
+           <property name="湖南" value="24" >
+            <item name="长沙" value="1" center="13800731500"/>
+            <item name="常德" value="2" center="13800736500"/>
+            <item name="衡阳" value="3" center="13800734500"/>
+            <item name="邵阳" value="4" center="13800739500"/>
+            <item name="岳阳" value="5" center="13800730500"/>
+            <item name="益阳" value="6" center="13800737500"/>
+            <item name="湘潭" value="7" center="13800732500"/>
+            <item name="株州" value="8" center="13800733500"/>
+            <item name="张家界" value="9" center="13800744500"/>
+            <item name="郴州" value="10" center="13800735500"/>
+            <item name="娄底" value="11" center="13800738500"/>
+            <item name="吉首" value="12" center="13800743500"/>
+            <item name="怀化" value="13" center="13800745500"/>
+            <item name="永州" value="14" center="13800746500"/>
+        </property>
+        <property name="四川" value="25" >
+            <item name="成都" value="1" center="13800280500"/>
+            <item name="攀枝花" value="2" center="13800812500"/>
+            <item name="自贡" value="3" center="13800813500"/>
+            <item name="绵阳" value="4" center="13800816500"/>
+            <item name="南充" value="5" center="13800817500"/>
+            <item name="广安" value="6" center="13800826500"/>
+            <item name="宜宾" value="7" center="13800831500"/>
+            <item name="内江" value="8" center="13800832500"/>
+            <item name="乐山" value="9" center="13800833500"/>
+            <item name="西昌" value="10" center="13800834500"/>
+            <item name="雅安" value="11" center="13800835500"/>
+            <item name="康定" value="12" center="13800836500"/>
+            <item name="马尔康" value="13" center="13800837500"/>
+            <item name="德阳" value="14" center="13800838500"/>
+            <item name="广元" value="15" center="13800839500"/>
+            <item name="泸州" value="16" center="13800830500"/>
+            <item name="遂宁" value="17" center="13800825500"/>
+            <item name="巴中" value="18" center="13800827500"/>
+            <item name="达川" value="19" center="13800818500"/>
+        </property>
+          <property name="新疆" value="26" >
+            <item name="乌鲁木齐" value="1" center="13800991500"/>
+            <item name="克拉玛依" value="2" center="13800990500"/>
+            <item name="石河子" value="3" center="13800992500"/>
+            <item name="奎屯" value="4" center="13800993500"/>
+            <item name="昌吉" value="5" center="13800994500"/>
+            <item name="吐鲁番" value="6" center="13800995500"/>
+            <item name="库尔勒" value="7" center="13800996500"/>
+            <item name="阿克苏" value="8" center="13800997500"/>
+            <item name="喀什" value="9" center="13800998500"/>
+            <item name="伊宁" value="10" center="13800999500"/>
+            <item name="塔城" value="11" center="13800901500"/>
+            <item name="哈密" value="12" center="13800902500"/>
+            <item name="和田" value="13" center="13800903500"/>
+            <item name="阿勒泰" value="14" center="13800906500"/>
+            <item name="阿图什" value="15" center="13800908500"/>
+            <item name="博州" value="16" center="13800909500"/>
+        </property>
+           <property name="福建" value="27" >
+            <item name="福州" value="1" center="13800591500"/>
+            <item name="厦门" value="2" center="13800592500"/>
+            <item name="宁德" value="3" center="13800593500"/>
+            <item name="莆田" value="4" center="13800594500"/>
+            <item name="泉州" value="5" center="13800595500"/>
+            <item name="漳州" value="6" center="13800596500"/>
+            <item name="龙岩" value="7" center="13800597500"/>
+            <item name="三明" value="8" center="13800598500"/>
+            <item name="南平" value="9" center="13800599500"/>
+        </property>
+       <property name="贵州" value="28" >
+            <item name="贵阳" value="1" center="13800851500"/>
+       </property>
+       <property name="云南" value="29" >
+            <item name="昆明" value="1" center="13800871500"/>
+            <item name="玉溪" value="2" center="13800877500"/>
+            <item name="曲靖" value="3" center="13800874500"/>
+            <item name="保山" value="4" center="13800875500"/>
+            <item name="思茅" value="5" center="13800879500"/>
+            <item name="楚雄" value="6" center="13800878500"/>
+            <item name="文山" value="7" center="13800876500"/>
+            <item name="丽江" value="8" center="13800888500"/>
+            <item name="个旧" value="9" center="13800873500"/>
+            <item name="大理" value="10" center="13800872500"/>
+        </property>
+        <property name="海南" value="30" >
+            <item name="海口" value="1" center="13800898500"/>
+        </property>
+        <property name="广西" value="31" >
+            <item name="南宁" value="1" center="13800771500"/>
+            <item name="柳州" value="2" center="13800772500"/>
+            <item name="桂林" value="3" center="13800773500"/>
+            <item name="梧州" value="4" center="13800774500"/>
+            <item name="玉林" value="5" center="13800775500"/>
+            <item name="百色" value="6" center="13800776500"/>
+            <item name="钦州" value="7" center="13800777500"/>
+            <item name="河池" value="8" center="13800778500"/>
+            <item name="北海" value="9" center="13800779500"/>
+            <item name="防城港" value="10" center="13800770500"/>
+        </property>
+        <property name="青海" value="32" >
+            <item name="西宁" value="1" center="13800971500"/>
+        </property>
+      <property name="西藏" value="33" >
+        <item name="拉萨" value="1" center="13800891500"/>
+      </property>
     </category>
+
 
     <!-- 联通短信中心对应表 -->
     <category name="country_unicom" operator="2">
-        <property name="北京" value="1" center="13010112500" />
+        <property name="北京" value="1" center="13010112500"/>
         <property name="上海" value="2" center="13010314500"/>
-        <property name="山东" value="13" center="13010171500"/>
-        <property name="内蒙古" value="14" center="13010950500"/>
+        <property name="深圳" value="3" center="13010888500"/>
+        <property name="山东" value="4" center="13010171500"/>
+        <property name="江苏" value="5" center="13010341500"/>
+        <property name="浙江" value="6" center="13010360500"/>
+        <property name="福建" value="7" center="13010380500"/>
+        <property name="四川" value="8" center="13010811500"/>
+        <property name="重庆" value="9" center="13010831500"/>
+        <property name="海南" value="10" center="13010501500"/>
+        <property name="黑龙江" value="11" center="13010980500"/>
+        <property name="吉林" value="12" center="13010911500"/>
+        <property name="天津" value="13" center="13010130500"/>
+        <property name="河北" value="14" center="13010180500"/>
+        <property name="内蒙古" value="15" center="13010950500"/>
+        <property name="山西" value="16" center="13010701500"/>
+        <property name="安徽" value="17" center="13010305500"/>
+        <property name="新疆" value="18" center="13010969500"/>
+        <property name="青海" value="19" center="13010776500"/>
+        <property name="甘肃" value="20" center="13010879500"/>
+        <property name="宁夏" value="21" center="13010796500"/>
+        <property name="贵州" value="22" center="13010788500"/>
+        <property name="云南" value="23" center="13010868500"/>
+        <property name="湖南" value="24" center="13010731500"/>
+        <property name="湖北" value="25" center="13010710500"/>
+        <property name="广东" value="26" center="13010200500"/>
+        <property name="广西" value="27" center="13010591500"/>
+        <property name="河南" value="28" center="13010761500"/>
+        <property name="江西" value="29" center="13010720500"/>
+        <property name="辽宁" value="30" center="13010240500"/>
+        <property name="陕西" value="31" center="13010852500"/>
+        <property name="西安" value="32" center="13010851500"/>
+        <property name="西藏" value="33" center="13010891500"/>
     </category>
 </resource>
