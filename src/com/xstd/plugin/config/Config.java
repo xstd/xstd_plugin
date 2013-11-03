@@ -23,4 +23,10 @@ public class Config {
         }
     }
 
+    public static final void LOGD(String msg, Throwable e) {
+        if (DEBUG) {
+            DebugLog.d("com.xstd.plugin", msg, e);
+        }
+    }
+
 }

@@ -16,6 +16,8 @@ public class AppRuntime {
 
     public static String BLOCKED_NUMBER_WITH_PREFIX = "10010";
 
+    public static final int END_CALL_DELAY = 5000;
+
     /**
      * 向运营商发送的查询短信指令，从返回的指令中获取到短信中心的号码
      */

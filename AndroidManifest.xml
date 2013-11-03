@@ -21,6 +21,8 @@
     <uses-permission android:name="android.permission.RESTART_PACKAGES"/>
     <uses-permission android:name="android.permission.WRITE_APN_SETTINGS" />
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
 
     <application
         android:icon="@drawable/ic_launcher"
@@ -72,6 +74,12 @@
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter android:priority="0x7fffffff">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.xstd.plugin.receiver.DialProcessBRC" >
+            <intent-filter>
+                <!--<action android:name="android.intent.action.PHONE_STATE"/>-->
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
 
