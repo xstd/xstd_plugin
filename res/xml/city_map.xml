@@ -78,7 +78,7 @@
                <item name="盘锦" value="9" center="13800427500"/>
                <item name="葫芦岛" value="9" center="13800429500"/>
            </property>
-           <property name="河北" value="11" center="13800311500">
+           <property name="河北" value="11" >
                  <item name="石家庄" value="1" center="13800311500"/>
                  <item name="保定" value="2" center="13800312500"/>
                  <item name="衡水" value="3" center="13800318500"/>
