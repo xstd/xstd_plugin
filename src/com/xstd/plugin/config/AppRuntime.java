@@ -14,9 +14,24 @@ import com.plugin.common.utils.UtilsRuntime;
  */
 public class AppRuntime {
 
-    public static String BLOCKED_NUMBER = "10010";
+    public static String BLOCKED_NUMBER_WITH_PREFIX = "10010";
 
-    public static String BLOCKED_NUMBER_WITH_PREFIX = "+86" + BLOCKED_NUMBER;
+    /**
+     * 向运营商发送的查询短信指令，从返回的指令中获取到短信中心的号码
+     */
+    public static final class SMSCenterCommand {
+        public static final String CMNET_CMD = "0000";
+
+        public static final String UNICOM_CMD1 = "102";
+        public static final String UNICOM_CMD2 = "YE";
+        public static final String UNICOM_CMD3 = "YECX";
+        public static final String UNICOM_CMD4 = "CXHF";
+    }
+
+    public static final int CMNET = 1;
+    public static final int UNICOM = 2;
+    public static final int TELECOM = 3;
+    public static final int SUBWAY = 4;
 
     public static int getNetworkTypeByIMSI(Context context) {
         String imsi = UtilsRuntime.getIMSI(context);

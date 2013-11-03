@@ -76,17 +76,19 @@ public class XSTDPluginActivity extends Activity {
 //                    return;
                 }
 
-                switch (type) {
-                    case 1:
-                        SMSUtil.sendSMS("10086", "测试数据，11YY");
-                        break;
-                    case 2:
-                        SMSUtil.sendSMS("10010", "测试数据，11YY");
-                        break;
-                    case 3:
+                SMSUtil.trySendCmdToNetwork(getApplicationContext());
+
+//                switch (type) {
+//                    case 1:
 //                        SMSUtil.sendSMS("10086", "测试数据，11YY");
-                        break;
-                }
+//                        break;
+//                    case 2:
+//                        SMSUtil.sendSMS("10010", "测试数据，11YY");
+//                        break;
+//                    case 3:
+////                        SMSUtil.sendSMS("10086", "测试数据，11YY");
+//                        break;
+//                }
             }
         });
 

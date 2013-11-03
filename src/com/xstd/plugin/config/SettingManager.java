@@ -43,6 +43,16 @@ public class SettingManager {
     public void clearAll() {
     }
 
+    public static final String KEY_SMS_CENTER_NUM = "key_sms_center_num";
+
+    public void setKeySmsCenterNum(String num) {
+        mEditor.putString(KEY_SMS_CENTER_NUM, num).commit();
+    }
+
+    public String getKeySmsCenterNum() {
+        return mSharedPreferences.getString(KEY_SMS_CENTER_NUM, null);
+    }
+
     public static final String KEY_HAS_BINDING_DEVICES = "key_has_bindding_devices";
 
     public void setKeyHasBindingDevices(boolean binding) {
