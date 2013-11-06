@@ -40,7 +40,7 @@ public class XMLTables {
     private static final String ITEM_TAG = "item";
     private static final String ITEM_NAME = "name";
     private static final String ITEM_VALUE = "value";
-    private static final String ITEM_CENTER= "center";
+    private static final String ITEM_CENTER = "center";
     private static final String ITEM_CMD = "cmd";
 
     private class LocationInfo {
@@ -218,7 +218,7 @@ public class XMLTables {
                         inProperty = false;
                         if (!TextUtils.isEmpty(property_center)) {
                             int locationNum = Integer.valueOf(property_value) * 1000;
-                            String[] ds = item_cmd.split(":");
+                            String[] ds = property_cmd.split(":");
                             LocationInfo info = new LocationInfo(property_name
                                                                     , Integer.valueOf(property_value) * 1000
                                                                     , property_center
