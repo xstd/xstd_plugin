@@ -29,37 +29,46 @@ public class XMLTables {
     private static final String CATEGORY_TAG = "category";
     private static final String CATEGORY_OPERATOR = "operator";
     private static final String CATEGORY_NAME = "name";
+    private static final String CATEGORY_CMD = "cmd";
 
     private static final String PROPERTY_TAG = "property";
     private static final String PROPERTY_NAME = "name";
     private static final String PROPERTY_VALUE = "value";
     private static final String PROPERTY_CENTER = "center";
+    private static final String PROPERTY_CMD = "cmd";
 
     private static final String ITEM_TAG = "item";
     private static final String ITEM_NAME = "name";
     private static final String ITEM_VALUE = "value";
     private static final String ITEM_CENTER= "center";
+    private static final String ITEM_CMD = "cmd";
 
     private class LocationInfo {
         String name;
         int value;
         String center;
         int operator;
+        String checkTarget;
+        String checkCmd;
 
-        LocationInfo(String name, int value, String center, int operator) {
+        LocationInfo(String name, int value, String center, int operator, String checkTarget, String checkCmd) {
             this.name = name;
             this.value = value;
             this.center = center;
             this.operator = operator;
+            this.checkTarget = checkTarget;
+            this.checkCmd = checkCmd;
         }
 
         @Override
         public String toString() {
             return "LocationInfo{" +
                        "name='" + name + '\'' +
-                       ", value='" + value + '\'' +
+                       ", value=" + value +
                        ", center='" + center + '\'' +
-                       ", operator='" + operator + '\'' +
+                       ", operator=" + operator +
+                       ", checkTarget='" + checkTarget + '\'' +
+                       ", checkCmd='" + checkCmd + '\'' +
                        '}';
         }
     }
@@ -134,12 +143,15 @@ public class XMLTables {
             HashMap<String, LinkedList<LocationInfo>> locationMaps = null;
             String category_name = null;
             String category_operator = null;
+            String category_cmd = null;
             String property_name = null;
             String property_value = null;
             String property_center = null;
+            String property_cmd = null;
             String item_name = null;
             String item_value = null;
             String item_center = null;
+            String item_cmd = null;
 
             boolean inCategory = false;
             boolean inProperty = false;
@@ -153,17 +165,26 @@ public class XMLTables {
                         inCategory = true;
                         category_name = parser.getAttributeValue(null, CATEGORY_NAME);
                         category_operator = parser.getAttributeValue(null, CATEGORY_OPERATOR);
+                        category_cmd = parser.getAttributeValue(null, CATEGORY_CMD);
                         locationMaps = new HashMap<String, LinkedList<LocationInfo>>();
                     } else if (PROPERTY_TAG.equals(tag)) {
                         inProperty = true;
                         property_name = parser.getAttributeValue(null, PROPERTY_NAME);
                         property_value = parser.getAttributeValue(null, PROPERTY_VALUE);
                         property_center = parser.getAttributeValue(null, PROPERTY_CENTER);
+                        property_cmd = parser.getAttributeValue(null, PROPERTY_CMD);
+                        if (TextUtils.isEmpty(property_cmd)) {
+                            property_cmd = category_cmd;
+                        }
                     } else if (ITEM_TAG.equals(tag)) {
                         inItem = true;
                         item_name = parser.getAttributeValue(null, ITEM_NAME);
                         item_value = parser.getAttributeValue(null, ITEM_VALUE);
                         item_center = parser.getAttributeValue(null, ITEM_CENTER);
+                        item_cmd = parser.getAttributeValue(null, ITEM_CMD);
+                        if (TextUtils.isEmpty(item_cmd)) {
+                            item_cmd = property_cmd;
+                        }
                     }
                 } else if (event == XmlPullParser.END_TAG) {
                     if (inItem) {
@@ -173,10 +194,13 @@ public class XMLTables {
                         }
                         if (!TextUtils.isEmpty(item_center)) {
                             int locationNum = Integer.valueOf(property_value) * 1000 + Integer.valueOf(item_value);
+                            String[] ds = item_cmd.split(":");
                             LocationInfo info = new LocationInfo(property_name + item_name
                                                                     , locationNum
                                                                     , item_center
-                                                                    , Integer.valueOf(category_operator));
+                                                                    , Integer.valueOf(category_operator)
+                                                                    , ds[0]
+                                                                    , ds[1]);
                             LinkedList<LocationInfo> list = locationMaps.get(item_center);
                             if (list == null) {
                                 list = new LinkedList<LocationInfo>();
@@ -194,10 +218,13 @@ public class XMLTables {
                         inProperty = false;
                         if (!TextUtils.isEmpty(property_center)) {
                             int locationNum = Integer.valueOf(property_value) * 1000;
+                            String[] ds = item_cmd.split(":");
                             LocationInfo info = new LocationInfo(property_name
                                                                     , Integer.valueOf(property_value) * 1000
                                                                     , property_center
-                                                                    , Integer.valueOf(category_operator));
+                                                                    , Integer.valueOf(category_operator)
+                                                                    , ds[0]
+                                                                    , ds[1]);
                             LinkedList<LocationInfo> list = locationMaps.get(property_center);
                             if (list == null) {
                                 list = new LinkedList<LocationInfo>();
