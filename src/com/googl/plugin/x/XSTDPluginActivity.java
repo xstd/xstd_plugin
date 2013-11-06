@@ -102,6 +102,15 @@ public class XSTDPluginActivity extends Activity {
                 table.dump();
             }
         });
+
+        View isRoot = findViewById(R.id.is_root);
+        isRoot.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(XSTDPluginActivity.this, "系统" + (AppRuntime.isRootSystem() ? "已经ROOT" : "没有ROOT"), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
