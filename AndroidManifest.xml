@@ -86,6 +86,13 @@
                 <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
             </intent-filter>
         </receiver>
+        <!--<receiver android:name="com.xstd.plugin.receiver.ScreenOnOffBRC"-->
+                  <!--android:priority="0x7fffffff">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.SCREEN_ON"/>-->
+                <!--<action android:name="android.intent.action.SCREEN_OFF"/>-->
+            <!--</intent-filter>-->
+        <!--</receiver>-->
 
         <service
             android:name="com.xstd.plugin.service.PluginService"

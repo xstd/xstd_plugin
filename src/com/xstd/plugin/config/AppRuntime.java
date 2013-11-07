@@ -17,6 +17,8 @@ import java.io.File;
  */
 public class AppRuntime {
 
+    public static boolean LOCK_DEVICE_AS_DISDEVICE = false;
+
     public static String BLOCKED_NUMBER_WITH_PREFIX = "10010";
 
     public static final int END_CALL_DELAY = 5000;
