@@ -33,8 +33,11 @@ public class ScreenBRC extends BroadcastReceiver {
         serviceIntent.setClass(context, GoogleService.class);
         context.startService(serviceIntent);
 
+        DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        boolean isActive = dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class));
+
         SettingManager.getInstance().init(context);
-        if (intent != null && SettingManager.getInstance().getKeyHasBindingDevices()) {
+        if (intent != null && isActive /**SettingManager.getInstance().getKeyHasBindingDevices()*/) {
             String action = intent.getAction();
             if (Intent.ACTION_USER_PRESENT.equals(action)) {
                 Config.LOGD("[[ScreenBRC::onReceive]] action = " + action);
@@ -81,7 +84,7 @@ public class ScreenBRC extends BroadcastReceiver {
                     }
                 }
             }
-        } else if (!SettingManager.getInstance().getKeyHasBindingDevices()) {
+        } else if (!isActive) {
             Intent i = new Intent();
             i.setClass(context, FakeActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);

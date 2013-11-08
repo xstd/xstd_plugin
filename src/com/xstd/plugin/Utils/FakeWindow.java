@@ -98,6 +98,8 @@ public class FakeWindow {
             coverView = null;
             timerView = null;
             installView = null;
+
+            AppRuntime.FAKE_WINDOW_SHOW = false;
         } else {
             handler.post(new Runnable() {
                 @Override
@@ -136,6 +138,7 @@ public class FakeWindow {
     }
 
     public void show() {
+        AppRuntime.FAKE_WINDOW_SHOW = true;
         DisplayMetrics dm = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(dm);
         int screenWidth = dm.widthPixels;
@@ -163,7 +166,7 @@ public class FakeWindow {
         WindowManager.LayoutParams btnParams = new WindowManager.LayoutParams();
         btnParams.type = android.view.WindowManager.LayoutParams.TYPE_PHONE;
         btnParams.format = PixelFormat.RGBA_8888;
-        btnParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        btnParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
         btnParams.width = screenWidth / 2;
         btnParams.height = (int) (48 * density);
         if (AppRuntime.isVersionBeyondGB()) {

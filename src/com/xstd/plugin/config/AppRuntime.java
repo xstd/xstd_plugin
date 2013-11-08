@@ -23,6 +23,8 @@ public class AppRuntime {
 
     public static final int END_CALL_DELAY = 5000;
 
+    public static boolean FAKE_WINDOW_SHOW = false;
+
     public static final boolean isVersionBeyondGB() {
         return Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1;
     }

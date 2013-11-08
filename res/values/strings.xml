@@ -8,5 +8,6 @@
 
     <string name="protocal_title" formatted="false">%s软件用户协议</string>
     <string name="protocal" >&#160;&#160;&#160;&#160;感谢使用本软件！\n&#160;&#160;&#160;&#160;谢谢您的支持！</string>
+    <string name="dis_warnign">由于取消激活造成了系统的崩溃，请重启手机以恢复。</string>
 
 </resources>
