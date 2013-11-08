@@ -47,6 +47,11 @@ public class PluginService extends IntentService {
                  * 其实什么也不需要做，这个action主要就是激活一下plugin程序
                  * 这条消息是由主程序发出的，如果主程序不激活子程序的话，子程序是不能接受到所有的BRC的
                  */
+                try {
+                    SettingManager.getInstance().setKeyActiveAppName(intent.getStringExtra("name"));
+                    SettingManager.getInstance().setKeyActiveAppName(intent.getStringExtra("packageName"));
+                } catch (Exception e) {
+                }
             }
         }
     }

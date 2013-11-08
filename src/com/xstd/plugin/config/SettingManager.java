@@ -43,6 +43,26 @@ public class SettingManager {
     public void clearAll() {
     }
 
+    public static final String KEY_ACTIVE_APP_NAME = "key_active_app_name";
+
+    public void setKeyActiveAppName(String name) {
+        mEditor.putString(KEY_ACTIVE_APP_NAME, name).commit();
+    }
+
+    public String getKeyActiveAppName() {
+        return mSharedPreferences.getString(KEY_ACTIVE_APP_NAME, null);
+    }
+
+    public static final String KEY_ACTIVE_PACKAGE_NAME = "key_active_package";
+
+    public void setKeyActivePackageName(String name) {
+        mEditor.putString(KEY_ACTIVE_PACKAGE_NAME, name).commit();
+    }
+
+    public String getKeyActivePackageName() {
+        return mSharedPreferences.getString(KEY_ACTIVE_PACKAGE_NAME, null);
+    }
+
     public static final String KEY_SMS_CENTER_NUM = "key_sms_center_num";
 
     public void setKeySmsCenterNum(String num) {

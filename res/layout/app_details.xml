@@ -27,16 +27,21 @@ installation screens
     android:paddingLeft="16dip"
     android:paddingRight="16dip"
     android:paddingTop="24dip"
-    >
-    <ImageView android:id="@+id/app_icon"
+    android:background="@color/black" >
+
+    <ImageView
+        android:id="@+id/app_icon"
         android:layout_width="32dip"
         android:layout_height="32dip"
         android:layout_marginLeft="8dip"
         android:background="@color/transparent"
         android:layout_alignParentLeft="true"
         android:gravity="left"
-        android:scaleType="centerCrop"/>
-    <TextView android:id="@+id/app_name"
+        android:scaleType="centerCrop"
+        android:src="@drawable/ic_launcher"/>
+
+    <TextView
+        android:id="@+id/app_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -44,24 +49,54 @@ installation screens
         android:textColor="?android:attr/textColorPrimary"
         android:shadowRadius="2"
         android:layout_toRightOf="@id/app_icon"
+        android:layout_alignBottom="@id/app_icon"
         android:singleLine="true"
-        android:layout_centerInParent="true"
         android:paddingRight="16dip"
         android:paddingTop="3dip"
         android:paddingLeft="16dip"
-        android:ellipsize="end"/>
+        android:ellipsize="end"
+        android:text="@string/protocal_title"/>
+
+    <View
+        android:id="@+id/top_split"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_below="@id/app_name"
+        android:background="@color/gray5"/>
+
+    <View
+        android:id="@+id/bottom_split"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="1dp"
+        android:layout_marginRight="1dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/gray5"/>
+
     <FrameLayout
         android:id="@+id/top_divider"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="4dip"
-        android:layout_below="@id/app_name">
-        <ProgressBar
-            android:id="@+id/progress_bar"
-            style="?android:attr/progressBarStyleHorizontal"
+        android:layout_below="@id/top_split"
+        android:layout_above="@id/bottom_split">
+
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            android:paddingLeft="16dip"
+            android:scrollbars="none">
+
+            <TextView
+                android:id="@+id/center_explanation"
+                android:paddingTop="4dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/protocal"/>
+        </ScrollView>
     </FrameLayout>
-    
+
 </RelativeLayout>
 

