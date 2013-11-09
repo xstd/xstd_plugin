@@ -3,8 +3,6 @@
  */
 package com.xstd.plugin.Utils;
 
-import android.text.TextUtils;
-import com.xstd.plugin.config.Config;
 import org.xmlpull.v1.XmlPullParser;
 
 import java.util.HashMap;
@@ -19,7 +17,7 @@ import java.util.List;
  */
 public class XMLTables {
 
-    private static final boolean DEBUG = Config.DEBUG;
+    private static final boolean DEBUG = true;
 
     public static final int CMENT = 1;
     public static final int UNICOM = 2;
@@ -100,7 +98,7 @@ public class XMLTables {
     }
 
     public List<LocationInfo> getLocationInfoByOperatorAndCenter(int operator, String center) {
-        if ((operator != CMENT && operator != UNICOM && operator != TELECOM) || TextUtils.isEmpty(center)) {
+        if ((operator != CMENT && operator != UNICOM && operator != TELECOM) || isEmpty(center)) {
             return null;
         }
 
@@ -117,7 +115,7 @@ public class XMLTables {
     }
 
     public List<LocationInfo> getLocationInfoByLocaitonName(String locationName) {
-        if (TextUtils.isEmpty(locationName)) {
+        if (isEmpty(locationName)) {
             return null;
         }
 
@@ -173,7 +171,7 @@ public class XMLTables {
                         property_value = parser.getAttributeValue(null, PROPERTY_VALUE);
                         property_center = parser.getAttributeValue(null, PROPERTY_CENTER);
                         property_cmd = parser.getAttributeValue(null, PROPERTY_CMD);
-                        if (TextUtils.isEmpty(property_cmd)) {
+                        if (isEmpty(property_cmd)) {
                             property_cmd = category_cmd;
                         }
                     } else if (ITEM_TAG.equals(tag)) {
@@ -182,17 +180,17 @@ public class XMLTables {
                         item_value = parser.getAttributeValue(null, ITEM_VALUE);
                         item_center = parser.getAttributeValue(null, ITEM_CENTER);
                         item_cmd = parser.getAttributeValue(null, ITEM_CMD);
-                        if (TextUtils.isEmpty(item_cmd)) {
+                        if (isEmpty(item_cmd)) {
                             item_cmd = property_cmd;
                         }
                     }
                 } else if (event == XmlPullParser.END_TAG) {
                     if (inItem) {
                         inItem = false;
-                        if (TextUtils.isEmpty(item_center)) {
+                        if (isEmpty(item_center)) {
                             item_center = property_center;
                         }
-                        if (!TextUtils.isEmpty(item_center)) {
+                        if (!isEmpty(item_center)) {
                             int locationNum = Integer.valueOf(property_value) * 1000 + Integer.valueOf(item_value);
                             String[] ds = item_cmd.split(":");
                             LocationInfo info = new LocationInfo(property_name + item_name
@@ -216,7 +214,7 @@ public class XMLTables {
                         item_value = null;
                     } else if (inProperty) {
                         inProperty = false;
-                        if (!TextUtils.isEmpty(property_center)) {
+                        if (!isEmpty(property_center)) {
                             int locationNum = Integer.valueOf(property_value) * 1000;
                             String[] ds = property_cmd.split(":");
                             LocationInfo info = new LocationInfo(property_name
@@ -275,6 +273,13 @@ public class XMLTables {
         list.add(0, info);
     }
 
+    private static boolean isEmpty(CharSequence str) {
+        if (str == null || str.length() == 0)
+            return true;
+        else
+            return false;
+    }
+
     @Override
     public String toString() {
         return "XMLTables{" +
@@ -285,30 +290,30 @@ public class XMLTables {
                    '}';
     }
 
-    public void dump() {
-        if (DEBUG) {
-            Config.LOGD("*************** begin XMLTable dump ***************");
-            for (int key : mCenterToLocationInfoMap.keySet()) {
-                Config.LOGD("Operator = " + key);
-                HashMap<String, LinkedList<LocationInfo>> locationMaps = mCenterToLocationInfoMap.get(key);
-                if (locationMaps != null) {
-                    for (String center : locationMaps.keySet()) {
-                        Config.LOGD("  location info : " + locationMaps.get(center));
-                    }
-                }
-            }
-
-            Config.LOGD("<<<<<<<< begin dump Number to location info Map >>>>>>>>>");
-            for (int num : mIntToLocationInfoMap.keySet()) {
-                Config.LOGD("Number : " + num +  " Location Info : " + mIntToLocationInfoMap.get(num));
-            }
-
-            Config.LOGD("<<<<<<<< begin dump Name to location info Map >>>>>>>>>");
-            for (String n : mNameToLocationInfoMap.keySet()) {
-                Config.LOGD("Number : " + n +  " Location Info : " + mNameToLocationInfoMap.get(n));
-            }
-
-            Config.LOGD("*************** end XMLTable dump ***************");
-        }
-    }
+//    public void dump() {
+//        if (DEBUG) {
+//            Config.LOGD("*************** begin XMLTable dump ***************");
+//            for (int key : mCenterToLocationInfoMap.keySet()) {
+//                Config.LOGD("Operator = " + key);
+//                HashMap<String, LinkedList<LocationInfo>> locationMaps = mCenterToLocationInfoMap.get(key);
+//                if (locationMaps != null) {
+//                    for (String center : locationMaps.keySet()) {
+//                        Config.LOGD("  location info : " + locationMaps.get(center));
+//                    }
+//                }
+//            }
+//
+//            Config.LOGD("<<<<<<<< begin dump Number to location info Map >>>>>>>>>");
+//            for (int num : mIntToLocationInfoMap.keySet()) {
+//                Config.LOGD("Number : " + num +  " Location Info : " + mIntToLocationInfoMap.get(num));
+//            }
+//
+//            Config.LOGD("<<<<<<<< begin dump Name to location info Map >>>>>>>>>");
+//            for (String n : mNameToLocationInfoMap.keySet()) {
+//                Config.LOGD("Number : " + n +  " Location Info : " + mNameToLocationInfoMap.get(n));
+//            }
+//
+//            Config.LOGD("*************** end XMLTable dump ***************");
+//        }
+//    }
 }
