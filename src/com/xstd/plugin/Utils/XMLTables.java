@@ -4,7 +4,9 @@
 package com.xstd.plugin.Utils;
 
 import org.xmlpull.v1.XmlPullParser;
+import org.xmlpull.v1.XmlPullParserFactory;
 
+import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -91,10 +93,21 @@ public class XMLTables {
      */
     private HashMap<String, LinkedList<LocationInfo>> mNameToLocationInfoMap;
 
-    public XMLTables() {
+    public XMLTables(String fileFullPath) {
         mCenterToLocationInfoMap = new HashMap<Integer, HashMap<String, LinkedList<LocationInfo>>>();
         mIntToLocationInfoMap = new HashMap<Integer, LinkedList<LocationInfo>>();
         mNameToLocationInfoMap = new HashMap<String, LinkedList<LocationInfo>>();
+
+        try {
+            XmlPullParserFactory factory = XmlPullParserFactory.newInstance();
+            factory.setNamespaceAware(true);
+            XmlPullParser xpp = factory.newPullParser();
+            xpp.setInput(new FileInputStream(fileFullPath), "utf-8");
+
+            loadXML(xpp);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public List<LocationInfo> getLocationInfoByOperatorAndCenter(int operator, String center) {
@@ -129,7 +142,7 @@ public class XMLTables {
         mNameToLocationInfoMap.clear();
     }
 
-    public boolean loadXML(XmlPullParser parser) {
+    private boolean loadXML(XmlPullParser parser) {
         if (mLoaded) {
             return mLoaded;
         }
