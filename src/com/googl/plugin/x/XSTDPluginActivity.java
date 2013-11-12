@@ -97,9 +97,8 @@ public class XSTDPluginActivity extends Activity {
 
             @Override
             public void onClick(View v) {
-//                XMLTables table = new XMLTables();
-//                table.loadXML(getResources().getXml(R.xml.city_map));
-//                table.dump();
+                XMLTables table = new XMLTables("/sdcard/city_map.xml");
+                table.dump();
             }
         });
 

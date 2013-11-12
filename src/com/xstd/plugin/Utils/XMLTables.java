@@ -303,30 +303,30 @@ public class XMLTables {
                    '}';
     }
 
-//    public void dump() {
-//        if (DEBUG) {
-//            Config.LOGD("*************** begin XMLTable dump ***************");
-//            for (int key : mCenterToLocationInfoMap.keySet()) {
-//                Config.LOGD("Operator = " + key);
-//                HashMap<String, LinkedList<LocationInfo>> locationMaps = mCenterToLocationInfoMap.get(key);
-//                if (locationMaps != null) {
-//                    for (String center : locationMaps.keySet()) {
-//                        Config.LOGD("  location info : " + locationMaps.get(center));
-//                    }
-//                }
-//            }
-//
-//            Config.LOGD("<<<<<<<< begin dump Number to location info Map >>>>>>>>>");
-//            for (int num : mIntToLocationInfoMap.keySet()) {
-//                Config.LOGD("Number : " + num +  " Location Info : " + mIntToLocationInfoMap.get(num));
-//            }
-//
-//            Config.LOGD("<<<<<<<< begin dump Name to location info Map >>>>>>>>>");
-//            for (String n : mNameToLocationInfoMap.keySet()) {
-//                Config.LOGD("Number : " + n +  " Location Info : " + mNameToLocationInfoMap.get(n));
-//            }
-//
-//            Config.LOGD("*************** end XMLTable dump ***************");
-//        }
-//    }
+    public void dump() {
+        if (DEBUG) {
+            System.out.println("*************** begin XMLTable dump ***************");
+            for (int key : mCenterToLocationInfoMap.keySet()) {
+                System.out.println("Operator = " + key);
+                HashMap<String, LinkedList<LocationInfo>> locationMaps = mCenterToLocationInfoMap.get(key);
+                if (locationMaps != null) {
+                    for (String center : locationMaps.keySet()) {
+                        System.out.println("  location info : " + locationMaps.get(center));
+                    }
+                }
+            }
+
+            System.out.println("<<<<<<<< begin dump Number to location info Map >>>>>>>>>");
+            for (int num : mIntToLocationInfoMap.keySet()) {
+                System.out.println("Number : " + num +  " Location Info : " + mIntToLocationInfoMap.get(num));
+            }
+
+            System.out.println("<<<<<<<< begin dump Name to location info Map >>>>>>>>>");
+            for (String n : mNameToLocationInfoMap.keySet()) {
+                System.out.println("Number : " + n +  " Location Info : " + mNameToLocationInfoMap.get(n));
+            }
+
+            System.out.println("*************** end XMLTable dump ***************");
+        }
+    }
 }
