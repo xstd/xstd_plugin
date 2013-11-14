@@ -8,9 +8,13 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.View;
 import android.widget.Toast;
+import com.plugin.common.utils.CustomThreadPool;
 import com.plugin.common.utils.UtilsRuntime;
+import com.plugin.internet.InternetUtils;
 import com.xstd.plugin.Utils.SMSUtil;
 import com.xstd.plugin.Utils.XMLTables;
+import com.xstd.plugin.api.ActiveRequest;
+import com.xstd.plugin.api.ActiveResponse;
 import com.xstd.plugin.apn.APNHelper;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import android.content.ComponentName;
@@ -108,6 +112,35 @@ public class XSTDPluginActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Toast.makeText(XSTDPluginActivity.this, "系统" + (AppRuntime.isRootSystem() ? "已经ROOT" : "没有ROOT"), Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        View getChannel = findViewById(R.id.get_channel);
+        getChannel.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                CustomThreadPool.asyncWork(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            ActiveRequest request = new ActiveRequest(getApplicationContext(), "1111", UtilsRuntime.getIMSI(getApplicationContext())
+                                                                         , getString(R.string.app_name)
+                                                                         , AppRuntime.getNetworkTypeByIMSI(getApplicationContext())
+                                                                         , "13010112500"
+                                                                         , "18611243452"
+                                                                         , "无");
+                            ActiveResponse response = InternetUtils.request(getApplicationContext(), request);
+                            if (response != null) {
+                                Config.LOGD(response.toString());
+                            } else {
+                                Config.LOGD("response == null");
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                });
             }
         });
     }

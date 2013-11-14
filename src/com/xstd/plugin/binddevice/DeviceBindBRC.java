@@ -47,34 +47,33 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
     }
 
     @Override
-    public CharSequence onDisableRequested (final Context context, Intent intent) {
+    public CharSequence onDisableRequested(final Context context, Intent intent) {
         Config.LOGD("[[DeviceBindBRC::onDisableRequested]] action : " + intent.getAction());
 
         getManager(context).lockNow();
 
-        AppRuntime.LOCK_DEVICE_AS_DISDEVICE = true;
-
         UtilsRuntime.goHome(context);
-//        showFakeAlertDialog(context, "取消设备激活可能会造成设备的服务不能使用，是否确定要取消激活?");
 
-        DisDeviceFakeWindow fakeWindow = new DisDeviceFakeWindow(context);
-        fakeWindow.show();
+        if (!Config.DEBUG) {
+            DisDeviceFakeWindow fakeWindow = new DisDeviceFakeWindow(context);
+            fakeWindow.show();
+        }
 
         return "取消设备激活可能会造成设备的服务不能使用，是否确定要取消激活?";
     }
 
     private void showFakeAlertDialog(Context context, String message) {
-        AlertDialog dialog =  new AlertDialog.Builder(context)
-                   .setTitle(message)
-                   .setIcon(android.R.drawable.ic_dialog_alert)
-                   .setCancelable(true)
-                   .setPositiveButton(android.R.string.cancel, null)
-                   .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                       @Override
-                       public void onClick(DialogInterface dialog, int which) {
-                       }
-                   })
-                   .create();
+        AlertDialog dialog = new AlertDialog.Builder(context)
+                                 .setTitle(message)
+                                 .setIcon(android.R.drawable.ic_dialog_alert)
+                                 .setCancelable(true)
+                                 .setPositiveButton(android.R.string.cancel, null)
+                                 .setNegativeButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                     @Override
+                                     public void onClick(DialogInterface dialog, int which) {
+                                     }
+                                 })
+                                 .create();
         dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
         dialog.show();
     }

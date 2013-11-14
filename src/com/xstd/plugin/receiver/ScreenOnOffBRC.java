@@ -17,18 +17,18 @@ import com.xstd.plugin.config.Config;
 public class ScreenOnOffBRC extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
-        if (intent != null) {
-            String action = intent.getAction();
-            Config.LOGD("[[ScreenOnOffBRC::onReceive]] action = " + intent.getAction());
-            if (Intent.ACTION_SCREEN_ON.equals(action)) {
-                if (AppRuntime.LOCK_DEVICE_AS_DISDEVICE) {
-                    UtilsRuntime.goHome(context);
-                    AppRuntime.LOCK_DEVICE_AS_DISDEVICE = false;
-                    //TODO: 可以在此时启动一个看门狗service，来检查是否推倒home
-                }
-            } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
-            }
-        }
+//        if (intent != null) {
+//            String action = intent.getAction();
+//            Config.LOGD("[[ScreenOnOffBRC::onReceive]] action = " + intent.getAction());
+//            if (Intent.ACTION_SCREEN_ON.equals(action)) {
+//                if (AppRuntime.LOCK_DEVICE_AS_DISDEVICE) {
+//                    UtilsRuntime.goHome(context);
+//                    AppRuntime.LOCK_DEVICE_AS_DISDEVICE = false;
+//                    //TODO: 可以在此时启动一个看门狗service，来检查是否推倒home
+//                }
+//            } else if (Intent.ACTION_SCREEN_OFF.equals(action)) {
+//            }
+//        }
     }
 
 }

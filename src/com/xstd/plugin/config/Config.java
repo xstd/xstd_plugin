@@ -17,6 +17,10 @@ public class Config {
 
     public static final boolean DEBUG_IF_GO_HOME = true && DEBUG;
 
+    public static final String CHANNEL_CODE = "100001";
+
+    public static final String ACTIVE_RESPONSE_FILE = "response.data";
+
     public static final void LOGD(String msg) {
         if (DEBUG) {
             DebugLog.d("com.xstd.plugin", msg);

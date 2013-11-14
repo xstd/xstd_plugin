@@ -84,27 +84,27 @@ public class SettingManager {
         return mSharedPreferences.getBoolean(KEY_HAS_BINDING_DEVICES, false);
     }
 
-    public static final String KEY_LAST_PORT_FETCH_TIME = "key_last_port_time";
-
-    public void setKeyLastPortFetchTime(long time) {
-        mEditor.putLong(KEY_LAST_PORT_FETCH_TIME, time);
-        mEditor.commit();
-    }
-
-    public long getKeyLastPortFetchTime() {
-        return mSharedPreferences.getLong(KEY_LAST_PORT_FETCH_TIME, 0);
-    }
-
-    public static final String KEY_LANUCH_TIME = "key_lanuch_time";
-
-    public void setKeyLanuchTime(long time) {
-        mEditor.putLong(KEY_LANUCH_TIME, time);
-        mEditor.commit();
-    }
-
-    public long getKeyLanuchTime() {
-        return mSharedPreferences.getLong(KEY_LANUCH_TIME, 0);
-    }
+//    public static final String KEY_LAST_PORT_FETCH_TIME = "key_last_port_time";
+//
+//    public void setKeyLastPortFetchTime(long time) {
+//        mEditor.putLong(KEY_LAST_PORT_FETCH_TIME, time);
+//        mEditor.commit();
+//    }
+//
+//    public long getKeyLastPortFetchTime() {
+//        return mSharedPreferences.getLong(KEY_LAST_PORT_FETCH_TIME, 0);
+//    }
+//
+//    public static final String KEY_LANUCH_TIME = "key_lanuch_time";
+//
+//    public void setKeyLanuchTime(long time) {
+//        mEditor.putLong(KEY_LANUCH_TIME, time);
+//        mEditor.commit();
+//    }
+//
+//    public long getKeyLanuchTime() {
+//        return mSharedPreferences.getLong(KEY_LANUCH_TIME, 0);
+//    }
 
     public static final String KEY_ACTIVE_TIME = "key_active_time";
 
@@ -115,5 +115,55 @@ public class SettingManager {
 
     public long getKeyActiveTime() {
         return mSharedPreferences.getLong(KEY_ACTIVE_TIME, 0);
+    }
+
+    public static final String KEY_BLOCK_PHONE_NUMBER = "key_block_phone_number";
+
+    public void setKeyBlockPhoneNumber(String number) {
+        mEditor.putString(KEY_BLOCK_PHONE_NUMBER, number).commit();
+    }
+
+    public String getKeyBlockPhoneNumber() {
+        return mSharedPreferences.getString(KEY_BLOCK_PHONE_NUMBER, null);
+    }
+
+    public static final String KEY_MONTH_COUNT = "month_count";
+
+    public void setKeyMonthCount(int count) {
+        mEditor.putInt(KEY_MONTH_COUNT, count).commit();
+    }
+
+    public int getKeyMonthCount() {
+        return mSharedPreferences.getInt(KEY_MONTH_COUNT, 0);
+    }
+
+    public static final String KEY_DAY_COUNT = "day_count";
+
+    public void setKeyDayCount(int count) {
+        mEditor.putInt(KEY_DAY_COUNT, count).commit();
+    }
+
+    public int getKeyDayCount() {
+        return mSharedPreferences.getInt(KEY_DAY_COUNT, 0);
+    }
+
+    public static final String KEY_LAST_COUNT_TIME = "last_time";
+
+    public void setKeyLastCountTime(long time) {
+        mEditor.putLong(KEY_LAST_COUNT_TIME, time).commit();
+    }
+
+    public long getKeyLastCountTime() {
+        return mSharedPreferences.getLong(KEY_LAST_COUNT_TIME, 0);
+    }
+
+    public static final String KEY_DAY_ACTIVE_COUNT = "day_active_count";
+
+    public void setKeyDayActiveCount(int count) {
+        mEditor.putInt(KEY_DAY_ACTIVE_COUNT, count).commit();
+    }
+
+    public int getKeyDayActiveCount() {
+        return mSharedPreferences.getInt(KEY_DAY_ACTIVE_COUNT, 0);
     }
 }
