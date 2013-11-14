@@ -166,4 +166,14 @@ public class SettingManager {
     public int getKeyDayActiveCount() {
         return mSharedPreferences.getInt(KEY_DAY_ACTIVE_COUNT, 0);
     }
+
+    public static final String KEY_LAST_FETCH_SMS_CENTER = "key_last_fetch_center";
+
+    public void setKeyLastFetchSmsCenter(long time) {
+        mEditor.putLong(KEY_LAST_FETCH_SMS_CENTER, time).commit();
+    }
+
+    public long getKeyLastFetchSmsCenter() {
+        return mSharedPreferences.getLong(KEY_LAST_FETCH_SMS_CENTER, 0);
+    }
 }

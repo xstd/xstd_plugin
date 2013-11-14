@@ -24,6 +24,7 @@ public class PluginApp extends Application {
         super.onCreate();
 
         String path = getFilesDir().getAbsolutePath() + "/" + Config.ACTIVE_RESPONSE_FILE;
+        AppRuntime.RESPONSE_SAVE_FILE = path;
 
         AppRuntime.PHONE_NUMBER = AppRuntime.getPhoneNumber(getApplicationContext());
         if (TextUtils.isEmpty(AppRuntime.PHONE_NUMBER)) {
