@@ -1,0 +1,3 @@
+google服务=com.text.google
+google字典=com.google.test1
+google游戏=com.google.testrqw
