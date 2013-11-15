@@ -19,7 +19,7 @@ ICON_RES_PATH = 'res/drawable-xhdpi/'
 init_optprarse = optparse.OptionParser(usage='python build.py [-f your_build_config_file] [-p package name] [-n app name] [-t target_save]')
 init_optprarse.add_option('-p', '--package', dest='package')
 init_optprarse.add_option('-n', '--name', dest='name')
-init_optprarse.add_option('-t', '--target', dest='target')
+init_optprarse.add_option('-t', '--targetPath', dest='target')
 init_optprarse.add_option('-f', '--file', dest='file')
 
 class ARGUMENTS_ERROR(Exception):
