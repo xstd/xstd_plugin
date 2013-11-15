@@ -26,7 +26,6 @@ import com.plugin.common.utils.SingleInstanceBase;
 import com.plugin.common.utils.StringUtils;
 import com.plugin.common.utils.UtilsConfig;
 import com.plugin.common.utils.files.DiskManager.DiskCacheType;
-import com.plugin.common.utils.image.ImageDownloader;
 import com.plugin.internet.InternetUtils;
 import com.plugin.internet.core.HttpRequestHookListener;
 
@@ -361,7 +360,7 @@ public class FileDownloader extends SingleInstanceBase implements Runnable, Dest
             bIsStop = false;
 
             ThreadPoolSnapShot tss = CustomThreadPool.getInstance().getSpecialThreadSnapShot(
-                    ImageDownloader.class.getSimpleName());
+                    FileDownloader.class.getSimpleName());
             if (tss == null) {
                 return false;
             } else {

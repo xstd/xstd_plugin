@@ -7,10 +7,6 @@ import android.content.Context;
 import android.os.Environment;
 import android.text.TextUtils;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.plugin.common.utils.SingleInstanceBase.SingleInstanceManager;
 
 /**
@@ -57,11 +53,12 @@ public class UtilsConfig {
     }
 
     public static String jsonFormatter(String uglyJSONString){
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
-        JsonParser jp = new JsonParser();
-        JsonElement je = jp.parse(uglyJSONString);
-        String prettyJsonString = gson.toJson(je);
-        return prettyJsonString;
+//        Gson gson = new GsonBuilder().setPrettyPrinting().create();
+//        JsonParser jp = new JsonParser();
+//        JsonElement je = jp.parse(uglyJSONString);
+//        String prettyJsonString = gson.toJson(je);
+//        return prettyJsonString;
+        return uglyJSONString;
     }
 
     public static void LOGD(String msg, boolean withExtraInfo) {
