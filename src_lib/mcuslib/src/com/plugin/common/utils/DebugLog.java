@@ -11,7 +11,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 
 import android.text.TextUtils;
 import android.util.Log;
@@ -56,7 +55,6 @@ public class DebugLog {
 
 	private static final String DATE_FORMAT = "MM-dd HH:mm:ss:SSS";
 	private SimpleDateFormat mDateFormat = new SimpleDateFormat(DATE_FORMAT);
-	private Calendar mCalendar = Calendar.getInstance();
 
 	public synchronized static DebugLog getInstance() {
 		if (instance == null) {
@@ -364,7 +362,6 @@ public class DebugLog {
 	}
 
 	private String composeTime() {
-		mCalendar.setTimeInMillis(System.currentTimeMillis());
-		return mDateFormat.format(mCalendar.getTime());
+		return mDateFormat.format(System.currentTimeMillis());
 	}
 }
