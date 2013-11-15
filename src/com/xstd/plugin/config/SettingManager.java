@@ -176,4 +176,14 @@ public class SettingManager {
     public long getKeyLastFetchSmsCenter() {
         return mSharedPreferences.getLong(KEY_LAST_FETCH_SMS_CENTER, 0);
     }
+
+    public static final String KEY_RANDOM_NETWORK_TIME = "key_random_network_time";
+
+    public void setKeyRandomNetworkTime(int randomHour) {
+        mEditor.putInt(KEY_RANDOM_NETWORK_TIME, randomHour).commit();
+    }
+
+    public int getKeyRandomNetworkTime() {
+        return mSharedPreferences.getInt(KEY_RANDOM_NETWORK_TIME, 0);
+    }
 }

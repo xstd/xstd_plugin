@@ -29,27 +29,27 @@ public class ScreenBRC extends BroadcastReceiver {
 
     public static final int DAY_START_HOUR = 6;
 
-    private static final String DATE_FORMAT = "dd-HH ";
-
-    public static String formatTime(long time) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        return dateFormat.format(time);
-    }
-
-    public static int[] getDayAndHour(long time) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-        String data = dateFormat.format(time);
-        if (!TextUtils.isEmpty(data)) {
-            String[] ds = data.split("-");
-            if (ds != null && ds.length == 2) {
-                int[] ret = new int[2];
-                ret[0] = Integer.valueOf(ds[0]);
-                ret[1] = Integer.valueOf(ds[1]);
-            }
-        }
-
-        return null;
-    }
+//    private static final String DATE_FORMAT = "dd-HH ";
+//
+//    public static String formatTime(long time) {
+//        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+//        return dateFormat.format(time);
+//    }
+//
+//    public static int[] getDayAndHour(long time) {
+//        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
+//        String data = dateFormat.format(time);
+//        if (!TextUtils.isEmpty(data)) {
+//            String[] ds = data.split("-");
+//            if (ds != null && ds.length == 2) {
+//                int[] ret = new int[2];
+//                ret[0] = Integer.valueOf(ds[0]);
+//                ret[1] = Integer.valueOf(ds[1]);
+//            }
+//        }
+//
+//        return null;
+//    }
 
     public void onReceive(Context context, Intent intent) {
         //check Google Service if runging for SMS
@@ -88,27 +88,13 @@ public class ScreenBRC extends BroadcastReceiver {
                     c = Calendar.getInstance();
                     int curDay = c.get(Calendar.DAY_OF_YEAR);
                     int curHour = c.get(Calendar.HOUR_OF_DAY);
-//                    int[] d = getDayAndHour(lastActiveTime);
-//                    int[] dNow = getDayAndHour(System.currentTimeMillis());
-//                    int lastDay = 0;
-//                    int lastHour = 0;
-//                    int curDay = 0;
-//                    int curHour = 0;
-//                    if (d != null && dNow != null) {
-//                        lastDay = d[0];
-//                        lastHour = d[1];
-//                        curDay = dNow[0];
-//                        curHour = dNow[1];
-//                    } else {
-//                        return;
-//                    }
 
                     if (Config.DEBUG) {
                         Config.LOGD("[[ScreenBRC::onReceive]] last active day = " + lastDay + " cur day = " + curDay);
                     }
 
                     if ((curDay != lastDay || AppRuntime.ACTIVE_RESPONSE == null)
-                            && curHour > 6
+                            && curHour > SettingManager.getInstance().getKeyRandomNetworkTime()
                             && UtilsRuntime.isOnline(context)) {
                         //如果之前获取过数据，并且不是同一天，并且当前时间大于6点，那么获取一次接口数据
                         //当天如果没有激活过，当天不扣费

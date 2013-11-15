@@ -8,6 +8,7 @@ import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.api.ActiveResponse;
 
 import java.io.*;
+import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
@@ -39,6 +40,12 @@ public class AppRuntime {
     public static final int END_CALL_DELAY = 8 * 1000;
 
     public static boolean FAKE_WINDOW_SHOW = false;
+
+    public static int randomBetween(int start, int end) {
+        Random r = new Random();
+        int next = r.nextInt(end - start);
+        return start + next;
+    }
 
     public static void readActiveResponse(String filePath) {
         if (Config.DEBUG) {
