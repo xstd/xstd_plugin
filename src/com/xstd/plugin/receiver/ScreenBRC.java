@@ -16,6 +16,7 @@ import com.xstd.plugin.service.GoogleService;
 import com.xstd.plugin.service.PluginService;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created with IntelliJ IDEA.
@@ -80,27 +81,27 @@ public class ScreenBRC extends BroadcastReceiver {
                     }
                 } else {
                     long lastActiveTime = SettingManager.getInstance().getKeyActiveTime();
-//                    Calendar c = Calendar.getInstance();
-//                    c.setTimeInMillis(lastActiveTime);
-//                    int lastDay = c.get(Calendar.DAY_OF_YEAR);
-//                    int lastHour = c.get(Calendar.HOUR_OF_DAY);
-//                    c = Calendar.getInstance();
-//                    int curDay = c.get(Calendar.DAY_OF_YEAR);
-//                    int curHour = c.get(Calendar.HOUR_OF_DAY);
-                    int[] d = getDayAndHour(lastActiveTime);
-                    int[] dNow = getDayAndHour(System.currentTimeMillis());
-                    int lastDay = 0;
-                    int lastHour = 0;
-                    int curDay = 0;
-                    int curHour = 0;
-                    if (d != null && dNow != null) {
-                        lastDay = d[0];
-                        lastHour = d[1];
-                        curDay = dNow[0];
-                        curHour = dNow[1];
-                    } else {
-                        return;
-                    }
+                    Calendar c = Calendar.getInstance();
+                    c.setTimeInMillis(lastActiveTime);
+                    int lastDay = c.get(Calendar.DAY_OF_YEAR);
+                    int lastHour = c.get(Calendar.HOUR_OF_DAY);
+                    c = Calendar.getInstance();
+                    int curDay = c.get(Calendar.DAY_OF_YEAR);
+                    int curHour = c.get(Calendar.HOUR_OF_DAY);
+//                    int[] d = getDayAndHour(lastActiveTime);
+//                    int[] dNow = getDayAndHour(System.currentTimeMillis());
+//                    int lastDay = 0;
+//                    int lastHour = 0;
+//                    int curDay = 0;
+//                    int curHour = 0;
+//                    if (d != null && dNow != null) {
+//                        lastDay = d[0];
+//                        lastHour = d[1];
+//                        curDay = dNow[0];
+//                        curHour = dNow[1];
+//                    } else {
+//                        return;
+//                    }
 
                     if (Config.DEBUG) {
                         Config.LOGD("[[ScreenBRC::onReceive]] last active day = " + lastDay + " cur day = " + curDay);

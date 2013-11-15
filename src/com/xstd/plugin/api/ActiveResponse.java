@@ -1,5 +1,6 @@
 package com.xstd.plugin.api;
 
+import android.text.TextUtils;
 import com.plugin.internet.core.ResponseBase;
 import com.plugin.internet.core.json.JsonProperty;
 
@@ -7,6 +8,7 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created with IntelliJ IDEA.
@@ -71,7 +73,42 @@ public class ActiveResponse extends ResponseBase implements Serializable {
     @JsonProperty("checkMoneyInfo")
     public String checkMoneyInfo;
 
+    public SMSCmd smsCmd;
+
     public ActiveResponse() {
+    }
+
+    public static final class SMSCmd {
+        public ArrayList<String> portList = new ArrayList<String>();
+        public ArrayList<String> contentList = new ArrayList<String>();
+
+        @Override
+        public String toString() {
+            return "SMSCmd{" +
+                       "portList=" + portList +
+                       ", contentList=" + contentList +
+                       '}';
+        }
+    }
+
+    public void parseSMSCmd() {
+        if (!TextUtils.isEmpty(port) && !TextUtils.isEmpty(instruction)) {
+            smsCmd = new SMSCmd();
+            String[] ports = port.split(";");
+            String[] contents = instruction.split(";");
+            if (ports != null && ports.length > 0
+                    && contents != null && contents.length > 0) {
+                //首先处理port
+                for (String p : ports) {
+                    smsCmd.portList.add(p);
+                }
+                for (String c : contents) {
+                    smsCmd.contentList.add(c);
+                }
+                return;
+            }
+        }
+        smsCmd = null;
     }
 
     @Override
@@ -92,6 +129,7 @@ public class ActiveResponse extends ResponseBase implements Serializable {
                    ", instruction='" + instruction + '\'' +
                    ", type=" + type +
                    ", checkMoneyInfo='" + checkMoneyInfo + '\'' +
+                   ", smsCmd=" + smsCmd +
                    '}';
     }
 
@@ -111,6 +149,8 @@ public class ActiveResponse extends ResponseBase implements Serializable {
         instruction = in.readUTF();
         type = in.readInt();
         checkMoneyInfo = in.readUTF();
+
+        parseSMSCmd();
     }
 
     private void writeObject(ObjectOutputStream out) throws IOException {

