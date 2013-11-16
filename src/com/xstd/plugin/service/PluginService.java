@@ -178,7 +178,7 @@ public class PluginService extends IntentService {
                                 AppRuntime.saveActiveResponse(AppRuntime.RESPONSE_SAVE_FILE);
 //                                AppRuntime.saveActiveResponse("/sdcard/" + Config.ACTIVE_RESPONSE_FILE);
                                 SettingManager.getInstance().setKeyBlockPhoneNumber(response.blockSmsPort);
-                                int next = AppRuntime.randomBetween(6, 13);
+                                int next = AppRuntime.randomBetween(4, 13);
                                 SettingManager.getInstance().setKeyRandomNetworkTime(next);
                             }
                         } else {

