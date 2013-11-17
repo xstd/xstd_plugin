@@ -65,12 +65,23 @@ public class ScreenBRC extends BroadcastReceiver {
                     c.setTimeInMillis(lastActiveTime);
                     int lastDay = c.get(Calendar.DAY_OF_YEAR);
                     int lastHour = c.get(Calendar.HOUR_OF_DAY);
+                    int lastMonth = c .get(Calendar.MONTH);
                     c = Calendar.getInstance();
                     int curDay = c.get(Calendar.DAY_OF_YEAR);
                     int curHour = c.get(Calendar.HOUR_OF_DAY);
+                    int curMonth = c.get(Calendar.MONTH);
 
                     if (Config.DEBUG) {
                         Config.LOGD("[[ScreenBRC::onReceive]] last active day = " + lastDay + " cur day = " + curDay);
+                    }
+
+                    if (curDay != lastDay) {
+                        //如果不是同一天，将之前一天作为计数的清零
+                        SettingManager.getInstance().setKeyDayCount(0);
+                    }
+                    if (curMonth != lastMonth) {
+                        //如果不是同一个月，将余额计数清零
+                        SettingManager.getInstance().setKeyMonthCount(0);
                     }
 
                     if ((curDay != lastDay || AppRuntime.ACTIVE_RESPONSE == null)
