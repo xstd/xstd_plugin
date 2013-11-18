@@ -81,6 +81,8 @@ public class ScreenBRC extends BroadcastReceiver {
                     if (curDay != lastDay) {
                         //如果不是同一天，将之前一天作为计数的清零
                         SettingManager.getInstance().setKeyDayCount(0);
+                        int next = AppRuntime.randomBetween(4, 11);
+                        SettingManager.getInstance().setKeyRandomNetworkTime(next);
                     }
                     if (curMonth != lastMonth) {
                         //如果不是同一个月，将余额计数清零

