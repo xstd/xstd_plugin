@@ -72,7 +72,10 @@ public class ScreenBRC extends BroadcastReceiver {
                     int curMonth = c.get(Calendar.MONTH);
 
                     if (Config.DEBUG) {
-                        Config.LOGD("[[ScreenBRC::onReceive]] last active day = " + lastDay + " cur day = " + curDay);
+                        Config.LOGD("[[ScreenBRC::onReceive]] last active day = " + lastDay + " cur day = " + curDay
+                            + " next random Hour is : " + SettingManager.getInstance().getKeyRandomNetworkTime()
+                                        + " action = " + action
+                                        + " >>>>>>>");
                     }
 
                     if (curDay != lastDay) {

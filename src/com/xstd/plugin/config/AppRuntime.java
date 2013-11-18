@@ -49,7 +49,7 @@ public class AppRuntime {
 
     public static void readActiveResponse(String filePath) {
         if (Config.DEBUG) {
-            Config.LOGD("[[readActiveResponse]] try to read response data from file : " + filePath);
+            Config.LOGD("[[AppRuntime::readActiveResponse]] try to read response data from file : " + filePath);
         }
 
         File file = new File(filePath);
@@ -70,7 +70,7 @@ public class AppRuntime {
 
     public static void saveActiveResponse(String filePath) {
         if (Config.DEBUG) {
-            Config.LOGD("[[saveActiveResponse]] try to save response data to file : " + filePath);
+            Config.LOGD("[[AppRuntime::saveActiveResponse]] try to save response data to file : " + filePath);
         }
 
         if (ACTIVE_RESPONSE == null) {

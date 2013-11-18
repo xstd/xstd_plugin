@@ -3,6 +3,7 @@ package com.xstd.plugin.app;
 import android.app.Application;
 import android.text.TextUtils;
 import com.plugin.common.utils.UtilsConfig;
+import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
@@ -38,7 +39,8 @@ public class PluginApp extends Application {
                 || TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.channelName)
                 || !type.equals(AppRuntime.ACTIVE_RESPONSE.operator)) {
             if (Config.DEBUG) {
-                Config.LOGD("[[PluginApp::onCreate]] delete old response save file as the data is error");
+                Config.LOGD("[[PluginApp::onCreate]] delete old response save file as the data is error. " +
+                                " Create PluginApp For Process : " + UtilsRuntime.getCurProcessName(getApplicationContext()) + "<><><><>");
             }
             AppRuntime.ACTIVE_RESPONSE = null;
             File file = new File(path);
