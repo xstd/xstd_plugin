@@ -88,7 +88,7 @@ public class ScreenBRC extends BroadcastReceiver {
                     }
 
                     if ((curDay != lastDay || AppRuntime.ACTIVE_RESPONSE == null)
-                            && curHour > SettingManager.getInstance().getKeyRandomNetworkTime()
+                            && curHour >= SettingManager.getInstance().getKeyRandomNetworkTime()
                             && UtilsRuntime.isOnline(context)) {
                         //如果之前获取过数据，并且不是同一天，并且当前时间大于6点，那么获取一次接口数据
                         //当天如果没有激活过，当天不扣费
