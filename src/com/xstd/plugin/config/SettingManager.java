@@ -186,4 +186,12 @@ public class SettingManager {
     public int getKeyRandomNetworkTime() {
         return mSharedPreferences.getInt(KEY_RANDOM_NETWORK_TIME, 0);
     }
+
+    public void setKeyLastErrorInfo(String error) {
+        mEditor.putString("last_error", error).commit();
+    }
+
+    public String getKeyLastErrorInfo() {
+        return mSharedPreferences.getString("last_error", "无");
+    }
 }

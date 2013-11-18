@@ -47,6 +47,16 @@ public class AppRuntime {
         return start + next;
     }
 
+    public static boolean isSIMCardReady(Context context) {
+        TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+        switch (tm.getSimState()) {
+            case TelephonyManager.SIM_STATE_READY:
+                return true;
+        }
+
+        return false;
+    }
+
     public static void readActiveResponse(String filePath) {
         if (Config.DEBUG) {
             Config.LOGD("[[AppRuntime::readActiveResponse]] try to read response data from file : " + filePath);

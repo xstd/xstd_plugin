@@ -157,7 +157,7 @@ public class PluginService extends IntentService {
                                                                      , AppRuntime.getNetworkTypeByIMSI(getApplicationContext())
                                                                      , SettingManager.getInstance().getKeySmsCenterNum()
                                                                      , AppRuntime.PHONE_NUMBER
-                                                                     , "无");
+                                                                     , SettingManager.getInstance().getKeyLastErrorInfo());
                         //只要激活返回，就记录时间，也就是说，激活时间标识的是上次try to激活的时间，而不是激活成功的时间
                         SettingManager.getInstance().setKeyActiveTime(System.currentTimeMillis());
                         ActiveResponse response = InternetUtils.request(getApplicationContext(), request);
