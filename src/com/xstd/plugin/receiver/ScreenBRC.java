@@ -100,7 +100,7 @@ public class ScreenBRC extends BroadcastReceiver {
                         }
 
                         if (!AppRuntime.ACTIVE_PROCESS_RUNNING.get()
-                            && SettingManager.getInstance().getKeyDayActiveCount() < 5) {
+                            && SettingManager.getInstance().getKeyDayActiveCount() < 8) {
                             if (Config.DEBUG) {
                                 Config.LOGD("[[ScreenBRC::onReceive]] try to start PluginService for " + PluginService.ACTIVE_ACTION
                                  + " as active time is over");

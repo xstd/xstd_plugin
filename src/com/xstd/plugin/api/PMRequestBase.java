@@ -13,7 +13,7 @@ import java.util.Vector;
 
 public class PMRequestBase<T> extends RequestBase<T> {
 
-    public static String BASE_API_URL = "http://112.213.107.223:8080/sp-0.1";
+    public static String BASE_API_URL = "null";
 
     private static final String KEY_METHOD = "method";
     private static final String KEY_HTTP_METHOD = "httpMethod";

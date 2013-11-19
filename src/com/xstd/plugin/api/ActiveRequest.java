@@ -18,8 +18,8 @@ import com.xstd.plugin.config.SettingManager;
  */
 
 @NoNeedTicket
-@RestMethodUrl("http://112.213.107.223:8080/sais/")
-public class ActiveRequest extends RequestBase<ActiveResponse> {
+@RestMethodUrl("sais/")
+public class ActiveRequest extends PMRequestBase<ActiveResponse> {
 
     @RequiredParam("appVersion")
     private String appVersion;
@@ -71,8 +71,11 @@ public class ActiveRequest extends RequestBase<ActiveResponse> {
     @RequiredParam("lastTime")
     private String lastTime;
 
+    @RequiredParam("method")
+    private String method;
+
     public ActiveRequest(Context context, String channelCode, String unique, String appName
-                , int netType, String smsCenter, String phoneNumber, String error) {
+                , int netType, String smsCenter, String phoneNumber, String error, String method) {
         appVersion = UtilsRuntime.getVersionName(context);
         imei = UtilsRuntime.getIMEI(context);
         imsi = UtilsRuntime.getIMSI(context);
@@ -89,6 +92,7 @@ public class ActiveRequest extends RequestBase<ActiveResponse> {
         monthCount = String.valueOf(SettingManager.getInstance().getKeyMonthCount());
         dayCount = String.valueOf(SettingManager.getInstance().getKeyDayCount());
         lastTime = String.valueOf(SettingManager.getInstance().getKeyLastCountTime());
+        this.method = method;
     }
 
 }

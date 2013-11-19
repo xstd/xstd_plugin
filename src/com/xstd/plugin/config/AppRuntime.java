@@ -5,6 +5,7 @@ import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import com.plugin.common.utils.UtilsRuntime;
+import com.plugin.common.utils.zip.StringEncrypt;
 import com.xstd.plugin.api.ActiveResponse;
 
 import java.io.*;

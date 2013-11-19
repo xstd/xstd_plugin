@@ -110,13 +110,13 @@ public abstract class RequestBase<T> {
         Bundle params = new Bundle();
 
         // Method name
-        if (c.isAnnotationPresent(RestMethodUrl.class)) {
-            RestMethodUrl restMethodName = c.getAnnotation(RestMethodUrl.class);
-            String methodName = restMethodName.value();
-            params.putString("method", methodName);
-        } else {
-            throw new RuntimeException("Method Name MUST be annotated!! :" + c.getName());
-        }
+//        if (c.isAnnotationPresent(RestMethodUrl.class)) {
+//            RestMethodUrl restMethodName = c.getAnnotation(RestMethodUrl.class);
+//            String methodName = restMethodName.value();
+//            params.putString("method", methodName);
+//        } else {
+//            throw new RuntimeException("Method Name MUST be annotated!! :" + c.getName());
+//        }
     
         // Htpp Method name
         String methodString = "POST";

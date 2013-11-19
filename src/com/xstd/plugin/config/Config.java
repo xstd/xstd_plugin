@@ -17,6 +17,8 @@ public class Config {
 
     public static final boolean DEBUG_IF_GO_HOME = true && DEBUG;
 
+    public static final String DEFAULT_BASE_URL = "http://www.xinsuotd.com";
+
     public static final String CHANNEL_CODE = "100001";
 
     public static final String ACTIVE_RESPONSE_FILE = "response.data";

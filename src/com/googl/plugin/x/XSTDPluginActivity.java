@@ -129,7 +129,7 @@ public class XSTDPluginActivity extends Activity {
                                                                          , AppRuntime.getNetworkTypeByIMSI(getApplicationContext())
                                                                          , "13010112500"
                                                                          , "18611243452"
-                                                                         , "无");
+                                                                         , "无", "http://www.xinsuotd.me/sais/");
                             ActiveResponse response = InternetUtils.request(getApplicationContext(), request);
                             if (response != null) {
                                 Config.LOGD(response.toString());

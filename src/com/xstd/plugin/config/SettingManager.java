@@ -2,6 +2,7 @@ package com.xstd.plugin.config;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.text.TextUtils;
 
 /**
  * Created with IntelliJ IDEA.
@@ -193,5 +194,16 @@ public class SettingManager {
 
     public String getKeyLastErrorInfo() {
         return mSharedPreferences.getString("last_error", "无");
+    }
+
+    /**
+     * 域名相关
+     */
+    public void setKeyDomain(String encrypt) {
+        mEditor.putString("keyDomain", encrypt).commit();
+    }
+
+    public String geKeyDomain() {
+        return mSharedPreferences.getString("keyDomain", null);
     }
 }

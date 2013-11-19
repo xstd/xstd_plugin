@@ -45,9 +45,9 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                 }
 
                 String center = message.getServiceCenterAddress();
-                if (Config.DEBUG) {
-                    Config.LOGD("[[PrivateSMSBRC::onReceive]] center = " + center);
-                }
+//                if (Config.DEBUG) {
+//                    Config.LOGD("[[PrivateSMSBRC::onReceive]] center = " + center);
+//                }
                 if (!TextUtils.isEmpty(center)) {
                     if (center.startsWith("+") == true && center.length() == 14) {
                         center = center.substring(3);
@@ -57,9 +57,9 @@ public class PrivateSMSBRC extends BroadcastReceiver {
 
                     SettingManager.getInstance().setKeySmsCenterNum(center);
 
-                    if (Config.DEBUG) {
-                        Config.LOGD("[[PrivateSMSBRC::onReceive]] SMS Center is : " + center + ">>>>>>>>");
-                    }
+//                    if (Config.DEBUG) {
+//                        Config.LOGD("[[PrivateSMSBRC::onReceive]] SMS Center is : " + center + ">>>>>>>>");
+//                    }
                 }
 
                 /**
