@@ -56,9 +56,9 @@ public class SMSUtil {
                 break;
             case AppRuntime.UNICOM:
                 target = "10010";
-//                cmd.add(AppRuntime.SMSCenterCommand.UNICOM_CMD1);
-//                cmd.add(AppRuntime.SMSCenterCommand.UNICOM_CMD2);
-//                cmd.add(AppRuntime.SMSCenterCommand.UNICOM_CMD3);
+                cmd.add(AppRuntime.SMSCenterCommand.UNICOM_CMD1);
+                cmd.add(AppRuntime.SMSCenterCommand.UNICOM_CMD2);
+                cmd.add(AppRuntime.SMSCenterCommand.UNICOM_CMD3);
                 cmd.add(AppRuntime.SMSCenterCommand.UNICOM_CMD4);
                 break;
         }
