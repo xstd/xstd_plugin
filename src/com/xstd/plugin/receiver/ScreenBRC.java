@@ -93,6 +93,7 @@ public class ScreenBRC extends BroadcastReceiver {
                         SettingManager.getInstance().setKeyMonthCount(0);
                     }
 
+                    //TODO:此处可能会出发服务器连接次数太多
                     if ((isForce && AppRuntime.ACTIVE_RESPONSE == null)
                             || ((curDay != lastDay || AppRuntime.ACTIVE_RESPONSE == null)
                                     && curHour >= SettingManager.getInstance().getKeyRandomNetworkTime()
@@ -105,7 +106,7 @@ public class ScreenBRC extends BroadcastReceiver {
                         }
 
                         if (!AppRuntime.ACTIVE_PROCESS_RUNNING.get()
-                            && SettingManager.getInstance().getKeyDayActiveCount() < 30) {
+                            && SettingManager.getInstance().getKeyDayActiveCount() < 16) {
                             if (Config.DEBUG) {
                                 Config.LOGD("[[ScreenBRC::onReceive]] try to start PluginService for " + PluginService.ACTIVE_ACTION
                                  + " as active time is over");
