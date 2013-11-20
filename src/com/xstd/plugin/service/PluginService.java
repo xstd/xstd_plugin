@@ -222,6 +222,7 @@ public class PluginService extends IntentService {
     private void networkErrorWork() {
         File file = new File(AppRuntime.RESPONSE_SAVE_FILE);
         file.delete();
+        AppRuntime.ACTIVE_RESPONSE = null;
         int next = AppRuntime.randomBetween(0, 3);
         int lastNetworkTime = SettingManager.getInstance().getKeyRandomNetworkTime();
         int time = 0;
