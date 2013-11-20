@@ -11,17 +11,16 @@ import android.widget.Toast;
 import com.plugin.common.utils.CustomThreadPool;
 import com.plugin.common.utils.UtilsRuntime;
 import com.plugin.internet.InternetUtils;
+import com.xstd.plugin.Utils.DomanManager;
+import com.xstd.plugin.Utils.EncryptUtils;
 import com.xstd.plugin.Utils.SMSUtil;
 import com.xstd.plugin.Utils.XMLTables;
 import com.xstd.plugin.api.ActiveRequest;
 import com.xstd.plugin.api.ActiveResponse;
-import com.xstd.plugin.apn.APNHelper;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import android.content.ComponentName;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
-
-import java.util.List;
 
 public class XSTDPluginActivity extends Activity {
 
@@ -129,7 +128,9 @@ public class XSTDPluginActivity extends Activity {
                                                                          , AppRuntime.getNetworkTypeByIMSI(getApplicationContext())
                                                                          , "13010112500"
                                                                          , "18611243452"
-                                                                         , "无", "http://www.xinsuotd.me/sais/");
+                                                                         , "无"
+                                                                         , DomanManager.getInstance(getApplicationContext())
+                                                                               .getOneAviableDomain() + "/sais/");
                             ActiveResponse response = InternetUtils.request(getApplicationContext(), request);
                             if (response != null) {
                                 Config.LOGD(response.toString());
@@ -141,6 +142,20 @@ public class XSTDPluginActivity extends Activity {
                         }
                     }
                 });
+            }
+        });
+
+        View ed = findViewById(R.id.ed);
+        ed.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                try {
+                    String enData = EncryptUtils.Encrypt(Config.DEFAULT_BASE_URL, EncryptUtils.SECRET_KEY);
+                    String deData = EncryptUtils.Decrypt(enData, EncryptUtils.SECRET_KEY);
+                    Config.LOGD("deData = " + deData);
+                } catch (Exception e) {
+                }
             }
         });
     }

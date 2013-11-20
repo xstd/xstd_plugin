@@ -6,7 +6,6 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
-import android.os.PowerManager;
 import android.text.TextUtils;
 import com.googl.plugin.x.FakeActivity;
 import com.googl.plugin.x.R;

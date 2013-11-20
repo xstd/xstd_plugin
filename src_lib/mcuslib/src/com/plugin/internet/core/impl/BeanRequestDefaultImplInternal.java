@@ -41,7 +41,7 @@ class BeanRequestDefaultImplInternal implements BeanRequestInterface {
     private static final String KEY_METHOD = "method";
 
     private static final String KEY_HTTP_METHOD = "httpMethod";
-    
+
     private static final String KEY_METHOD_EXT = "methodExt";
 
     private static BeanRequestDefaultImplInternal mInstance;
@@ -123,7 +123,7 @@ class BeanRequestDefaultImplInternal implements BeanRequestInterface {
         if (contentType == null) {
             if (!ignore && mHttpHookListener != null) {
                 mHttpHookListener.onHttpConnectError(NetWorkException.MISS_CONTENT, "Content Type MUST be specified",
-                        request);
+                                                        request);
             }
 
             throw new NetWorkException(NetWorkException.MISS_CONTENT, "Content Type MUST be specified", null);
@@ -138,7 +138,7 @@ class BeanRequestDefaultImplInternal implements BeanRequestInterface {
             }
 
             UtilsConfig.LOGD("\n\n//***\n| [[request::" + request + "]] \n" + "| RestAPI URL = " + api_url
-                    + "\n| after getSig bundle params is = \n" + param + " \n\\\\***\n");
+                                 + "\n| after getSig bundle params is = \n" + param + " \n\\\\***\n");
         }
 
         int size = 0;
@@ -161,11 +161,11 @@ class BeanRequestDefaultImplInternal implements BeanRequestInterface {
                     } catch (UnsupportedEncodingException e) {
                         if (!ignore && mHttpHookListener != null) {
                             mHttpHookListener.onHttpConnectError(NetWorkException.ENCODE_HTTP_PARAMS_ERROR,
-                                    "Unable to encode http parameters", request);
+                                                                    "Unable to encode http parameters", request);
                         }
 
                         throw new NetWorkException(NetWorkException.ENCODE_HTTP_PARAMS_ERROR,
-                                "Unable to encode http parameters", null);
+                                                      "Unable to encode http parameters", null);
                     }
                 }
             } else if (httpMethod.equals("GET")) {
@@ -190,7 +190,7 @@ class BeanRequestDefaultImplInternal implements BeanRequestInterface {
 
         if (DEBUG) {
             UtilsConfig.LOGD("before get internet data from server, time cost from entry = "
-                    + (System.currentTimeMillis() - entryTime) + "ms");
+                                 + (System.currentTimeMillis() - entryTime) + "ms");
         }
 
         String response = mHttpClientInterface.getResource(String.class, api_url, httpMethod, entity);
@@ -199,14 +199,14 @@ class BeanRequestDefaultImplInternal implements BeanRequestInterface {
         }
 
         if (DEBUG) {
-            UtilsConfig.LOGD(response);            
+            UtilsConfig.LOGD(response);
             long endTime = System.currentTimeMillis();
             StringBuilder sb = new StringBuilder(1024);
             sb.append("\n\n")
-                    .append("//***\n")
-                    .append("| ------------- begin response ------------\n")
-                    .append("|\n")
-                    .append("| [[request::" + request + "]] " + " cost time from entry : " + (endTime - entryTime)
+                .append("//***\n")
+                .append("| ------------- begin response ------------\n")
+                .append("|\n")
+                .append("| [[request::" + request + "]] " + " cost time from entry : " + (endTime - entryTime)
                             + "ms. " + "raw response String = \n");
             UtilsConfig.LOGD(sb.toString());
             sb.setLength(0);
@@ -236,18 +236,6 @@ class BeanRequestDefaultImplInternal implements BeanRequestInterface {
             sb.setLength(0);
             sb.append("|\n|\n").append("| ------------- end response ------------\n").append("\\\\***");
             UtilsConfig.LOGD(sb.toString());
-
-            // Config.LOGD("\n\n");
-            // Config.LOGD("//***");
-            // Config.LOGD("| ------------- begin response ------------");
-            // Config.LOGD("|");
-            // Config.LOGD("| [[RRConnect::request::" + request + "]] " +
-            // " cost time from entry : " + (endTime - entryTime)
-            // + "ms. " + "raw response String = ");
-            // Config.LOGD("| " + response);
-            // Config.LOGD("|");
-            // Config.LOGD("| ------------- end response ------------\n|\n|");
-            // Config.LOGD("\\\\***");
         }
 
         if (mHttpHookListener != null) {
@@ -261,64 +249,8 @@ class BeanRequestDefaultImplInternal implements BeanRequestInterface {
 
             throw new NetWorkException(NetWorkException.SERVER_ERROR, "服务器错误，请稍后重试", null);
         } else {
-            // 调试网络流量
-            // if (Config.DEBUG_NETWORK_ST) {
-            // String value =
-            // DataBaseOperator.getInstance().queryCacheValue(Config.NETWORK_STATISTICS_TYPE,
-            // method,
-            // Config.NETWORK_STATISTICS_DOWN);
-            // int oldSize = 0;
-            // if (!TextUtils.isEmpty(value)) {
-            // oldSize = Integer.valueOf(value);
-            // }
-            // oldSize += response.getBytes().length;
-            // DataBaseOperator.getInstance().addCacheValue(Config.NETWORK_STATISTICS_TYPE,
-            // method,
-            // Config.NETWORK_STATISTICS_DOWN, String.valueOf(oldSize));
-            // }
         }
 
-        // JsonErrorResponse failureResponse = JsonUtils.parseError(response);
-        // if (failureResponse == null) {
-        // if (!TextUtils.isEmpty(method) && method.equals("batch.batchRun")) {
-        // // 特殊处理batch.batchRun
-        // BatchRunResponse responeObj = new BatchRunResponse();
-        // BatchRunRequest reqeustObj = (BatchRunRequest) request;
-        //
-        // if (reqeustObj != null && reqeustObj.requestList != null) {
-        // responeObj.responseList = new
-        // ResponseBase[reqeustObj.requestList.length];
-        // }
-        //
-        // try {
-        // JSONObject jsonObj = new JSONObject(response);
-        // if (reqeustObj.requestList != null) {
-        // for (int index = 0; index < reqeustObj.requestList.length; ++index) {
-        // String api_name = reqeustObj.requestList[index].getMethodName();
-        // if (!TextUtils.isEmpty(api_name)) {
-        // String apiData = jsonObj.optString(api_name);
-        // if (!TextUtils.isEmpty(apiData)) {
-        // JsonErrorResponse fResponse = JsonUtils.parseError(apiData);
-        // if (fResponse == null) {
-        // ResponseBase oneResponse = (ResponseBase) JsonUtils.parse(apiData,
-        // reqeustObj.requestList[index].getGenericType());
-        // responeObj.responseList[index] = oneResponse;
-        // } else {
-        // responeObj.responseList[index] = null;
-        // }
-        // } else {
-        // responeObj.responseList[index] = null;
-        // }
-        // }
-        // }
-        // }
-        // } catch (Exception e) {
-        // e.printStackTrace();
-        // return null;
-        // }
-        //
-        // return (T) responeObj;
-        // } else {
         T ret = null;
         try {
             //先检查是否是错误的数据结构
@@ -337,9 +269,9 @@ class BeanRequestDefaultImplInternal implements BeanRequestInterface {
             ret = JsonUtils.parse(response, request.getGenericType());
             if (DEBUG) {
                 UtilsConfig.LOGD("Before return, after success get the data from server, parse cost time from entry = "
-                        + (System.currentTimeMillis() - entryTime) + "ms" + " response parse result = " + ret);
+                                     + (System.currentTimeMillis() - entryTime) + "ms" + " response parse result = " + ret);
             }
-            
+
             if (ret == null) {
                 try {
                     if (mHttpHookListener != null) {
@@ -363,7 +295,7 @@ class BeanRequestDefaultImplInternal implements BeanRequestInterface {
                 ex.printStackTrace();
             }
         }
-        
+
         return ret;
         // }
         // } else {

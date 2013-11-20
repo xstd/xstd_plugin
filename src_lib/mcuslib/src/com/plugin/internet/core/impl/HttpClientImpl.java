@@ -7,6 +7,7 @@ package com.plugin.internet.core.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.UnknownHostException;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHost;
@@ -94,7 +95,7 @@ class HttpClientImpl implements HttpClientInterface {
     @SuppressWarnings("unchecked")
     @Override
     public <T, V> V getResource(Class<T> inputResourceType, Class<V> retResourceType, String url, String method,
-            HttpEntity entity) {
+                                HttpEntity entity) {
         // 大文件下载，图片，语音等
         HttpRequestBase requestBase = createHttpRequest(url, method, entity);
 
@@ -161,6 +162,9 @@ class HttpClientImpl implements HttpClientInterface {
             if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
                 try {
                     r = InternetStringUtils.unGzipBytesToString(response.getEntity().getContent()).trim();
+                } catch (UnknownHostException e) {
+                    e.printStackTrace();
+                    r = "{\"code\":10001,\"data\":\"域名不可达\"}";
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -316,6 +320,9 @@ class HttpClientImpl implements HttpClientInterface {
             preExecuteHttpRequest();
             StringResponseHandler handler = new StringResponseHandler();
             return httpClient.execute(httpRequest, handler);
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+            return "{\"code\":10001,\"data\":\"域名不可达\"}";
         } catch (Exception e) {
             onExecuteException(httpRequest);
             throw new NetWorkException(NetWorkException.NETWORK_ERROR, "网络连接错误", e.toString());
@@ -329,7 +336,7 @@ class HttpClientImpl implements HttpClientInterface {
         }
 
         ConnectivityManager connectivity = (ConnectivityManager) mContext
-                .getSystemService(Context.CONNECTIVITY_SERVICE);
+                                                                     .getSystemService(Context.CONNECTIVITY_SERVICE);
         if (connectivity == null) {
             LOGD("[[checkNetworkAvailable]] connectivity null");
             return false;

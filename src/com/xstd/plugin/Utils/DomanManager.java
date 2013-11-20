@@ -2,7 +2,6 @@ package com.xstd.plugin.Utils;
 
 import android.content.Context;
 import android.text.TextUtils;
-import com.plugin.common.utils.zip.StringEncrypt;
 import com.plugin.internet.InternetUtils;
 import com.xstd.plugin.api.DomainRequest;
 import com.xstd.plugin.api.DomainResponse;
@@ -73,7 +72,7 @@ public class DomanManager {
             } else if (mDomainList.size() == 1) {
                 try {
                     String data = mDomainList.get(0);
-                    String enData = new String(StringEncrypt.encrypt(data, "8f788e71181e47fe92a1fe8c72a0ce1b"));
+                    String enData = new String(EncryptUtils.Encrypt(data, EncryptUtils.SECRET_KEY));
                     if (Config.DEBUG) {
                         Config.LOGD("[[DomanManager::costOneDomain]] current domain info : " + data + " after encrypyt data : " + enData);
                     }
@@ -96,7 +95,7 @@ public class DomanManager {
         }
         try {
             String data = sb.substring(0, sb.length() - 1);
-            String enData = new String(StringEncrypt.encrypt(data, "8f788e71181e47fe92a1fe8c72a0ce1b"));
+            String enData = new String(EncryptUtils.Encrypt(data, EncryptUtils.SECRET_KEY));
             if (Config.DEBUG) {
                 Config.LOGD("[[DomanManager::costOneDomain]] current domain info : " + data + " after encrypyt data : " + enData);
             }
@@ -138,15 +137,15 @@ public class DomanManager {
      * @return
      */
     private final String getAviableDomain() {
-        String data = SettingManager.getInstance().geKeyDomain();
-        if (!TextUtils.isEmpty(data)) {
-            byte[] bytes = StringEncrypt.decrypt(data.getBytes(), "8f788e71181e47fe92a1fe8c72a0ce1b");
-            if (bytes != null) {
-                String deData = new String(bytes);
+        try {
+            String data = SettingManager.getInstance().geKeyDomain();
+            if (!TextUtils.isEmpty(data)) {
+                String deData = EncryptUtils.Decrypt(data, EncryptUtils.SECRET_KEY);
                 if (!TextUtils.isEmpty(deData)) {
                     return deData;
                 }
             }
+        } catch (Exception e) {
         }
 
         return Config.DEFAULT_BASE_URL;
@@ -163,7 +162,7 @@ public class DomanManager {
         @Override
         public void onDomainLeak() {
             try {
-                DomainRequest request = new DomainRequest(DomanManager.getInstance(mContext).getAviableDomain() + "/spDomain/");
+                DomainRequest request = new DomainRequest(DomanManager.getInstance(mContext).getOneAviableDomain() + "/spDomain/");
                 DomainResponse response = InternetUtils.request(mContext, request);
                 if (response != null && response.domainList != null && response.domainList.length > 0) {
                     ArrayList<String> list = new ArrayList<String>();

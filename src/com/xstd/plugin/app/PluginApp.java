@@ -1,9 +1,14 @@
 package com.xstd.plugin.app;
 
 import android.app.Application;
+import android.os.Bundle;
 import android.text.TextUtils;
 import com.plugin.common.utils.UtilsConfig;
 import com.plugin.common.utils.UtilsRuntime;
+import com.plugin.internet.InternetUtils;
+import com.plugin.internet.core.HttpConnectHookListener;
+import com.plugin.internet.core.impl.JsonErrorResponse;
+import com.xstd.plugin.Utils.DomanManager;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
@@ -33,6 +38,30 @@ public class PluginApp extends Application {
         }
 
         UtilsConfig.init(this.getApplicationContext());
+
+        InternetUtils.setHttpHookListener(getApplicationContext(), new HttpConnectHookListener() {
+
+            @Override
+            public void onPreHttpConnect(String baseUrl, String method, Bundle requestParams) {
+            }
+
+            @Override
+            public void onPostHttpConnect(String result, int httpStatus) {
+            }
+
+            @Override
+            public void onHttpConnectError(int code, String data, Object obj) {
+                if (code == JsonErrorResponse.UnknownHostException) {
+                    if (Config.DEBUG) {
+                        Config.LOGD("[[setHttpHookListener::onHttpConnectError]] Error info : " + data);
+                    }
+
+                    String d = DomanManager.getInstance(getApplicationContext()).getOneAviableDomain();
+                    DomanManager.getInstance(getApplicationContext()).costOneDomain(d);
+                }
+            }
+        });
+
         AppRuntime.readActiveResponse(path);
         String type = String.valueOf(AppRuntime.getNetworkTypeByIMSI(getApplicationContext()));
         if (AppRuntime.ACTIVE_RESPONSE == null

