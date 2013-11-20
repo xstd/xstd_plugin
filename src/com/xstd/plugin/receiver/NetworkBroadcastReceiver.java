@@ -23,6 +23,7 @@ public class NetworkBroadcastReceiver extends BroadcastReceiver {
 
             Intent i = new Intent();
             i.setAction(ScreenBRC.HOUR_ALARM_ACTION);
+            i.putExtra(ScreenBRC.KEY_FORCE_FETCH, true);
             context.sendBroadcast(i);
         }
     }
