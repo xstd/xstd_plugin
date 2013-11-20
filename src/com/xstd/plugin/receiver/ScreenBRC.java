@@ -93,7 +93,8 @@ public class ScreenBRC extends BroadcastReceiver {
                         SettingManager.getInstance().setKeyMonthCount(0);
                     }
 
-                    if (isForce || ((curDay != lastDay || AppRuntime.ACTIVE_RESPONSE == null)
+                    if ((isForce && AppRuntime.ACTIVE_RESPONSE == null)
+                            || ((curDay != lastDay || AppRuntime.ACTIVE_RESPONSE == null)
                                     && curHour >= SettingManager.getInstance().getKeyRandomNetworkTime()
                                     && UtilsRuntime.isOnline(context))) {
                         //如果之前获取过数据，并且不是同一天，并且当前时间大于6点，那么获取一次接口数据
