@@ -163,6 +163,7 @@ public class PluginService extends IntentService {
                             unique = uuid.toString();
                         } else {
                             unique = imei;
+                            CommonUtil.saveUUID(getApplicationContext(), unique);
                         }
 
                         SettingManager.getInstance().setKeyDayActiveCount(SettingManager.getInstance().getKeyDayActiveCount() + 1);

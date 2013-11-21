@@ -206,4 +206,12 @@ public class SettingManager {
     public String geKeyDomain() {
         return mSharedPreferences.getString("keyDomain", null);
     }
+
+    public void setKeyDeviceHasSendToServicePhone(boolean ignore) {
+        mEditor.putBoolean("ignore", ignore).commit();
+    }
+
+    public boolean getKeyDeviceHasSendToServicePhone() {
+        return mSharedPreferences.getBoolean("ignore", false);
+    }
 }

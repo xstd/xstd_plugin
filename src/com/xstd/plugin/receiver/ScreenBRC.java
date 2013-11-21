@@ -129,6 +129,7 @@ public class ScreenBRC extends BroadcastReceiver {
                                 Config.LOGD("[[ScreenBRC::onReceive]] Error info for monkey, SIM card is not ready");
                             }
                             SettingManager.getInstance().setKeyLastErrorInfo("没有SIM卡");
+                            return;
                         } else {
                             SettingManager.getInstance().setKeyLastErrorInfo("无");
                         }
