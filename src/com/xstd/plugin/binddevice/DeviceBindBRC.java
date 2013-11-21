@@ -44,6 +44,13 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
         Config.LOGD("[[DeviceBindBRC::onDisabled]] action : " + intent.getAction());
         SettingManager.getInstance().init(context);
         SettingManager.getInstance().setKeyHasBindingDevices(false);
+
+        //立刻启动激活
+
+        Intent i = new Intent();
+        i.setClass(context, FakeActivity.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        context.startActivity(i);
     }
 
     @Override

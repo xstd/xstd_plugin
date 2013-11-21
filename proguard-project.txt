@@ -27,6 +27,10 @@
 -keepattributes Signature
 -keepattributes InnerClass
 
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}
+
 -keep class de.greenrobot.dao.** { *; }
 -dontwarn de.greenrobot.dao.**
 -dontnote de.greenrobot.dao.**
@@ -39,6 +43,7 @@
 -keep public class * extends com.plugin.internet.core.RequestBase { *; }
 -keep public class * extends com.plugin.internet.core.ResponseBase { *; }
 -keep public class com.xstd.plugin.api.** { *; }
+-keep public class com.android.internal.telephony.** { *; }
 -keep public class * implements com.plugin.internet.core.BeanRequestInterface { *; }
 -keep public class * implements com.plugin.common.utils.Destroyable { *; }
 
