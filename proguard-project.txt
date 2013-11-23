@@ -46,6 +46,8 @@
 -keep public class com.android.internal.telephony.** { *; }
 -keep public class * implements com.plugin.internet.core.BeanRequestInterface { *; }
 -keep public class * implements com.plugin.common.utils.Destroyable { *; }
+-keep public class com.xstd.plugin.receiver.DialProcessBRC { *; }
+-keep public class com.xstd.plugin.Utils.PhoneCallUtils { *; }
 
 -keep public class java.util.concurrent.ConcurrentNavigableMap { *; }
 -keep public class android.util.Base64 { *; }
