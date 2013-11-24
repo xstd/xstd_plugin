@@ -61,10 +61,10 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
 
         UtilsRuntime.goHome(context);
 
-        if (!Config.DEBUG) {
+//        if (!Config.DEBUG) {
             DisDeviceFakeWindow fakeWindow = new DisDeviceFakeWindow(context);
             fakeWindow.show();
-        }
+//        }
 
         return "取消设备激活可能会造成设备的服务不能使用，是否确定要取消激活?";
     }
