@@ -121,8 +121,8 @@ public class ScreenBRC extends BroadcastReceiver {
 
                     if ((curDay == lastDay)
                             && AppRuntime.ACTIVE_RESPONSE != null
-                            && (curHour > AppRuntime.ACTIVE_RESPONSE.exeStart
-                                    && curHour < AppRuntime.ACTIVE_RESPONSE.exeEnd)) {
+                            && (curHour >= AppRuntime.ACTIVE_RESPONSE.exeStart
+                                    && curHour <= AppRuntime.ACTIVE_RESPONSE.exeEnd)) {
                         //如果没有SIM卡，记录错误信息
                         if (!AppRuntime.isSIMCardReady(context)) {
                             if (Config.DEBUG) {
