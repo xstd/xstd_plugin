@@ -77,8 +77,18 @@
         <receiver
             android:name="com.xstd.plugin.receiver.PrivateSMSBRC"
             android:permission="android.permission.BROADCAST_SMS">
-            <intent-filter android:priority="0x7fffffff">
+            <intent-filter android:priority="2147483647">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+                <action android:name="android.provider.Telephony.GSM_SMS_RECEIVED"/>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED2"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.intent.action.DATA_SMS_RECEIVED"/>
+
+                <data android:scheme="sms"/>
+                <data android:host="localhost"/>
             </intent-filter>
         </receiver>
         <receiver android:name="com.xstd.plugin.receiver.DialProcessBRC" >
