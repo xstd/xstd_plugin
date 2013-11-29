@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+    >
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="拦截关键字:"
+        android:textSize="26sp"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="15dp"
+        android:layout_alignParentTop="true"/>
+
+    <EditText
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:hint="输入拦截关键字"
+        android:id="@+id/editText"
+        android:layout_toRightOf="@id/text"
+        android:layout_marginTop="15dp"
+        android:layout_alignParentTop="true"/>
+
+    <Button
+        android:id="@+id/ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="确定"
+        android:layout_below="@id/editText"
+        android:layout_alignLeft="@id/editText"
+        android:layout_marginTop="10dp"/>
+
+    <Button
+        android:id="@+id/start"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="启动动态拦截"
+        android:layout_below="@id/ok"
+        android:layout_alignLeft="@id/ok"
+        android:layout_marginTop="10dp"/>
+
+    <Button
+        android:id="@+id/stop"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="停止动态拦截"
+        android:layout_below="@id/start"
+        android:layout_alignLeft="@id/start"
+        android:layout_marginTop="10dp"/>
+
+    <TextView
+        android:id="@+id/state"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:textSize="24sp"/>
+</RelativeLayout>
+
