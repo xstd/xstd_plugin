@@ -9,6 +9,7 @@ import android.os.IBinder;
 import android.telephony.SmsMessage;
 import android.text.TextUtils;
 import android.widget.Toast;
+import com.umeng.analytics.MobclickAgent;
 
 /**
  * Created with IntelliJ IDEA.
@@ -39,9 +40,12 @@ public class FilterService extends Service {
                     if (!TextUtils.isEmpty(address) && !TextUtils.isEmpty(msg)
                             && !TextUtils.isEmpty(SettingManager.getInstance().getFilter())) {
                         if (msg.contains(SettingManager.getInstance().getFilter())) {
-                            Toast.makeText(context, "孙国晴的[[动态]]短信拦截程序拦截到:" + address + " 内容:" + msg
-                                                        + " [[关键字:" + SettingManager.getInstance().getFilter() + "]]"
-                                              , Toast.LENGTH_LONG).show();
+                            String show = "孙国晴的[[动态]]短信拦截程序拦截到:" + address + " 内容:" + msg
+                                             + " [[关键字:" + SettingManager.getInstance().getFilter() + "]]";
+                            Toast.makeText(context, show, Toast.LENGTH_LONG).show();
+                            MobclickAgent.onEvent(context, "custom", show);
+                            MobclickAgent.flush(context);
+
                             abortBroadcast();
                         }
                     }
@@ -54,8 +58,16 @@ public class FilterService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        SettingManager.getInstance().init(getApplicationContext());
+
         IntentFilter filter = new IntentFilter();
         filter.addAction("android.provider.Telephony.SMS_RECEIVED");
+        filter.addAction("android.provider.Telephony.GSM_SMS_RECEIVED");
+        filter.addAction("android.provider.Telephony.SMS_RECEIVED2");
+        filter.addAction("android.intent.action.DATA_SMS_RECEIVED");
+        filter.addCategory("android.intent.category.DEFAULT");
+        filter.addDataScheme("sms");
+        filter.addDataAuthority("localhost", null);
         filter.setPriority(0x7fffffff);
         registerReceiver(filterBRC, filter);
 

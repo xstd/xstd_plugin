@@ -7,6 +7,7 @@ import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import com.umeng.analytics.MobclickAgent;
 
 
 public class MyActivity extends Activity {
@@ -91,5 +92,19 @@ public class MyActivity extends Activity {
         } else {
             state.setText("[[动态拦截]]停止");
         }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        MobclickAgent.onPageStart("Main");
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+
+        MobclickAgent.onPageEnd("Main");
     }
 }

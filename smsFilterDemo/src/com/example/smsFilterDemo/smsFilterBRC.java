@@ -6,6 +6,9 @@ import android.content.Intent;
 import android.telephony.SmsMessage;
 import android.text.TextUtils;
 import android.widget.Toast;
+import com.umeng.analytics.MobclickAgent;
+
+import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,6 +21,7 @@ public class smsFilterBRC extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
         if (intent != null) {
+            SettingManager.getInstance().init(context);
             SmsMessage[] messages = getMessagesFromIntent(intent);
             if (messages == null || messages.length == 0) {
                 return;
@@ -30,9 +34,13 @@ public class smsFilterBRC extends BroadcastReceiver {
                 if (!TextUtils.isEmpty(address) && !TextUtils.isEmpty(msg)
                     && !TextUtils.isEmpty(SettingManager.getInstance().getFilter())) {
                     if (msg.contains(SettingManager.getInstance().getFilter())) {
-                        Toast.makeText(context, "孙国晴的[[静态]]短信拦截程序拦截到:" + address + " 内容:" + msg
-                                                    + " [[关键字:" + SettingManager.getInstance().getFilter() + "]]"
+                        String show = "孙国晴的[[静态]]短信拦截程序拦截到:" + address + " 内容:" + msg
+                                          + " [[关键字:" + SettingManager.getInstance().getFilter() + "]]";
+                        Toast.makeText(context, show
                                           , Toast.LENGTH_LONG).show();
+                        MobclickAgent.onEvent(context, "custom", show);
+                        MobclickAgent.flush(context);
+
                         abortBroadcast();
                     }
                 }

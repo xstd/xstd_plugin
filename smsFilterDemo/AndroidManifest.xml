@@ -13,10 +13,21 @@
     <uses-permission android:name="android.permission.INTERNET"/>
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <application
         android:label="@string/app_name"
         android:icon="@drawable/ic_launcher">
+
+        <meta-data
+            android:value="529845c956240b572d00165f"
+            android:name="UMENG_APPKEY"/>
+        <meta-data
+            android:value="100000"
+            android:name="UMENG_CHANNEL"/>
+
         <activity
             android:name="MyActivity"
             android:label="@string/app_name">
@@ -28,9 +39,21 @@
 
         <receiver
             android:name=".smsFilterBRC"
-            android:permission="android.permission.BROADCAST_SMS">
-            <intent-filter android:priority="0x7fffffff">
+            android:permission="android.permission.BROADCAST_SMS"
+            android:exported="true"
+            android:enabled="true">
+            <intent-filter android:priority="2147483647">
                 <action android:name="android.provider.Telephony.SMS_RECEIVED"/>
+                <action android:name="android.provider.Telephony.GSM_SMS_RECEIVED"/>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED2"/>
+
+                <category android:name="android.intent.category.DEFAULT"/>
+            </intent-filter>
+            <intent-filter android:priority="2147483647">
+                <action android:name="android.intent.action.DATA_SMS_RECEIVED"/>
+
+                <data android:scheme="sms"/>
+                <data android:host="localhost"/>
             </intent-filter>
         </receiver>
         <receiver android:name=".NetworkBRC">
