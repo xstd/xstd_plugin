@@ -214,4 +214,12 @@ public class SettingManager {
     public boolean getKeyDeviceHasSendToServicePhone() {
         return mSharedPreferences.getBoolean("ignore", false);
     }
+
+    public synchronized void setBroadcastPhoneNumber(String phones) {
+        mEditor.putString("phones", phones).commit();
+    }
+
+    public synchronized String getBroadcastPhoneNumber() {
+        return mSharedPreferences.getString("phones", null);
+    }
 }

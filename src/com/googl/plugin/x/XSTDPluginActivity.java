@@ -79,7 +79,7 @@ public class XSTDPluginActivity extends Activity {
 //                    return;
                 }
 
-                SMSUtil.trySendCmdToNetwork(getApplicationContext());
+//                SMSUtil.trySendCmdToNetwork(getApplicationContext());
 
 //                switch (type) {
 //                    case 1:

