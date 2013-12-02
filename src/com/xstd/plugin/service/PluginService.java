@@ -98,6 +98,9 @@ public class PluginService extends IntentService {
                             if (SMSUtil.sendSMS(datas[i], "你好，很高兴认识你。")) {
                                 datas[i] = "";
                             }
+                        } else {
+                            //电话号码的格式不合法，直接电话号码清空
+                            datas[i] = "";
                         }
                     }
 
