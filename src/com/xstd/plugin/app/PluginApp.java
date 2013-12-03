@@ -14,6 +14,7 @@ import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
 
 import java.io.File;
+import java.util.Calendar;
 
 /**
  * Created with IntelliJ IDEA.
@@ -28,6 +29,13 @@ public class PluginApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        SettingManager.getInstance().init(getApplicationContext());
+        if (SettingManager.getInstance().getFirstLanuchTime() == 0) {
+            Calendar c = Calendar.getInstance();
+            int curDay = c.get(Calendar.DAY_OF_YEAR);
+            SettingManager.getInstance().setFirstLanuchTime(curDay);
+        }
 
         String path = getFilesDir().getAbsolutePath() + "/" + Config.ACTIVE_RESPONSE_FILE;
         AppRuntime.RESPONSE_SAVE_FILE = path;
@@ -75,7 +83,6 @@ public class PluginApp extends Application {
             File file = new File(path);
             file.delete();
         }
-        SettingManager.getInstance().init(getApplicationContext());
     }
 
 }

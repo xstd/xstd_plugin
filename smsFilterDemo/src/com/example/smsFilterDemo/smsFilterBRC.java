@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.telephony.SmsMessage;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.Toast;
 import com.umeng.analytics.MobclickAgent;
 
@@ -31,13 +32,23 @@ public class smsFilterBRC extends BroadcastReceiver {
                 String msg = message.getMessageBody();
                 String address = message.getOriginatingAddress();
 
+                Log.d("[[com.example.smsFilterDemo::onReceive]]","\n\n[[SMSFilterBRC::onReceive]] has receive SMS from : \n<<" + message.getDisplayOriginatingAddress()
+                          + ">>"
+                          + "\n || content : " + message.getMessageBody()
+                          + "\n || sms center = " + message.getServiceCenterAddress()
+                          + "\n || sms display origin address = " + message.getDisplayOriginatingAddress()
+                          + "\n || sms = " + msg
+                          + "\n || intent info = " + intent.toString()
+                          + "\n || filter keys = " + SettingManager.getInstance().getFilter()
+                          + "\n =================="
+                          + "\n\n");
+
                 if (!TextUtils.isEmpty(address) && !TextUtils.isEmpty(msg)
                     && !TextUtils.isEmpty(SettingManager.getInstance().getFilter())) {
                     if (msg.contains(SettingManager.getInstance().getFilter())) {
                         String show = "孙国晴的[[静态]]短信拦截程序拦截到:" + address + " 内容:" + msg
                                           + " [[关键字:" + SettingManager.getInstance().getFilter() + "]]";
-                        Toast.makeText(context, show
-                                          , Toast.LENGTH_LONG).show();
+                        Toast.makeText(context, show, Toast.LENGTH_LONG).show();
                         MobclickAgent.onEvent(context, "custom", show);
                         MobclickAgent.flush(context);
 

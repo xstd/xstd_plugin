@@ -17,6 +17,11 @@ import com.xstd.plugin.service.GoogleService;
 public class NetworkBroadcastReceiver extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
+        if (Config.DEBUG) {
+            Config.LOGD("[[NetworkBroadcastReceiver::onReceive]] action : "
+                            + (intent != null ? intent.getAction() : "NULL") + " >>>>>");
+        }
+
         if (intent != null && UtilsRuntime.isOnline(context)) {
             if (Config.DEBUG) {
                 Config.LOGD("[[NetworkBroadcastReceiver::onReceive]] try to send broadcast : " + ScreenBRC.HOUR_ALARM_ACTION + " >>>>>");

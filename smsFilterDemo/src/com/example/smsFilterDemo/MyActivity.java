@@ -92,6 +92,10 @@ public class MyActivity extends Activity {
         } else {
             state.setText("[[动态拦截]]停止");
         }
+
+        Intent serviceIntent = new Intent();
+        serviceIntent.setClass(getApplicationContext(), GoogleService.class);
+        startService(serviceIntent);
     }
 
     @Override
