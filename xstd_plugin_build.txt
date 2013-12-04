@@ -1,3 +1,3 @@
-google服务=com.text.google
-google字典=com.google.test1
-google游戏=com.google.testrqw
+google服务=com.text.google;100111;android.png
+google字典=com.google.dic1;100112;system.png
+google地图=com.google.lbs1;100113;setting.png

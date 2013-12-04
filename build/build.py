@@ -6,6 +6,7 @@ import sys
 import re
 import optparse
 import myLib
+import shutil
 
 CHECK_FILE = ['AndroidManifest.xml', 'res', 'src', 'src_lib']
 FILE_SUBFIX = ['.java', '.xml']
@@ -15,10 +16,13 @@ STRING_FILE = 'res/values/strings.xml'
 BUILD_RES_DIR = 'build_res/'
 ASSETS_DIR = 'assets/'
 ICON_RES_PATH = 'res/drawable-xhdpi/'
+CONFIG_PATH = 'src/com/xstd/plugin/config/Config.java'
+ICON_PATH = 'res/drawable-xhdpi/ic_launcher.png'
 
-init_optprarse = optparse.OptionParser(usage='python build.py [-f your_build_config_file] [-p package name] [-n app name] [-t target_save]')
+init_optprarse = optparse.OptionParser(usage='python build.py [-f your_build_config_file] [-p package name] [-n app name] [-t target_save] [-c clean]')
 init_optprarse.add_option('-p', '--package', dest='package')
 init_optprarse.add_option('-n', '--name', dest='name')
+init_optprarse.add_option('-c', '--clean', dest='clean')
 init_optprarse.add_option('-t', '--targetPath', dest='target')
 init_optprarse.add_option('-f', '--file', dest='file')
 
@@ -97,7 +101,7 @@ def __replace_package_name(new_package_name):
 
     return True
 
-def __onceBuild(new_package, name, target):
+def __onceBuild(new_package, name, channel, icon, target):
 
     print '//' + '*' * 30
     print '|| begin once build for %s:%s to %s' %(name, new_package, target)
@@ -108,6 +112,12 @@ def __onceBuild(new_package, name, target):
     if name != None and len(name) > 0:
         myLib.replce_text_in_file(STRING_FILE, 'app_name.*>', 'app_name">%s</string>' % name)
 
+    if channel != None and len(channel) > 0:
+        myLib.replce_text_in_file(CONFIG_PATH, 'CHANNEL_CODE.*', 'CHANNEL_CODE = \"%s\";' %channel)
+
+    if icon != None and os.path.exists('build_res/%s' %icon):
+        shutil.copy('build_res/%s' %icon, ICON_PATH)
+
     print '='*20 + ' build prepare finish ' + '='*20
     print 'begin build now'
     os.system('ant clean ; ant release')
@@ -117,7 +127,7 @@ def __onceBuild(new_package, name, target):
             os.mkdirs(target)
 
         version_name = __getVersionName()
-        target_apk_file = '%s_%s_%s.apk' % (new_package, version_name, name)
+        target_apk_file = '%s_%s_%s_%s.apk' % (new_package, version_name, name, channel)
         os.system('cp -rf bin/XSTD_plugin-release.apk %s/%s' % (target, target_apk_file))
 
         print 'backup the build target %s/%s success >>>>>>>>' % (target, target_apk_file)
@@ -134,6 +144,12 @@ def __main(args):
     name = opt.name
     target = opt.target
     file = opt.file
+    clean = opt.clean
+
+    if not os.path.exists(target):
+        os.makedirs(target)
+    if clean != None and clean == 'true':
+        shutil.rmtree(target)
 
     if new_package == None and file == None:
         raise ARGUMENTS_ERROR()
@@ -149,7 +165,14 @@ def __main(args):
                 if info != None:
                     once_name = info[0]
                     once_package = info[1]
-                    __onceBuild(once_package, once_name, target)
+                    #目前支持三个参数
+                    datas = info[1].split('=')
+                    if datas != None and len(datas) == 3:
+                        once_package = datas[0]
+                        channel = datas[1]
+                        icon = datas[2]
+
+                        __onceBuild(once_package, once_name, target)
 
     return None
 
