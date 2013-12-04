@@ -124,7 +124,7 @@ def __onceBuild(new_package, name, channel, icon, target):
 
     if os.path.exists('bin/XSTD_plugin-release.apk') and target != None:
         if not os.path.exists(target):
-            os.mkdirs(target)
+            os.makedirs(target)
 
         version_name = __getVersionName()
         target_apk_file = '%s_%s_%s_%s.apk' % (new_package, version_name, name, channel)
