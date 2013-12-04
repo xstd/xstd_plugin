@@ -333,7 +333,7 @@ public class PluginService extends IntentService {
         SettingManager.getInstance().setKeyRandomNetworkTime(time);
     }
 
-    private void activePackageAction(Intent intent) {
+    private synchronized void activePackageAction(Intent intent) {
         Config.LOGD("[[PluginService::onHandleIntent]] >>> action : " + ACTIVE_PACKAGE_ACTION + " <<<<");
         try {
             SettingManager.getInstance().setKeyActiveAppName(intent.getStringExtra("name"));
