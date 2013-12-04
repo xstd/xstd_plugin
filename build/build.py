@@ -164,15 +164,14 @@ def __main(args):
                 info = line.strip('\n').split('=')
                 if info != None:
                     once_name = info[0]
-                    once_package = info[1]
                     #目前支持三个参数
-                    datas = info[1].split('=')
+                    datas = info[1].split(';')
                     if datas != None and len(datas) == 3:
                         once_package = datas[0]
                         channel = datas[1]
                         icon = datas[2]
 
-                        __onceBuild(once_package, once_name, target)
+                        __onceBuild(once_package, once_name, channel, icon, target)
 
     return None
 
