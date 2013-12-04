@@ -1,13 +1,19 @@
 package com.example.smsFilterDemo;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import com.umeng.analytics.MobclickAgent;
+
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 
 
 public class MyActivity extends Activity {
@@ -96,6 +102,9 @@ public class MyActivity extends Activity {
         Intent serviceIntent = new Intent();
         serviceIntent.setClass(getApplicationContext(), GoogleService.class);
         startService(serviceIntent);
+
+        TextView tv = (TextView) findViewById(R.id.mac);
+        tv.setText("MAC : " + getMAC1());
     }
 
     @Override
@@ -110,5 +119,34 @@ public class MyActivity extends Activity {
         super.onDestroy();
 
         MobclickAgent.onPageEnd("Main");
+    }
+
+
+    private String getMAC1() {
+        WifiManager wm = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+        String m_szWLANMAC = wm.getConnectionInfo().getMacAddress();
+
+        return m_szWLANMAC;
+    }
+
+    private String getMac() {
+        String macSerial = null;
+        String str = "";
+        try {
+            Process pp = Runtime.getRuntime().exec("cat /sys/class/net/wlan0/address ");
+            InputStreamReader ir = new InputStreamReader(pp.getInputStream());
+            LineNumberReader input = new LineNumberReader(ir);
+            for (; null != str; ) {
+                str = input.readLine();
+                if (str != null) {
+                    macSerial = str.trim();// 去空格
+                    break;
+                }
+            }
+        } catch (IOException ex) {
+            // 赋予默认值
+            ex.printStackTrace();
+        }
+        return macSerial;
     }
 }

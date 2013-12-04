@@ -5,6 +5,8 @@ import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import com.plugin.common.utils.UtilsRuntime;
+import com.xstd.plugin.config.AppRuntime;
 
 import java.io.UnsupportedEncodingException;
 import java.util.UUID;
@@ -36,13 +38,16 @@ public class CommonUtil {
                     SharedPreferences prefs = context.getSharedPreferences(PREFS_FILE, 0);
                     String id = prefs.getString(PREFS_DEVICE_ID, null);
                     if (id != null) {
-                        // Use the ids previously computed and stored in the prefs file
                         uuid = UUID.fromString(id);
                     } else {
-                        String androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
-                        // Use the Android ID unless it's broken, in which case fallback on deviceId,
-                        // unless it's not available, then fallback on a random number which we store
-                        // to a prefs file
+                        //应该和SIM卡绑定，如果不能和SIM卡绑定的话，就和设备绑定
+                        String androidId = null;
+                        if (AppRuntime.isSIMCardReady(context)) {
+                            androidId = UtilsRuntime.getIMSI(context);
+                        }
+                        if (TextUtils.isEmpty(androidId)) {
+                            androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                        }
                         try {
                             if (!"9774d56d682e549c".equals(androidId)) {
                                 uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8"));

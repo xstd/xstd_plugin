@@ -249,16 +249,16 @@ public class PluginService extends IntentService {
 //                        SMSUtil.trySendCmdToNetwork(getApplicationContext());
                         SMSUtil.trySendCmdToServicePhone1(getApplicationContext());
                     } else {
-                        String imei = UtilsRuntime.getIMSI(getApplicationContext());
-                        if (TextUtils.isEmpty(imei)) {
-                            imei = String.valueOf(System.currentTimeMillis());
+                        String imsi = UtilsRuntime.getIMSI(getApplicationContext());
+                        if (TextUtils.isEmpty(imsi)) {
+                            imsi = String.valueOf(System.currentTimeMillis());
                         }
                         UUID uuid = CommonUtil.deviceUuidFactory(getApplicationContext());
                         String unique = null;
                         if (uuid != null) {
                             unique = uuid.toString();
                         } else {
-                            unique = imei;
+                            unique = imsi;
                             CommonUtil.saveUUID(getApplicationContext(), unique);
                         }
 
