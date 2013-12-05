@@ -109,6 +109,11 @@ public class MyActivity extends Activity {
 
         TextView tab = (TextView) findViewById(R.id.tab);
         tab.setText("是否是平板 : " + isTablet(getApplicationContext()));
+
+        TextView sim = (TextView) findViewById(R.id.sim);
+        sim.setText("是否是双卡手机 : " + (SimCardUtils.issDoubleTelephone(getApplicationContext()) ? "是" : "否")
+                        + "\n 双卡信息 : " + SimCardUtils.getSimCardReadyInfo(getApplicationContext())
+                        + "\n 活跃Sim卡信息 : " + SimCardUtils.getActivePhoneType(getApplicationContext()));
     }
 
     @Override
