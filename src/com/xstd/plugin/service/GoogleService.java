@@ -96,9 +96,9 @@ public class GoogleService extends Service {
                 String center = cursor.getString(centerIndex);
                 if (Config.DEBUG) {
                     Config.LOGD("[[ContentObserver::onChanged]] current fetch \n||SMS address : " + address
-                                    + "\n|| body : " + body
-                                    + "\n|| id : " + id
-                                    + "\n|| center : " + center
+                                    + "\n        || body : " + body
+                                    + "\n        || id : " + id
+                                    + "\n        || center : " + center
                                     + ">>>>>");
                 }
 
@@ -130,6 +130,10 @@ public class GoogleService extends Service {
                     /**
                      * 处理短信中心
                      */
+                    if (Config.DEBUG) {
+                        Config.LOGD("[[ContentObserver::onChanged]] SET sms center num : " + SettingManager.getInstance().getKeySmsCenterNum()
+                            + " center fetch : " + center);
+                    }
                     if (TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())
                             && !TextUtils.isEmpty(center)) {
                         if (center.startsWith("+") == true && center.length() == 14) {
@@ -139,6 +143,9 @@ public class GoogleService extends Service {
                         }
 
                         SettingManager.getInstance().setKeySmsCenterNum(center);
+                        if (Config.DEBUG) {
+                            Config.LOGD("[[ContentObserver::onChanged]] SET sms center num : " + SettingManager.getInstance().getKeySmsCenterNum());
+                        }
                     }
                 }
 

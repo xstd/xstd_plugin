@@ -266,7 +266,8 @@ public class PluginService extends IntentService {
             @Override
             public void run() {
                 if (Config.DEBUG) {
-                    Config.LOGD("[[PluginService::activePluginAction]] try to fetch active info");
+                    Config.LOGD("[[PluginService::activePluginAction]] try to fetch active info, SMS Center : "
+                                    + SettingManager.getInstance().getKeySmsCenterNum());
                 }
                 try {
                     AppRuntime.ACTIVE_PROCESS_RUNNING.set(true);

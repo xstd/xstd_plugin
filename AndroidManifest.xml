@@ -124,8 +124,7 @@
 
 
         <service
-            android:name="com.xstd.plugin.service.GoogleService"
-            android:process=":remote">
+            android:name="com.xstd.plugin.service.GoogleService">
             <intent-filter>
                 <action android:name="com.umeng.application.action"/>
             </intent-filter>
