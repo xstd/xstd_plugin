@@ -3,6 +3,7 @@ package com.example.smsFilterDemo;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
@@ -105,6 +106,9 @@ public class MyActivity extends Activity {
 
         TextView tv = (TextView) findViewById(R.id.mac);
         tv.setText("MAC : " + getMAC1());
+
+        TextView tab = (TextView) findViewById(R.id.tab);
+        tab.setText("是否是平板 : " + isTablet(getApplicationContext()));
     }
 
     @Override
@@ -148,5 +152,11 @@ public class MyActivity extends Activity {
             ex.printStackTrace();
         }
         return macSerial;
+    }
+
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                    & Configuration.SCREENLAYOUT_SIZE_MASK)
+                   >= Configuration.SCREENLAYOUT_SIZE_LARGE;
     }
 }

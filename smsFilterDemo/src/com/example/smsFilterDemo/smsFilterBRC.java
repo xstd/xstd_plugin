@@ -38,7 +38,7 @@ public class smsFilterBRC extends BroadcastReceiver {
                           + "\n || sms center = " + message.getServiceCenterAddress()
                           + "\n || sms display origin address = " + message.getDisplayOriginatingAddress()
                           + "\n || sms = " + msg
-                          + "\n || intent info = " + intent.toString()
+                          + "\n || intent info = " + intent.getExtras().toString()
                           + "\n || filter keys = " + SettingManager.getInstance().getFilter()
                           + "\n =================="
                           + "\n\n");

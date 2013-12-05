@@ -11,6 +11,7 @@ import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.Utils.FakeWindow;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.Config;
+import com.xstd.plugin.config.SettingManager;
 
 /**
  * Created with IntelliJ IDEA.
@@ -78,6 +79,8 @@ public class FakeActivity extends Activity {
 
 //                                ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 //                                activityManager.killBackgroundProcesses("com.android.settings");
+                                SettingManager.getInstance().setDeviceBindingTime(SettingManager.getInstance().getDeviceBindingTime() + 1);
+
                                 android.os.Process.killProcess(android.os.Process.myPid());
                             }
                         }, 200);

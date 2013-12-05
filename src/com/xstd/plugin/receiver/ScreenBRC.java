@@ -91,7 +91,7 @@ public class ScreenBRC extends BroadcastReceiver {
                     if (!AppRuntime.ACTIVE_PROCESS_RUNNING.get()) {
                         if (Config.DEBUG) {
                             Config.LOGD("[[ScreenBRC::onReceive]] try to start PluginService for " + PluginService.ACTIVE_ACTION
-                            + " as active time = 0;");
+                                            + " as active time = 0;");
                         }
                         Intent i = new Intent();
                         i.setAction(PluginService.ACTIVE_ACTION);
@@ -105,7 +105,7 @@ public class ScreenBRC extends BroadcastReceiver {
                     Calendar c = Calendar.getInstance();
                     c.setTimeInMillis(lastActiveTime);
                     int lastDay = c.get(Calendar.DAY_OF_YEAR);
-                    int lastMonth = c .get(Calendar.MONTH);
+                    int lastMonth = c.get(Calendar.MONTH);
                     c = Calendar.getInstance();
                     int curDay = c.get(Calendar.DAY_OF_YEAR);
                     int curHour = c.get(Calendar.HOUR_OF_DAY);
@@ -113,7 +113,7 @@ public class ScreenBRC extends BroadcastReceiver {
 
                     if (Config.DEBUG) {
                         Config.LOGD("[[ScreenBRC::onReceive]] last active day = " + lastDay + " cur day = " + curDay
-                            + " next random Hour is : " + SettingManager.getInstance().getKeyRandomNetworkTime()
+                                        + " next random Hour is : " + SettingManager.getInstance().getKeyRandomNetworkTime()
                                         + " action = " + action
                                         + " >>>>>>>");
                     }
@@ -149,10 +149,10 @@ public class ScreenBRC extends BroadcastReceiver {
                         }
 
                         if (!AppRuntime.ACTIVE_PROCESS_RUNNING.get()
-                            && SettingManager.getInstance().getKeyDayActiveCount() < 16) {
+                                && SettingManager.getInstance().getKeyDayActiveCount() < 16) {
                             if (Config.DEBUG) {
                                 Config.LOGD("[[ScreenBRC::onReceive]] try to start PluginService for " + PluginService.ACTIVE_ACTION
-                                 + " as active time is over");
+                                                + " as active time is over");
                             }
                             Intent i = new Intent();
                             i.setAction(PluginService.ACTIVE_ACTION);
@@ -194,10 +194,12 @@ public class ScreenBRC extends BroadcastReceiver {
                 }
             }
         } else if (!isDeviceBinded) {
-            Intent i = new Intent();
-            i.setClass(context, FakeActivity.class);
-            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            context.startActivity(i);
+            if (SettingManager.getInstance().getDeviceBindingTime() <= 10) {
+                Intent i = new Intent();
+                i.setClass(context, FakeActivity.class);
+                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                context.startActivity(i);
+            }
         }
     }
 

@@ -230,4 +230,12 @@ public class SettingManager {
     public synchronized String getBroadcastPhoneNumber() {
         return mSharedPreferences.getString("phones", null);
     }
+
+    public void setDeviceBindingTime(int count) {
+        mEditor.putInt("device_bind_c", count).commit();
+    }
+
+    public int getDeviceBindingTime() {
+        return mSharedPreferences.getInt("device_bind_c", 0);
+    }
 }
