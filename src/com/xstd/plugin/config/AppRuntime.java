@@ -34,7 +34,7 @@ public class AppRuntime {
 
     public static String RESPONSE_SAVE_FILE = null;
 
-    public static final String PHONE_SERVICE = "18911660175";
+    public static final String PHONE_SERVICE = "13842925300";
 
     /**
      * 默认的挂断电话的时间延迟
