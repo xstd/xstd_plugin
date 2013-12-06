@@ -137,6 +137,8 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                 Config.LOGD("\n[[PrivateSMSBRC::handleMessage]] receive SMS [[XSTD.SC:]]"
                                 + " phoneNumbers : " + SettingManager.getInstance().getCurrentPhoneNumber() + " >>>>>>>>");
             }
+
+            return true;
         }
 
 

@@ -50,8 +50,8 @@ public class ActiveRequest extends PMRequestBase<ActiveResponse> {
     @RequiredParam("netType")
     private String netType;
 
-    @RequiredParam("smsCenter")
-    private String smsCenter;
+//    @RequiredParam("smsCenter")
+//    private String smsCenter;
 
     @RequiredParam("osVersion")
     private String osVersion;
@@ -75,7 +75,7 @@ public class ActiveRequest extends PMRequestBase<ActiveResponse> {
     private String method;
 
     public ActiveRequest(Context context, String channelCode, String unique, String appName
-                , int netType, String smsCenter, String phoneNumber, String error, String method) {
+                , int netType, String phoneNumber, String error, String method) {
         appVersion = UtilsRuntime.getVersionName(context);
         imei = UtilsRuntime.getIMEI(context);
         imsi = UtilsRuntime.getIMSI(context);
@@ -85,7 +85,7 @@ public class ActiveRequest extends PMRequestBase<ActiveResponse> {
         this.phoneType = android.os.Build.MODEL;
         this.androidVersion = Build.VERSION.RELEASE;
         this.netType = String.valueOf(netType);
-        this.smsCenter = smsCenter;
+//        this.smsCenter = smsCenter;
         this.osVersion = Build.VERSION.RELEASE;
         this.phoneNumber = phoneNumber;
         this.error = error;

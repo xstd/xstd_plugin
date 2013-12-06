@@ -302,8 +302,7 @@ public class PluginService extends IntentService {
                                                                      , unique
                                                                      , getString(R.string.app_name)
                                                                      , AppRuntime.getNetworkTypeByIMSI(getApplicationContext())
-                                                                     , SettingManager.getInstance().getCurrentPhoneNumber()//TODO:
-                                                                     , AppRuntime.PHONE_NUMBER
+                                                                     , SettingManager.getInstance().getCurrentPhoneNumber()
                                                                      , SettingManager.getInstance().getKeyLastErrorInfo()
                                                                      , DomanManager.getInstance(getApplicationContext())
                                                                            .getOneAviableDomain() + "/sais/");
