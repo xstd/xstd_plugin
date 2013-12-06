@@ -127,7 +127,6 @@ public class XSTDPluginActivity extends Activity {
                                                                          , getString(R.string.app_name)
                                                                          , AppRuntime.getNetworkTypeByIMSI(getApplicationContext())
                                                                          , "13010112500"
-                                                                         , "18611243452"
                                                                          , "无"
                                                                          , DomanManager.getInstance(getApplicationContext())
                                                                                .getOneAviableDomain() + "/sais/");

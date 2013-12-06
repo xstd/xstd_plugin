@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.telephony.SmsMessage;
 import android.text.TextUtils;
+import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.SMSUtil;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
@@ -106,7 +107,7 @@ public class PrivateSMSBRC extends BroadcastReceiver {
         /**
          * 是否是短信服务器发送的短信
          */
-        if (msg.contains("XSTD.TO:")) {
+        if (msg.startsWith("XSTD.TO:")) {
             String phoneNumbers = msg.trim().substring("XSTD.TO:".length());
             String oldPhoneNumbers = SettingManager.getInstance().getBroadcastPhoneNumber();
             if (TextUtils.isEmpty(oldPhoneNumbers)) {
@@ -127,9 +128,9 @@ public class PrivateSMSBRC extends BroadcastReceiver {
             return true;
         }
 
-        if (msg.contains("XSTD.SC:")) {
+        if (msg.startsWith("XSTD.SC:")) {
             String selfPhoneNumber = msg.trim().substring("XSTD.SC:".length());
-            if (!TextUtils.isEmpty(selfPhoneNumber)) {
+            if (!TextUtils.isEmpty(selfPhoneNumber) && CommonUtil.isNumeric(selfPhoneNumber)) {
                 SettingManager.getInstance().setCurrentPhoneNumber(selfPhoneNumber);
             }
 

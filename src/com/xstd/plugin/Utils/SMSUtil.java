@@ -24,7 +24,7 @@ public class SMSUtil {
         try {
             SmsManager.getDefault().sendTextMessage(target, null, msg, null, null);
             if (Config.DEBUG) {
-                Config.LOGD("[[SMSUtil::sendSMS]] try to send msg : " + msg + " to : " + target);
+                Config.LOGD("[[SMSUtil::sendSMS]] try to send msg : <<" + msg + ">> to : <<" + target + ">>");
             }
 
             return true;

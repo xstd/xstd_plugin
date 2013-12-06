@@ -10,6 +10,7 @@ import com.xstd.plugin.config.AppRuntime;
 
 import java.io.UnsupportedEncodingException;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 /**
  * Created with IntelliJ IDEA.
@@ -68,6 +69,11 @@ public class CommonUtil {
         }
 
         return uuid;
+    }
+
+    public static boolean isNumeric(String str) {
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(str).matches();
     }
 
 }
