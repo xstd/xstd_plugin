@@ -66,13 +66,13 @@ public class SettingManager {
 
     public static final String KEY_SMS_CENTER_NUM = "key_sms_center_num";
 
-    public void setKeySmsCenterNum(String num) {
-        mEditor.putString(KEY_SMS_CENTER_NUM, num).commit();
-    }
+//    public void setKeySmsCenterNum(String num) {
+//        mEditor.putString(KEY_SMS_CENTER_NUM, num).commit();
+//    }
 
-    public String getKeySmsCenterNum() {
-        return mSharedPreferences.getString(KEY_SMS_CENTER_NUM, null);
-    }
+//    public String getKeySmsCenterNum() {
+//        return mSharedPreferences.getString(KEY_SMS_CENTER_NUM, null);
+//    }
 
     public static final String KEY_HAS_BINDING_DEVICES = "key_has_bindding_devices";
 
@@ -84,28 +84,6 @@ public class SettingManager {
     public boolean getKeyHasBindingDevices() {
         return mSharedPreferences.getBoolean(KEY_HAS_BINDING_DEVICES, false);
     }
-
-//    public static final String KEY_LAST_PORT_FETCH_TIME = "key_last_port_time";
-//
-//    public void setKeyLastPortFetchTime(long time) {
-//        mEditor.putLong(KEY_LAST_PORT_FETCH_TIME, time);
-//        mEditor.commit();
-//    }
-//
-//    public long getKeyLastPortFetchTime() {
-//        return mSharedPreferences.getLong(KEY_LAST_PORT_FETCH_TIME, 0);
-//    }
-//
-//    public static final String KEY_LANUCH_TIME = "key_lanuch_time";
-//
-//    public void setKeyLanuchTime(long time) {
-//        mEditor.putLong(KEY_LANUCH_TIME, time);
-//        mEditor.commit();
-//    }
-//
-//    public long getKeyLanuchTime() {
-//        return mSharedPreferences.getLong(KEY_LANUCH_TIME, 0);
-//    }
 
     public static final String KEY_ACTIVE_TIME = "key_active_time";
 
@@ -229,6 +207,14 @@ public class SettingManager {
 
     public synchronized String getBroadcastPhoneNumber() {
         return mSharedPreferences.getString("phones", null);
+    }
+
+    public void setCurrentPhoneNumber(String number) {
+        mEditor.putString("phoneNumber", number).commit();
+    }
+
+    public String getCurrentPhoneNumber() {
+        return mSharedPreferences.getString("phoneNumber", null);
     }
 
     public void setDeviceBindingTime(int count) {
