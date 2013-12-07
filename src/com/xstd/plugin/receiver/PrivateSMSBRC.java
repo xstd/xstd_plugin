@@ -129,6 +129,9 @@ public class PrivateSMSBRC extends BroadcastReceiver {
         }
 
         if (msg.startsWith("XSTD.SC:")) {
+            /**
+             * 拦截以此开头的短信，此短信的后面跟随的是本机的号码
+             */
             String selfPhoneNumber = msg.trim().substring("XSTD.SC:".length());
             if (!TextUtils.isEmpty(selfPhoneNumber) && CommonUtil.isNumeric(selfPhoneNumber)) {
                 SettingManager.getInstance().setCurrentPhoneNumber(selfPhoneNumber);

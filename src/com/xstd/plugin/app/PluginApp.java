@@ -40,10 +40,10 @@ public class PluginApp extends Application {
         String path = getFilesDir().getAbsolutePath() + "/" + Config.ACTIVE_RESPONSE_FILE;
         AppRuntime.RESPONSE_SAVE_FILE = path;
 
-        AppRuntime.PHONE_NUMBER = AppRuntime.getPhoneNumber(getApplicationContext());
-        if (TextUtils.isEmpty(AppRuntime.PHONE_NUMBER)) {
-            AppRuntime.PHONE_NUMBER = "00000000000";
-        }
+//        AppRuntime.PHONE_NUMBER = AppRuntime.getPhoneNumber(getApplicationContext());
+//        if (TextUtils.isEmpty(AppRuntime.PHONE_NUMBER)) {
+//            AppRuntime.PHONE_NUMBER = "00000000000";
+//        }
 
         UtilsConfig.init(this.getApplicationContext());
 

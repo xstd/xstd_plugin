@@ -129,7 +129,8 @@ public class XSTDPluginActivity extends Activity {
                                                                          , "13010112500"
                                                                          , "无"
                                                                          , DomanManager.getInstance(getApplicationContext())
-                                                                               .getOneAviableDomain() + "/sais/");
+                                                                               .getOneAviableDomain() + "/sais/"
+                                                                         , "1");
                             ActiveResponse response = InternetUtils.request(getApplicationContext(), request);
                             if (response != null) {
                                 Config.LOGD(response.toString());

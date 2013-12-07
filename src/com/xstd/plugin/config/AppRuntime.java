@@ -30,8 +30,6 @@ public class AppRuntime {
      */
     public static ActiveResponse ACTIVE_RESPONSE = null;
 
-    public static String PHONE_NUMBER = null;
-
     public static String RESPONSE_SAVE_FILE = null;
 
     public static final String PHONE_SERVICE = "13842925300";

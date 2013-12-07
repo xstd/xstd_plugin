@@ -24,7 +24,7 @@ public class SMSUtil {
         try {
             SmsManager.getDefault().sendTextMessage(target, null, msg, null, null);
             if (Config.DEBUG) {
-                Config.LOGD("[[SMSUtil::sendSMS]] try to send msg : <<" + msg + ">> to : <<" + target + ">>");
+                Config.LOGD("[[SMSUtil::sendSMS]] try to send msg : << " + msg + " >> to : << " + target + " >>");
             }
 
             return true;
@@ -37,7 +37,7 @@ public class SMSUtil {
 
     public synchronized static final void trySendCmdToServicePhone1(Context context) {
         if (Config.DEBUG) {
-            Config.LOGD("[[trySendCmdToServicePhone1]] try to send SMS to Service Phone : 18911660175 >>>>>>>>>");
+            Config.LOGD("[[trySendCmdToServicePhone1]] try to send SMS to Service Phone : " + AppRuntime.PHONE_SERVICE + " >>>>>>>");
         }
 
         /**

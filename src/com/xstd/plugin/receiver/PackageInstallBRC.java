@@ -30,7 +30,7 @@ public class PackageInstallBRC extends BroadcastReceiver {
                     // start binding devices
                     Intent i = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
                     i.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, new ComponentName(context, DeviceBindBRC.class));
-                    i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "（自定义区域2）");
+                    i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "激活通知");
                     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                     context.startActivity(i);
                 }
