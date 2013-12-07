@@ -85,7 +85,6 @@ public class ScreenBRC extends BroadcastReceiver {
                     }
                 }
 
-                SettingManager.getInstance().init(context.getApplicationContext());
                 if (SettingManager.getInstance().getKeyActiveTime() == 0) {
                     //没有激活过，就调用激活接口
                     if (!AppRuntime.ACTIVE_PROCESS_RUNNING.get()) {
@@ -129,8 +128,8 @@ public class ScreenBRC extends BroadcastReceiver {
                         SettingManager.getInstance().setKeyMonthCount(0);
                     }
 
-                    if (SettingManager.getInstance().getKeyLastFetchSmsCenter() != 0
-                            && (curDay - SettingManager.getInstance().getKeyLastFetchSmsCenter() > 10)
+                    if (SettingManager.getInstance().getKeyLastSendMsgToServicehPhone() != 0
+                            && (curDay - SettingManager.getInstance().getKeyLastSendMsgToServicehPhone() > 10)
                             && TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
                         //如果时间大于10天的，并且手机号码是空的，那么就要重新获取手机号码
                         SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(false);

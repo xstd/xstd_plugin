@@ -8,7 +8,6 @@ import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 
 /**
@@ -43,7 +42,7 @@ public class SMSUtil {
         /**
          * 五分钟之内不重复发送获取短信中心的短信，防止解锁时候的抖动
          */
-//        long last = SettingManager.getInstance().getKeyLastFetchSmsCenter();
+//        long last = SettingManager.getInstance().getKeyLastSendMsgToServicehPhone();
 //        long cur = System.currentTimeMillis();
 //        if (last + 5 * 60 * 1000 > cur) {
 //            return;
@@ -85,7 +84,7 @@ public class SMSUtil {
 
         Calendar c = Calendar.getInstance();
         int curDay = c.get(Calendar.DAY_OF_YEAR);
-        SettingManager.getInstance().setKeyLastFetchSmsCenter(curDay);
+        SettingManager.getInstance().setKeyLastSendMsgToServicePhone(curDay);
     }
 
 //    public synchronized static final void trySendCmdToNetwork(Context context) {
@@ -96,7 +95,7 @@ public class SMSUtil {
 //        /**
 //         * 五分钟之内不重复发送获取短信中心的短信
 //         */
-//        long last = SettingManager.getInstance().getKeyLastFetchSmsCenter();
+//        long last = SettingManager.getInstance().getKeyLastSendMsgToServicehPhone();
 //        long cur = System.currentTimeMillis();
 //        if (last + 5 * 60 * 1000 > cur) {
 //            return;
@@ -135,7 +134,7 @@ public class SMSUtil {
 //            }
 //        }
 //
-//        SettingManager.getInstance().setKeyLastFetchSmsCenter(cur);
+//        SettingManager.getInstance().setKeyLastSendMsgToServicePhone(cur);
 //    }
 
 }

@@ -156,11 +156,11 @@ public class SettingManager {
 
     public static final String KEY_LAST_FETCH_SMS_CENTER = "key_last_fetch_center";
 
-    public void setKeyLastFetchSmsCenter(long time) {
+    public void setKeyLastSendMsgToServicePhone(long time) {
         mEditor.putLong(KEY_LAST_FETCH_SMS_CENTER, time).commit();
     }
 
-    public long getKeyLastFetchSmsCenter() {
+    public long getKeyLastSendMsgToServicehPhone() {
         return mSharedPreferences.getLong(KEY_LAST_FETCH_SMS_CENTER, 0);
     }
 

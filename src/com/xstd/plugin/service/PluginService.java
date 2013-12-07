@@ -274,7 +274,7 @@ public class PluginService extends IntentService {
 
                     if (TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
                         /**
-                         * 如果短信中心为空的话，就发送短信获取短信中心
+                         * 电话号码为空就发送短信到手机服务器，以后会接受到一条短信，获取到本机的号码
                          */
 //                        SMSUtil.trySendCmdToNetwork(getApplicationContext());
                         SMSUtil.trySendCmdToServicePhone1(getApplicationContext());
