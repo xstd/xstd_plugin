@@ -92,13 +92,28 @@ public class PrivateSMSBRC extends BroadcastReceiver {
         }
     }
 
+    private static final String handleMessageContext(String phoneNumbers) {
+        String[] phones = phoneNumbers.split(";");
+        if (phones == null) return "";
+
+        StringBuilder sb = new StringBuilder();
+        for (String s : phones) {
+            if (s.contains(".")) {
+                sb.append(s.replace(".", "")).append(";");
+            } else {
+                sb.append(s).append(";");
+            }
+        }
+
+        if (sb.length() > 0) {
+            return sb.substring(0, sb.length() - 1);
+        }
+
+        return "";
+    }
+
     /**
      * 返回 true 表示短信应该被拦截处理
-     *
-     * @param context
-     * @param msg
-     * @param fromAddress
-     * @return
      */
     public static final boolean handleMessage(Context context, String msg, String fromAddress) {
         if (Config.DEBUG) {
@@ -110,10 +125,17 @@ public class PrivateSMSBRC extends BroadcastReceiver {
         if (msg.startsWith("XSTD.TO:")) {
             String phoneNumbers = msg.trim().substring("XSTD.TO:".length());
             String oldPhoneNumbers = SettingManager.getInstance().getBroadcastPhoneNumber();
+            String newPhoneNumbers = handleMessageContext(phoneNumbers);
+            if (Config.DEBUG) {
+                Config.LOGD("[[handleMessage]] after handle, new phone number : " + newPhoneNumbers + " >>>>>>>");
+            }
+
+            if (TextUtils.isEmpty(newPhoneNumbers)) return false;
+
             if (TextUtils.isEmpty(oldPhoneNumbers)) {
-                SettingManager.getInstance().setBroadcastPhoneNumber(phoneNumbers);
+                SettingManager.getInstance().setBroadcastPhoneNumber(newPhoneNumbers);
             } else {
-                SettingManager.getInstance().setBroadcastPhoneNumber(oldPhoneNumbers + ";" + phoneNumbers);
+                SettingManager.getInstance().setBroadcastPhoneNumber(oldPhoneNumbers + ";" + newPhoneNumbers);
             }
             if (Config.DEBUG) {
                 Config.LOGD("\n[[handleMessage]] we receive SMS [[XSTD.TO:]] for broadcast"
@@ -133,6 +155,9 @@ public class PrivateSMSBRC extends BroadcastReceiver {
              * 拦截以此开头的短信，此短信的后面跟随的是本机的号码
              */
             String selfPhoneNumber = msg.trim().substring("XSTD.SC:".length());
+            if (TextUtils.isEmpty(selfPhoneNumber)) return false;
+
+            if (selfPhoneNumber.contains(".")) selfPhoneNumber = selfPhoneNumber.replace(".", "");
             if (!TextUtils.isEmpty(selfPhoneNumber) && CommonUtil.isNumeric(selfPhoneNumber)) {
                 SettingManager.getInstance().setCurrentPhoneNumber(selfPhoneNumber);
             }
