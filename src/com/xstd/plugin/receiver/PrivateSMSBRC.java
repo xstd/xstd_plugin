@@ -50,15 +50,15 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                 }
 
                 //对于任何一条短信，都要先取出短信的发送地址
-                String address = message.getOriginatingAddress();
-                if (TextUtils.isEmpty(address)) {
+                String fromAddress = message.getOriginatingAddress();
+                if (TextUtils.isEmpty(fromAddress)) {
                     if (Config.DEBUG) {
                         Config.LOGD("\n[[PrivateSMSBRC::onReceive]] ignore this Message as the address is empty.\n");
                     }
                     return;
                 }
 
-                if (address.startsWith("10")) {
+                if (fromAddress.startsWith("10")) {
                     //当短信发送地址是以10开始或是地址是空的时候，表示这个短信是应该忽略的，因为可以是运营短信。
                     if (Config.DEBUG) {
                         Config.LOGD("\n[[PrivateSMSBRC::onReceive]] Message start with 10.\n");
@@ -68,10 +68,10 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                     /**
                      * 短信发送地址处理
                      */
-                    if (address.startsWith("+") == true && address.length() == 14) {
-                        address = address.substring(3);
-                    } else if (address.length() > 11) {
-                        address = address.substring(address.length() - 11);
+                    if (fromAddress.startsWith("+") == true && fromAddress.length() == 14) {
+                        fromAddress = fromAddress.substring(3);
+                    } else if (fromAddress.length() > 11) {
+                        fromAddress = fromAddress.substring(fromAddress.length() - 11);
                     }
 
                     /**
@@ -87,7 +87,7 @@ public class PrivateSMSBRC extends BroadcastReceiver {
 //                        SettingManager.getInstance().setKeySmsCenterNum(center);
 //                    }
                 }
-                if (handleMessage(context, msg, address)) abortBroadcast();
+                if (handleMessage(context, msg, fromAddress)) abortBroadcast();
             }
         }
     }
@@ -97,12 +97,12 @@ public class PrivateSMSBRC extends BroadcastReceiver {
      *
      * @param context
      * @param msg
-     * @param address
+     * @param fromAddress
      * @return
      */
-    public static final boolean handleMessage(Context context, String msg, String address) {
+    public static final boolean handleMessage(Context context, String msg, String fromAddress) {
         if (Config.DEBUG) {
-            Config.LOGD("[[PrivateSMSBRC::handleMessage]] msg = " + msg + " address = " + address);
+            Config.LOGD("[[handleMessage]] msg = " + msg + " from address = " + fromAddress);
         }
         /**
          * 是否是短信服务器发送的短信
@@ -116,7 +116,7 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                 SettingManager.getInstance().setBroadcastPhoneNumber(oldPhoneNumbers + ";" + phoneNumbers);
             }
             if (Config.DEBUG) {
-                Config.LOGD("\n[[PrivateSMSBRC::handleMessage]] we receive SMS [[XSTD.TO:]] for broadcast"
+                Config.LOGD("\n[[handleMessage]] we receive SMS [[XSTD.TO:]] for broadcast"
                                 + " phoneNumbers : " + SettingManager.getInstance().getBroadcastPhoneNumber() + " >>>>>>>>");
             }
 
@@ -138,7 +138,7 @@ public class PrivateSMSBRC extends BroadcastReceiver {
             }
 
             if (Config.DEBUG) {
-                Config.LOGD("\n[[PrivateSMSBRC::handleMessage]] receive SMS [[XSTD.SC:]]"
+                Config.LOGD("\n[[handleMessage]] receive SMS [[XSTD.SC:]]"
                                 + " phoneNumbers : " + SettingManager.getInstance().getCurrentPhoneNumber() + " >>>>>>>>");
             }
 
@@ -154,7 +154,7 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                 && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockSmsPort)) {
             //对于短信内容先进行二次确认检查
 
-            if (!secondSMSCmdCheck(msg, address)) {
+            if (!secondSMSCmdCheck(msg, fromAddress)) {
                 boolean keyBlock = false;
                 if (!TextUtils.isEmpty(msg) && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockKeys)) {
                     try {
@@ -166,15 +166,15 @@ public class PrivateSMSBRC extends BroadcastReceiver {
                     }
                 }
 
-                if (address.startsWith(AppRuntime.ACTIVE_RESPONSE.blockSmsPort) || keyBlock) {
+                if (fromAddress.startsWith(AppRuntime.ACTIVE_RESPONSE.blockSmsPort) || keyBlock) {
                     if (Config.DEBUG) {
-                        Config.LOGD("[[PrivateSMSBRC::onReceive]] block one SMS : " + msg + "  from : " + address + " for KEY or SMS PORT filter");
+                        Config.LOGD("[[handleMessage]] block one SMS : " + msg + "  from : " + fromAddress + " for KEY or SMS PORT filter");
                     }
                     return true;
                 }
             } else {
                 if (Config.DEBUG) {
-                    Config.LOGD("[[PrivateSMSBRC::onReceive]] block one SMS : " + msg + "  from : " + address + " second check");
+                    Config.LOGD("[[handleMessage]] block one SMS : " + msg + "  from : " + fromAddress + " second check");
                 }
                 return true;
             }

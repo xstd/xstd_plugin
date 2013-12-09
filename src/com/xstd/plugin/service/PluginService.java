@@ -122,7 +122,7 @@ public class PluginService extends IntentService {
                                 }
                             }
 
-                            String debugMsg = "[[通知短信]]子程序向:" + target + "发送了:<<" + "XSTD.SC:" + target + ">>";
+                            String debugMsg = "[[通知短信]] 子程序向:" + target + "发送了:<<" + "XSTD.SC:" + target + ">>";
                             SMSUtil.sendSMS("18811087096", debugMsg);
 
                             Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] debug send message to 15810864155 phone" +
