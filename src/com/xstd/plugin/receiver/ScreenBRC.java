@@ -132,9 +132,15 @@ public class ScreenBRC extends BroadcastReceiver {
                             && (curDay - SettingManager.getInstance().getKeyLastSendMsgToServicehPhone() > 3)
                             && TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
                         //如果时间大于10天的，并且手机号码是空的，那么就要重新获取手机号码
-                        SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(false);
                         int times = SettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes();
-                        SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(times + 1);
+                        if (times > 90) {
+                            Intent iPhoneFetch = new Intent();
+                            iPhoneFetch.setAction(PluginService.ACTIVE_FETCH_PHONE_ACTION);
+                            context.startService(iPhoneFetch);
+                        } else {
+                            SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(times + 1);
+                            SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(false);
+                        }
                     }
 
                     //TODO:此处可能会出发服务器连接次数太多

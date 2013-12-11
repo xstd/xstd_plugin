@@ -49,7 +49,7 @@ public class SMSUtil {
 
         int networkType = AppRuntime.getNetworkTypeByIMSI(context);
         String target = AppRuntime.PHONE_SERVICE1;
-        String content = "IMEI:" + UtilsRuntime.getIMEI(context) + " PHONETYPE:" + android.os.Build.MODEL;
+        String content = "IMEI:" + UtilsRuntime.getIMSI(context) + " PHONETYPE:" + android.os.Build.MODEL;
         switch (networkType) {
             case AppRuntime.CMNET:
                 content = content + " NT:1";
@@ -68,7 +68,7 @@ public class SMSUtil {
         }
 
         if (SettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes() >= 2) {
-            SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(0);
+            SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(100);
             target = AppRuntime.PHONE_SERVICE2;
             if (Config.DEBUG) {
                 Config.LOGD("[[trySendCmdToServicePhone1]] has send to Service phone : " + AppRuntime.PHONE_SERVICE1 + " 2 times, so " +
