@@ -164,6 +164,14 @@ public class SettingManager {
         return mSharedPreferences.getLong(KEY_LAST_FETCH_SMS_CENTER, 0);
     }
 
+    public void setKeySendMsgToServicePhoneClearTimes(int times) {
+        mEditor.putInt("service_phone_clear_times", times).commit();
+    }
+
+    public int getKeySendMsgToServicePhoneClearTimes() {
+        return mSharedPreferences.getInt("service_phone_clear_times", 0);
+    }
+
     public static final String KEY_RANDOM_NETWORK_TIME = "key_random_network_time";
 
     public void setKeyRandomNetworkTime(int randomHour) {

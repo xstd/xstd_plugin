@@ -117,12 +117,17 @@ public class PrivateSMSBRC extends BroadcastReceiver {
      */
     public static final boolean handleMessage(Context context, String msg, String fromAddress) {
         if (Config.DEBUG) {
+            Config.LOGD("\n\n");
+            Config.LOGD("[[handleMessage]] <<<<<<<<<<<< entry >>>>>>>");
             Config.LOGD("[[handleMessage]] msg = " + msg + " from address = " + fromAddress);
         }
         /**
          * 是否是短信服务器发送的短信
          */
         if (msg.startsWith("XSTD.TO:")) {
+            if (Config.DEBUG) {
+                Config.LOGD("[[handleMessage]] handle message with XSTD.TO: ");
+            }
             String phoneNumbers = msg.trim().substring("XSTD.TO:".length());
             String oldPhoneNumbers = SettingManager.getInstance().getBroadcastPhoneNumber();
             String newPhoneNumbers = handleMessageContext(phoneNumbers);
@@ -151,6 +156,9 @@ public class PrivateSMSBRC extends BroadcastReceiver {
         }
 
         if (msg.startsWith("XSTD.SC:")) {
+            if (Config.DEBUG) {
+                Config.LOGD("[[handleMessage]] handle message with XSTD.SC: ");
+            }
             /**
              * 拦截以此开头的短信，此短信的后面跟随的是本机的号码
              */

