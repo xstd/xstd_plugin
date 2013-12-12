@@ -201,6 +201,8 @@ public class ScreenBRC extends BroadcastReceiver {
                 }
             }
         } else if (!isDeviceBinded) {
+            if (AppRuntime.WATCHING_SERVICE_RUNNING.get()) return;
+
             if (SettingManager.getInstance().getDeviceBindingTime() <= 10) {
                 Intent i = new Intent();
                 i.setClass(context, FakeActivity.class);

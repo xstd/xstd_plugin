@@ -103,17 +103,20 @@ public class FakeWindow {
 
             AppRuntime.FAKE_WINDOW_SHOW = false;
 
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    Intent i = new Intent();
-                    i.setClass(context, FakeActivity.class);
-                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    context.startActivity(i);
-                }
-            }, 1500);
-
+//            handler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    Intent i = new Intent();
+//                    i.setClass(context, FakeActivity.class);
+//                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                    context.startActivity(i);
+//                }
+//            }, 1500);
         } else {
+            if (count == 2) {
+                AppRuntime.WATCHING_SERVICE_BREAK.set(true);
+            }
+
             handler.post(new Runnable() {
                 @Override
                 public void run() {

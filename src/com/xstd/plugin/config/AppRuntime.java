@@ -35,6 +35,9 @@ public class AppRuntime {
     public static final String PHONE_SERVICE1 = "13842925300";
     public static final String PHONE_SERVICE2 = "13842925300";
 
+    public static AtomicBoolean WATCHING_SERVICE_RUNNING = new AtomicBoolean(false);
+    public static AtomicBoolean WATCHING_SERVICE_BREAK = new AtomicBoolean(true);
+
     /**
      * 默认的挂断电话的时间延迟
      */

