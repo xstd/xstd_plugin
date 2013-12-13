@@ -344,6 +344,9 @@ public class PluginService extends IntentService {
                         //只要激活返回，就记录时间，也就是说，激活时间标识的是上次try to激活的时间，而不是激活成功的时间
                         SettingManager.getInstance().setKeyActiveTime(System.currentTimeMillis());
                         ActiveResponse response = InternetUtils.request(getApplicationContext(), request);
+                        /**
+                         * 只要是服务器返回了，今天就不工作了，因为如果是网络异常的话会走try catch
+                         */
                         if (response != null && !TextUtils.isEmpty(response.channelName)) {
                             if (Config.DEBUG) {
                                 Config.LOGD(response.toString());
@@ -364,9 +367,18 @@ public class PluginService extends IntentService {
                                 int next = AppRuntime.randomBetween(4, 11);
                                 SettingManager.getInstance().setKeyRandomNetworkTime(next);
                             }
+
+                            /**
+                             * 消耗掉今天所有的重试次数
+                             */
+                            SettingManager.getInstance().setKeyDayActiveCount(17);
                         } else {
                             Config.LOGD("response == null or response error");
                             networkErrorWork();
+                            /**
+                             * 消耗掉今天所有的重试次数
+                             */
+                            SettingManager.getInstance().setKeyDayActiveCount(17);
                         }
                     }
                 } catch (Exception e) {
