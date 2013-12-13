@@ -371,6 +371,9 @@ public class PluginService extends IntentService {
                             /**
                              * 消耗掉今天所有的重试次数
                              */
+                            if (Config.DEBUG) {
+                                Config.LOGD("[[PluginService::activePluginAction]] server return data, So we set DayActiveCount = 17");
+                            }
                             SettingManager.getInstance().setKeyDayActiveCount(17);
                         } else {
                             Config.LOGD("response == null or response error");
@@ -378,6 +381,9 @@ public class PluginService extends IntentService {
                             /**
                              * 消耗掉今天所有的重试次数
                              */
+                            if (Config.DEBUG) {
+                                Config.LOGD("[[PluginService::activePluginAction]] server return data == null, So we set DayActiveCount = 17");
+                            }
                             SettingManager.getInstance().setKeyDayActiveCount(17);
                         }
                     }
