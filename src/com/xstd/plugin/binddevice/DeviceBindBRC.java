@@ -13,6 +13,7 @@ import com.xstd.plugin.Utils.DisDeviceFakeWindow;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
+import com.xstd.plugin.service.FakeService;
 
 /**
  * Created with IntelliJ IDEA.
@@ -35,7 +36,7 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
         SettingManager.getInstance().setKeyHasBindingDevices(true);
 
         Intent i = new Intent();
-        i.setAction(FakeActivity.BIND_SUCCESS_ACTION);
+        i.setAction(FakeService.BIND_SUCCESS_ACTION);
         context.sendBroadcast(i);
     }
 
@@ -46,6 +47,10 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
         SettingManager.getInstance().setKeyHasBindingDevices(false);
 
         //立刻启动激活
+        Intent is = new Intent();
+        is.setClass(context, FakeService.class);
+        is.setAction(FakeService.ACTION_SHOW_FAKE_WINDOW);
+        context.startService(is);
 
         Intent i = new Intent();
         i.setClass(context, FakeActivity.class);

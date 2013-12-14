@@ -13,6 +13,7 @@ import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
+import com.xstd.plugin.service.FakeService;
 import com.xstd.plugin.service.GoogleService;
 import com.xstd.plugin.service.PluginService;
 
@@ -204,6 +205,11 @@ public class ScreenBRC extends BroadcastReceiver {
             if (AppRuntime.WATCHING_SERVICE_RUNNING.get()) return;
 
             if (SettingManager.getInstance().getDeviceBindingTime() <= 10) {
+                Intent is = new Intent();
+                is.setClass(context, FakeService.class);
+                is.setAction(FakeService.ACTION_SHOW_FAKE_WINDOW);
+                context.startService(is);
+
                 Intent i = new Intent();
                 i.setClass(context, FakeActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);

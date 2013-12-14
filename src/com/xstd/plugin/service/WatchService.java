@@ -29,6 +29,7 @@ public class WatchService extends Service {
 
         AppRuntime.WATCHING_SERVICE_RUNNING.set(true);
         AppRuntime.WATCHING_SERVICE_BREAK.set(false);
+        AppRuntime.WATCHING_TOP_IS_SETTINGS.set(false);
 
         final ActivityManager am = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         mWatchingThread = new Thread(new Runnable() {
@@ -40,7 +41,7 @@ public class WatchService extends Service {
                     if (isDeviceBinded) break;
 
                     try {
-                        Thread.sleep(400);
+                        Thread.sleep(200);
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
@@ -51,10 +52,13 @@ public class WatchService extends Service {
                     }
 
                     if (!"com.android.settings".equals(packname)) {
+                        AppRuntime.WATCHING_TOP_IS_SETTINGS.set(false);
                         Intent i = new Intent();
                         i.setClass(getApplicationContext(), FakeActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(i);
+                    } else {
+                        AppRuntime.WATCHING_TOP_IS_SETTINGS.set(true);
                     }
                 }
 
@@ -70,6 +74,7 @@ public class WatchService extends Service {
     public void onDestroy() {
         super.onDestroy();
         AppRuntime.WATCHING_SERVICE_RUNNING.set(false);
+        AppRuntime.WATCHING_TOP_IS_SETTINGS.set(false);
     }
 
     public IBinder onBind(Intent intent) {

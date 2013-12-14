@@ -1,8 +1,13 @@
 package com.xstd.plugin.service;
 
 import android.app.Service;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.os.Handler;
 import android.os.IBinder;
+import android.os.Looper;
 import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.Utils.FakeWindow;
 import com.xstd.plugin.config.AppRuntime;
@@ -18,11 +23,35 @@ public class FakeService extends Service {
 
     private FakeWindow window = null;
 
+    private Handler mHandler = new Handler(Looper.getMainLooper());
+    public static final String BIND_SUCCESS_ACTION = "com.bind.action.success";
+    private BroadcastReceiver mBindSuccesBRC = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            Config.LOGD("[[BroadcastReceiver::onReceive]] binding devices success >>>>>");
+            UtilsRuntime.goHome(getApplicationContext());
+
+            mHandler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    android.os.Process.killProcess(android.os.Process.myPid());
+                }
+            }, 500);
+        }
+    };
+
     @Override
     public void onCreate() {
         super.onCreate();
 
+        registerReceiver(mBindSuccesBRC, new IntentFilter(BIND_SUCCESS_ACTION));
         showFakeWindow();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(mBindSuccesBRC);
     }
 
     private synchronized void showFakeWindow() {

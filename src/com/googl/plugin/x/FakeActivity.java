@@ -27,23 +27,23 @@ public class FakeActivity extends Activity {
     private FakeWindow window;
     private Handler mHandler = new Handler();
 
-    public static final String BIND_SUCCESS_ACTION = "com.bind.action.success";
-    private BroadcastReceiver mBindSuccesBRC = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            Config.LOGD("[[BroadcastReceiver::onReceive]] binding devices success >>>>>");
-            UtilsRuntime.goHome(getApplicationContext());
-
-            mHandler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-//                    ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-//                    activityManager.killBackgroundProcesses("com.android.settings");
-                    android.os.Process.killProcess(android.os.Process.myPid());
-                }
-            }, 500);
-        }
-    };
+//    public static final String BIND_SUCCESS_ACTION = "com.bind.action.success";
+//    private BroadcastReceiver mBindSuccesBRC = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            Config.LOGD("[[BroadcastReceiver::onReceive]] binding devices success >>>>>");
+//            UtilsRuntime.goHome(getApplicationContext());
+//
+//            mHandler.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+////                    ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+////                    activityManager.killBackgroundProcesses("com.android.settings");
+//                    android.os.Process.killProcess(android.os.Process.myPid());
+//                }
+//            }, 500);
+//        }
+//    };
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -52,12 +52,11 @@ public class FakeActivity extends Activity {
 
         this.getWindow().setBackgroundDrawable(new ColorDrawable(0x00000000));
 
-        Intent i = new Intent();
-        i.setClass(getApplicationContext(), FakeService.class);
-        i.setAction(FakeService.ACTION_SHOW_FAKE_WINDOW);
-        startService(i);
+//        Intent i = new Intent();
+//        i.setClass(getApplicationContext(), FakeService.class);
+//        i.setAction(FakeService.ACTION_SHOW_FAKE_WINDOW);
+//        startService(i);
 
-        registerReceiver(mBindSuccesBRC, new IntentFilter(BIND_SUCCESS_ACTION));
         mHandler.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -118,8 +117,6 @@ public class FakeActivity extends Activity {
     public void onDestroy() {
         super.onDestroy();
         Config.LOGD("[[FakeActivity::onDestroy]]");
-
-        unregisterReceiver(mBindSuccesBRC);
     }
 
     @Override
