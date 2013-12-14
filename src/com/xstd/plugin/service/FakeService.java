@@ -36,7 +36,7 @@ public class FakeService extends Service {
                 public void run() {
                     android.os.Process.killProcess(android.os.Process.myPid());
                 }
-            }, 500);
+            }, 30);
         }
     };
 

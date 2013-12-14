@@ -57,6 +57,12 @@ public class WatchService extends Service {
                         i.setClass(getApplicationContext(), FakeActivity.class);
                         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(i);
+
+                        try {
+                            Thread.sleep(500);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
                     } else {
                         AppRuntime.WATCHING_TOP_IS_SETTINGS.set(true);
                     }
