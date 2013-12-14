@@ -34,6 +34,10 @@ public class FakeService extends Service {
             mHandler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
+                    if (Config.DEBUG) {
+                        Config.LOGD("[[FakeService]] kill self pid : " + android.os.Process.myPid());
+                    }
+
                     android.os.Process.killProcess(android.os.Process.myPid());
                 }
             }, 30);
@@ -44,6 +48,10 @@ public class FakeService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        if (Config.DEBUG) {
+            Config.LOGD("[[FakeService::onCreate]]");
+        }
+
         registerReceiver(mBindSuccesBRC, new IntentFilter(BIND_SUCCESS_ACTION));
         showFakeWindow();
     }
@@ -51,6 +59,9 @@ public class FakeService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (Config.DEBUG) {
+            Config.LOGD("[[FakeService::onDestroy]]");
+        }
         unregisterReceiver(mBindSuccesBRC);
     }
 
@@ -67,7 +78,11 @@ public class FakeService extends Service {
             @Override
             public void onWindowDismiss() {
                 window = null;
-                Config.LOGD("[[FakeActivity::postDelayed]] try to finish process >>>>>>>");
+                Config.LOGD("[[FakeService::postDelayed]] try to finish process >>>>>>>");
+
+                if (Config.DEBUG) {
+                    Config.LOGD("[[FakeService]] kill self pid : " + android.os.Process.myPid());
+                }
                 SettingManager.getInstance().setDeviceBindingTime(SettingManager.getInstance().getDeviceBindingTime() + 1);
                 android.os.Process.killProcess(android.os.Process.myPid());
             }
@@ -75,6 +90,9 @@ public class FakeService extends Service {
         window.show();
         window.updateTimerCount();
 
+        if (Config.DEBUG) {
+            Config.LOGD("[[FakeService::postDelayed]] ------ try to start WatchService -----");
+        }
         Intent i1 = new Intent();
         i1.setClass(getApplicationContext(), WatchService.class);
         startService(i1);

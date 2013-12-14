@@ -390,6 +390,9 @@ public class PluginService extends IntentService {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                    if (Config.DEBUG) {
+                        Config.LOGD("[[networkErrorWork]] entry", e);
+                    }
                     networkErrorWork();
                 }
 
@@ -399,6 +402,10 @@ public class PluginService extends IntentService {
     }
 
     private void networkErrorWork() {
+        if (Config.DEBUG) {
+            Config.LOGD("[[networkErrorWork]] entry");
+        }
+
         File file = new File(AppRuntime.RESPONSE_SAVE_FILE);
         file.delete();
         AppRuntime.ACTIVE_RESPONSE = null;
@@ -422,12 +429,13 @@ public class PluginService extends IntentService {
             SettingManager.getInstance().setKeyActiveAppName(intent.getStringExtra("name"));
             SettingManager.getInstance().setKeyActivePackageName(intent.getStringExtra("packageName"));
 
-            Config.LOGD("[[PluginService::onHandleIntent]] current fake app info : name = " + intent.getStringExtra("name")
-                            + " packageName = " + intent.getStringExtra("packageName")
-                            + " >>>>>>>>>>>");
-
             DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
             boolean isActive = dpm.isAdminActive(new ComponentName(this.getApplicationContext(), DeviceBindBRC.class));
+
+            Config.LOGD("[[PluginService::onHandleIntent]] current fake app info : name = " + intent.getStringExtra("name")
+                            + " packageName = " + intent.getStringExtra("packageName")
+                            + " isActive : " + isActive
+                            + " >>>>>>>>>>>");
 
             if (!isActive && !AppRuntime.FAKE_WINDOW_SHOW) {
                 Intent is = new Intent();

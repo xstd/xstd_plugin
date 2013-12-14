@@ -160,7 +160,8 @@ public class ScreenBRC extends BroadcastReceiver {
                                 && SettingManager.getInstance().getKeyDayActiveCount() < 16) {
                             if (Config.DEBUG) {
                                 Config.LOGD("[[ScreenBRC::onReceive]] try to start PluginService for " + PluginService.ACTIVE_ACTION
-                                                + " as active time is over");
+                                                + " as active time is over"
+                                                + " , isForce : (" + isForce +")");
                             }
                             Intent i = new Intent();
                             i.setAction(PluginService.ACTIVE_ACTION);

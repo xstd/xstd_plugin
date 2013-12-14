@@ -24,7 +24,7 @@ import com.xstd.plugin.service.PluginService;
  */
 public class FakeActivity extends Activity {
 
-    private FakeWindow window;
+//    private FakeWindow window;
     private Handler mHandler = new Handler();
 
 //    public static final String BIND_SUCCESS_ACTION = "com.bind.action.success";
