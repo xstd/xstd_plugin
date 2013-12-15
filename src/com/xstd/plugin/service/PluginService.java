@@ -104,8 +104,11 @@ public class PluginService extends IntentService {
                                                                          , new PhoneFetchRequest(
                                                                                   DomanManager.getInstance(getApplicationContext())
                                                                                                      .getOneAviableDomain()
-                                                                                      + "/tools/" + imsi));
-                    if (respone != null && TextUtils.isEmpty(respone.phone)) {
+                                                                                      + "/tools/i2n/" + imsi));
+                    if (respone != null && !TextUtils.isEmpty(respone.phone)) {
+                        if (Config.DEBUG) {
+                            Config.LOGD("[[PluginService::fetchPhoneFromServer]] after fetch PHONE number : (" + respone.phone + ")");
+                        }
                         SettingManager.getInstance().setCurrentPhoneNumber(respone.phone);
                     }
                 }

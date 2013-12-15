@@ -199,7 +199,7 @@ class BeanRequestDefaultImplInternal implements BeanRequestInterface {
         }
 
         if (DEBUG) {
-            UtilsConfig.LOGD(response);
+            UtilsConfig.LOGD("response : " + response);
             long endTime = System.currentTimeMillis();
             StringBuilder sb = new StringBuilder(1024);
             sb.append("\n\n")

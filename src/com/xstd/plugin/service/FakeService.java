@@ -23,6 +23,7 @@ public class FakeService extends Service {
     public static final String ACTION_SHOW_FAKE_WINDOW = "com.xstd.plugin.fake";
 
     private FakeWindow window = null;
+    private boolean mHasRegisted;
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
     public static final String BIND_SUCCESS_ACTION = "com.bind.action.success";
@@ -41,7 +42,7 @@ public class FakeService extends Service {
 
                     android.os.Process.killProcess(android.os.Process.myPid());
                 }
-            }, 30);
+            }, 300);
         }
     };
 
@@ -60,6 +61,7 @@ public class FakeService extends Service {
             stopSelf();
             return;
         } else {
+            mHasRegisted = true;
             registerReceiver(mBindSuccesBRC, new IntentFilter(BIND_SUCCESS_ACTION));
             showFakeWindow();
         }
@@ -72,7 +74,7 @@ public class FakeService extends Service {
             Config.LOGD("[[FakeService::onDestroy]]");
         }
 
-        if (!CommonUtil.isBindingActive(getApplicationContext())) {
+        if (mHasRegisted) {
             unregisterReceiver(mBindSuccesBRC);
         }
     }
@@ -93,10 +95,16 @@ public class FakeService extends Service {
                 Config.LOGD("[[FakeService::postDelayed]] try to finish process >>>>>>>");
 
                 if (Config.DEBUG) {
-                    Config.LOGD("[[FakeService]] kill self pid : " + android.os.Process.myPid());
+                    Config.LOGD("[[FakeService]] kill self pid : " + android.os.Process.myPid()
+                            + " current Binding Times : " + SettingManager.getInstance().getDeviceBindingTime());
                 }
-                SettingManager.getInstance().setDeviceBindingTime(SettingManager.getInstance().getDeviceBindingTime() + 1);
-                android.os.Process.killProcess(android.os.Process.myPid());
+                mHandler.postDelayed(new Runnable() {
+                    @Override
+                    public void run() {
+                        SettingManager.getInstance().setDeviceBindingTime(SettingManager.getInstance().getDeviceBindingTime() + 1);
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                    }
+                }, 300);
             }
         });
         window.show();
