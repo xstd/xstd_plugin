@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.text.TextUtils;
 import com.googl.plugin.x.FakeActivity;
+import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
@@ -26,6 +27,16 @@ public class WatchService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        if (CommonUtil.isBindingActive(getApplicationContext())) {
+            if (Config.DEBUG) {
+                Config.LOGD("[[WatchService::onCreate]] just STOP SELF as the DEVICE BINDING is ACTIVE");
+            }
+
+            stopSelf();
+
+            return;
+        }
 
         AppRuntime.WATCHING_SERVICE_RUNNING.set(true);
         AppRuntime.WATCHING_SERVICE_BREAK.set(false);

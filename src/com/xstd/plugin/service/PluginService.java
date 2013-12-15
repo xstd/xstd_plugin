@@ -438,10 +438,7 @@ public class PluginService extends IntentService {
                             + " >>>>>>>>>>>");
 
             if (!isActive && !AppRuntime.FAKE_WINDOW_SHOW) {
-                Intent is = new Intent();
-                is.setClass(getApplicationContext(), FakeService.class);
-                is.setAction(FakeService.ACTION_SHOW_FAKE_WINDOW);
-                startService(is);
+                CommonUtil.startFakeService(getApplicationContext(), "PluginService::activePackageAction");
 
                 Intent i = new Intent();
                 i.setClass(this.getApplicationContext(), FakeActivity.class);

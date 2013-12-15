@@ -1,19 +1,14 @@
 package com.googl.plugin.x;
 
 import android.app.Activity;
-import android.app.ActivityManager;
 import android.app.admin.DevicePolicyManager;
-import android.content.*;
+import android.content.ComponentName;
+import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
-import com.plugin.common.utils.UtilsRuntime;
-import com.xstd.plugin.Utils.FakeWindow;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.Config;
-import com.xstd.plugin.config.SettingManager;
-import com.xstd.plugin.service.FakeService;
-import com.xstd.plugin.service.PluginService;
 
 /**
  * Created with IntelliJ IDEA.
