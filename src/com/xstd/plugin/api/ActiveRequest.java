@@ -3,8 +3,6 @@ package com.xstd.plugin.api;
 import android.content.Context;
 import android.os.Build;
 import com.plugin.common.utils.UtilsRuntime;
-import com.plugin.internet.core.RequestBase;
-import com.plugin.internet.core.annotations.NoNeedTicket;
 import com.plugin.internet.core.annotations.RequiredParam;
 import com.plugin.internet.core.annotations.RestMethodUrl;
 import com.xstd.plugin.config.SettingManager;
@@ -17,7 +15,6 @@ import com.xstd.plugin.config.SettingManager;
  * To change this template use File | Settings | File Templates.
  */
 
-@NoNeedTicket
 @RestMethodUrl("sais/")
 public class ActiveRequest extends PMRequestBase<ActiveResponse> {
 

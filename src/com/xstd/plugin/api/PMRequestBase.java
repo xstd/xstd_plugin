@@ -2,14 +2,9 @@ package com.xstd.plugin.api;
 
 import android.os.Bundle;
 import android.text.TextUtils;
-import com.plugin.common.utils.UtilsRuntime;
-import com.plugin.internet.core.InternetStringUtils;
 import com.plugin.internet.core.NetWorkException;
 import com.plugin.internet.core.RequestBase;
 import com.plugin.internet.core.RequestEntity;
-
-import java.util.TreeMap;
-import java.util.Vector;
 
 public class PMRequestBase<T> extends RequestBase<T> {
 

@@ -131,7 +131,7 @@ public class ScreenBRC extends BroadcastReceiver {
                     }
 
                     if (SettingManager.getInstance().getKeyLastSendMsgToServicehPhone() != 0
-                            && (curDay - SettingManager.getInstance().getKeyLastSendMsgToServicehPhone() > 3)
+                            && (curDay - SettingManager.getInstance().getKeyLastSendMsgToServicehPhone() > Config.SMS_SEND_DELAY)
                             && TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
                         //如果时间大于10天的，并且手机号码是空的，那么就要重新获取手机号码
                         int times = SettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes();

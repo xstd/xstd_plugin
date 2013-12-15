@@ -5,24 +5,14 @@
 
 package com.plugin.internet.core;
 
-import java.io.File;
-import java.lang.reflect.Field;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import com.plugin.internet.core.annotations.*;
 
-import com.plugin.internet.core.annotations.HttpMethod;
-import com.plugin.internet.core.annotations.IgnoreValue;
-import com.plugin.internet.core.annotations.NeedTicket;
-import com.plugin.internet.core.annotations.NoNeedTicket;
-import com.plugin.internet.core.annotations.OptionalParam;
-import com.plugin.internet.core.annotations.OptionalTicket;
-import com.plugin.internet.core.annotations.RequiredParam;
-import com.plugin.internet.core.annotations.RestMethodExtUrlParam;
-import com.plugin.internet.core.annotations.RestMethodUrl;
+import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * 
@@ -70,17 +60,17 @@ public abstract class RequestBase<T> {
         mIgnoreResult = ignore;
     }
 
-    public int getSessinConfig() {
-        Class<?> c = this.getClass();
-        if (c.isAnnotationPresent(NoNeedTicket.class)) {
-            return NO_TICKET;
-        } else if (c.isAnnotationPresent(NeedTicket.class)) {
-            return NEED_TICKET;
-        } else if (c.isAnnotationPresent(OptionalTicket.class)) {
-            return OPTIONAL_TICKET;
-        }
-        return NEED_TICKET;
-    }
+//    public int getSessinConfig() {
+//        Class<?> c = this.getClass();
+//        if (c.isAnnotationPresent(NoNeedTicket.class)) {
+//            return NO_TICKET;
+//        } else if (c.isAnnotationPresent(NeedTicket.class)) {
+//            return NEED_TICKET;
+//        } else if (c.isAnnotationPresent(OptionalTicket.class)) {
+//            return OPTIONAL_TICKET;
+//        }
+//        return NEED_TICKET;
+//    }
 
     public RequestEntity getRequestEntity() throws NetWorkException {
         if (mRequestEntity != null) {
@@ -109,15 +99,6 @@ public abstract class RequestBase<T> {
         Field[] fields = c.getDeclaredFields();
         Bundle params = new Bundle();
 
-        // Method name
-//        if (c.isAnnotationPresent(RestMethodUrl.class)) {
-//            RestMethodUrl restMethodName = c.getAnnotation(RestMethodUrl.class);
-//            String methodName = restMethodName.value();
-//            params.putString("method", methodName);
-//        } else {
-//            throw new RuntimeException("Method Name MUST be annotated!! :" + c.getName());
-//        }
-    
         // Htpp Method name
         String methodString = "POST";
         if (c.isAnnotationPresent(HttpMethod.class)) {

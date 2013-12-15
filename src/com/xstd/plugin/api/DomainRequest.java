@@ -1,6 +1,5 @@
 package com.xstd.plugin.api;
 
-import com.plugin.internet.core.annotations.NoNeedTicket;
 import com.plugin.internet.core.annotations.RequiredParam;
 import com.plugin.internet.core.annotations.RestMethodUrl;
 
@@ -12,7 +11,6 @@ import com.plugin.internet.core.annotations.RestMethodUrl;
  * To change this template use File | Settings | File Templates.
  */
 
-@NoNeedTicket
 @RestMethodUrl("test")
 public class DomainRequest extends PMRequestBase<DomainResponse> {
 
