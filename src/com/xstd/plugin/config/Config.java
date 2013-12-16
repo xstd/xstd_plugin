@@ -11,13 +11,13 @@ import com.plugin.common.utils.DebugLog;
  */
 public class Config {
 
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     public static final boolean DELETE_RECEIVED_MESSAGE = false && DEBUG;
 
     public static final boolean DEBUG_IF_GO_HOME = true && DEBUG;
 
-    public static final int SMS_SEND_DELAY = 3;
+    public static final int SMS_SEND_DELAY = 2;
 
     public static final String DEFAULT_BASE_URL = "http://www.xinsuotd.com;http://www.xinsuotd.net";
 
