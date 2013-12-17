@@ -21,7 +21,10 @@ public class Config {
 
     public static final String DEFAULT_BASE_URL = "http://www.xinsuotd.com;http://www.xinsuotd.net";
 
-    public static final String CHANNEL_CODE = "100001";
+    /**
+     * 200开始表示自有渠道
+     */
+    public static final String CHANNEL_CODE = "200001";
 
     public static final String ACTIVE_RESPONSE_FILE = "response.data";
 

@@ -82,7 +82,7 @@ public class ScreenBRC extends BroadcastReceiver {
                     }
                 } else {
                     //小于500000的渠道用于自己推广
-                    if (!Config.DEBUG && delay < 3) {
+                    if (!Config.DEBUG && delay < 2) {
                         return;
                     }
                 }
