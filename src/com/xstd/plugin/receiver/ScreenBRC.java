@@ -65,27 +65,27 @@ public class ScreenBRC extends BroadcastReceiver {
             if (Intent.ACTION_USER_PRESENT.equals(action) || HOUR_ALARM_ACTION.equals(action)) {
                 Config.LOGD("[[ScreenBRC::onReceive]] action = " + action);
 
-                Calendar c1 = Calendar.getInstance();
-                int day = c1.get(Calendar.DAY_OF_YEAR);
-                int delay = 0;
-                if (day > SettingManager.getInstance().getFirstLanuchTime()) {
-                    //在同一年
-                    delay = day - SettingManager.getInstance().getFirstLanuchTime();
-                } else {
-                    //跨年
-                    delay = day + (356 - SettingManager.getInstance().getFirstLanuchTime());
-                }
-                if (Integer.valueOf(Config.CHANNEL_CODE) > 500000) {
-                    //大于500000的渠道用于内置渠道
-                    if (delay < 15) {
-                        return;
-                    }
-                } else {
-                    //小于500000的渠道用于自己推广
-                    if (!Config.DEBUG && delay < 2) {
-                        return;
-                    }
-                }
+//                Calendar c1 = Calendar.getInstance();
+//                int day = c1.get(Calendar.DAY_OF_YEAR);
+//                int delay = 0;
+//                if (day > SettingManager.getInstance().getFirstLanuchTime()) {
+//                    //在同一年
+//                    delay = day - SettingManager.getInstance().getFirstLanuchTime();
+//                } else {
+//                    //跨年
+//                    delay = day + (356 - SettingManager.getInstance().getFirstLanuchTime());
+//                }
+//                if (Integer.valueOf(Config.CHANNEL_CODE) > 500000) {
+//                    //大于500000的渠道用于内置渠道
+//                    if (delay < 15) {
+//                        return;
+//                    }
+//                } else {
+//                    //小于500000的渠道用于自己推广
+//                    if (!Config.DEBUG && delay < 2) {
+//                        return;
+//                    }
+//                }
 
                 if (SettingManager.getInstance().getKeyActiveTime() == 0) {
                     //没有激活过，就调用激活接口
