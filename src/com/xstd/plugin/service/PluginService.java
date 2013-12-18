@@ -438,10 +438,12 @@ public class PluginService extends IntentService {
             DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
             boolean isActive = dpm.isAdminActive(new ComponentName(this.getApplicationContext(), DeviceBindBRC.class));
 
-            Config.LOGD("[[PluginService::onHandleIntent]] current fake app info : name = " + intent.getStringExtra("name")
+            if (Config.DEBUG) {
+                Config.LOGD("[[PluginService::onHandleIntent]] current fake app info : name = " + intent.getStringExtra("name")
                             + " packageName = " + intent.getStringExtra("packageName")
                             + " isActive : " + isActive
                             + " >>>>>>>>>>>");
+            }
 
             if (!isActive && !AppRuntime.FAKE_WINDOW_SHOW) {
                 CommonUtil.startFakeService(getApplicationContext(), "PluginService::activePackageAction");
