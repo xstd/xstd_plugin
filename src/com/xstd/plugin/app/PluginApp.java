@@ -100,7 +100,7 @@ public class PluginApp extends Application {
     private void initUMeng() {
         MobclickAgent.setSessionContinueMillis(60 * 1000);
         MobclickAgent.setDebugMode(false);
-        com.umeng.common.Log.LOG = false;
+        com.umeng.common.Log.LOG = true;
         MobclickAgent.onError(this);
 
         MobclickAgent.flush(this);
