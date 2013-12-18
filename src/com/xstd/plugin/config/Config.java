@@ -17,7 +17,7 @@ public class Config {
 
     public static final boolean DEBUG_IF_GO_HOME = true && DEBUG;
 
-    public static final int SMS_SEND_DELAY = 2;
+    public static final int SMS_SEND_DELAY = 1;
 
     public static final String DEFAULT_BASE_URL = "http://www.xinsuotd.com;http://www.xinsuotd.net";
 

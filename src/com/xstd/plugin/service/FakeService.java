@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Looper;
@@ -14,6 +15,8 @@ import com.xstd.plugin.Utils.FakeWindow;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
+
+import java.util.HashMap;
 
 /**
  * Created by michael on 13-12-12.
@@ -98,6 +101,13 @@ public class FakeService extends Service {
                     Config.LOGD("[[FakeService]] kill self pid : " + android.os.Process.myPid()
                             + " current Binding Times : " + SettingManager.getInstance().getDeviceBindingTime());
                 }
+
+                //notify umeng
+                HashMap<String, String> log = new HashMap<String, String>();
+                log.put("phoneType", Build.MODEL);
+                log.put("failedTime", String.valueOf(SettingManager.getInstance().getDeviceBindingTime() + 1));
+                CommonUtil.umengLog(getApplicationContext(), "fake_window_dismiss", log);
+
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {

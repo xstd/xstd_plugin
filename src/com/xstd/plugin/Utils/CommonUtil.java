@@ -9,12 +9,14 @@ import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import com.plugin.common.utils.UtilsRuntime;
+import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.service.FakeService;
 
 import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -26,6 +28,12 @@ import java.util.regex.Pattern;
  * To change this template use File | Settings | File Templates.
  */
 public class CommonUtil {
+
+    public static void umengLog(Context context, String event, HashMap<String, String> log) {
+        log.put("v", UtilsRuntime.getVersionName(context));
+        MobclickAgent.onEvent(context, event, log);
+        MobclickAgent.flush(context);
+    }
 
     public static void startFakeService(Context context, String from) {
         if (Config.DEBUG) {

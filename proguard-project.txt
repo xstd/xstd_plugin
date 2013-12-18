@@ -63,3 +63,10 @@
 -keep class com.plugin.** { *; }
 -keep class com.polites.android.** { *; }
 -dontwarn uk.co.senab.photoview.**
+
+-keepclassmembers class * {
+   public <init>(org.json.JSONObject);
+}
+
+-keep public class com.umeng.fb.ui.ThreadView {
+}

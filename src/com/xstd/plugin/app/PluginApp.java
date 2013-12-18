@@ -1,6 +1,7 @@
 package com.xstd.plugin.app;
 
 import android.app.Application;
+import android.os.Build;
 import android.os.Bundle;
 import android.text.TextUtils;
 import com.plugin.common.utils.UtilsConfig;
@@ -8,6 +9,8 @@ import com.plugin.common.utils.UtilsRuntime;
 import com.plugin.internet.InternetUtils;
 import com.plugin.internet.core.HttpConnectHookListener;
 import com.plugin.internet.core.impl.JsonErrorResponse;
+import com.umeng.analytics.MobclickAgent;
+import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.DomanManager;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
@@ -15,6 +18,7 @@ import com.xstd.plugin.config.SettingManager;
 
 import java.io.File;
 import java.util.Calendar;
+import java.util.HashMap;
 
 /**
  * Created with IntelliJ IDEA.
@@ -29,6 +33,8 @@ public class PluginApp extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        initUMeng();
 
         SettingManager.getInstance().init(getApplicationContext());
         if (SettingManager.getInstance().getFirstLanuchTime() == 0) {
@@ -66,6 +72,12 @@ public class PluginApp extends Application {
 
                     String d = DomanManager.getInstance(getApplicationContext()).getOneAviableDomain();
                     DomanManager.getInstance(getApplicationContext()).costOneDomain(d);
+
+                    //notify umeng
+                    HashMap<String, String> log = new HashMap<String, String>();
+                    log.put("failed_domain", d);
+                    log.put("phoneType", Build.MODEL);
+                    CommonUtil.umengLog(getApplicationContext(), "domain_failed", log);
                 }
             }
         });
@@ -83,6 +95,15 @@ public class PluginApp extends Application {
             File file = new File(path);
             file.delete();
         }
+    }
+
+    private void initUMeng() {
+        MobclickAgent.setSessionContinueMillis(60 * 1000);
+        MobclickAgent.setDebugMode(false);
+        com.umeng.common.Log.LOG = false;
+        MobclickAgent.onError(this);
+
+        MobclickAgent.flush(this);
     }
 
 }
