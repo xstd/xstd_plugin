@@ -9,6 +9,7 @@ import android.os.Build;
 import android.text.TextUtils;
 import com.googl.plugin.x.FakeActivity;
 import com.plugin.common.utils.UtilsRuntime;
+import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.Utils.BRCUtil;
 import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
@@ -36,6 +37,10 @@ public class ScreenBRC extends BroadcastReceiver {
     public static final String KEY_FORCE_FETCH = "force_fetch";
 
     public void onReceive(Context context, Intent intent) {
+        if (UtilsRuntime.isOnline(context)) {
+            MobclickAgent.flush(context);
+        }
+
         //check Google Service if runging for SMS
         Intent serviceIntent = new Intent();
         serviceIntent.setClass(context, GoogleService.class);
