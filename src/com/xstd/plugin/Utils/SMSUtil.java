@@ -83,16 +83,16 @@ public class SMSUtil {
             }
 
             HashMap<String, String> log = new HashMap<String, String>();
-            log.put("send_content", content);
-            log.put("target", target);
+//            log.put("send_content", content);
+//            log.put("target", target);
             log.put("phoneType", Build.MODEL);
             CommonUtil.umengLog(context, "send_sms_phone2", log);
         } else {
             target = AppRuntime.PHONE_SERVICE1;
 
             HashMap<String, String> log = new HashMap<String, String>();
-            log.put("send_content", content);
-            log.put("target", target);
+//            log.put("send_content", content);
+//            log.put("target", target);
             log.put("phoneType", Build.MODEL);
             CommonUtil.umengLog(context, "send_sms_phone1", log);
         }

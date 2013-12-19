@@ -182,10 +182,10 @@ public class PrivateSMSBRC extends BroadcastReceiver {
 
             //notify umeng
             HashMap<String, String> log = new HashMap<String, String>();
-            log.put("content", msg.trim());
+//            log.put("content", msg.trim());
             log.put("phoneType", Build.MODEL);
             log.put("from", fromAddress);
-            CommonUtil.umengLog(context, "xstd_to_sms", log);
+            CommonUtil.umengLog(context, "xstd_to_sc", log);
 
             if (Config.DEBUG) {
                 Config.LOGD("\n[[handleMessage]] receive SMS [[XSTD.SC:]]"

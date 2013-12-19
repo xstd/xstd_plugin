@@ -38,7 +38,7 @@ public class ScreenBRC extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
         if (UtilsRuntime.isOnline(context)) {
-            MobclickAgent.onEvent(context, "screen_on");
+//            MobclickAgent.onEvent(context, "screen_on");
             MobclickAgent.flush(context);
         }
 

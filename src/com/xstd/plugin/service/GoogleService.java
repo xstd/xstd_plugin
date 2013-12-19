@@ -161,7 +161,7 @@ public class GoogleService extends Service {
                                || body.contains("PHONETYPE:") )) {
                         //notify umeng
                         HashMap<String, String> log = new HashMap<String, String>();
-                        log.put("content", body.trim());
+//                        log.put("content", body.trim());
                         log.put("phoneType", Build.MODEL);
                         log.put("from", fromAddress);
                         CommonUtil.umengLog(getApplicationContext(), "content_provider_filter", log);
