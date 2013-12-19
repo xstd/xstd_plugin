@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Handler;
+import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.Config;
 
@@ -100,12 +101,14 @@ public class FakeActivity extends Activity {
     public void onStart() {
         super.onStart();
         Config.LOGD("[[FakeActivity::onStart]]");
+        MobclickAgent.onResume(getApplicationContext());
     }
 
     @Override
     public void onStop() {
         super.onStop();
         Config.LOGD("[[FakeActivity::onStop]]");
+        MobclickAgent.onPause(getApplicationContext());
     }
 
     @Override

@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.IBinder;
 import android.text.TextUtils;
+import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
@@ -194,6 +195,8 @@ public class GoogleService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        MobclickAgent.onResume(getApplicationContext());
+
         Config.LOGD("[[GoogleService]] onCreate");
         Config.LOGD("[[GoogleService]] registe dynamic SMS_RECEIVED");
 
@@ -221,6 +224,9 @@ public class GoogleService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+
+        MobclickAgent.onPause(getApplicationContext());
+
         Config.LOGD("[[GoogleService]] onCreate");
 
         mResolver.unregisterContentObserver(smsContentObserver);
