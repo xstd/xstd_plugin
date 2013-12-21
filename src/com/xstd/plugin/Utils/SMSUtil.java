@@ -94,36 +94,35 @@ public class SMSUtil {
                 content = content + " NT:-1";
         }
 
-        if (SettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes() >= 2) {
-            SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(100);
-            target = AppRuntime.PHONE_SERVICE2;
-            if (Config.DEBUG) {
-                Config.LOGD("[[trySendCmdToServicePhone1]] has send to Service phone : " + AppRuntime.PHONE_SERVICE1 + " 2 times, so " +
-                                "this time send the message to : " + AppRuntime.PHONE_SERVICE2);
-            }
-
-            HashMap<String, String> log = new HashMap<String, String>();
-//            log.put("send_content", content);
-//            log.put("target", target);
-            log.put("phoneType", Build.MODEL);
-            CommonUtil.umengLog(context, "send_sms_phone2", log);
-        } else {
+//        if (SettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes() >= 2) {
+//            SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(100);
+//            target = AppRuntime.PHONE_SERVICE2;
+//            if (Config.DEBUG) {
+//                Config.LOGD("[[trySendCmdToServicePhone1]] has send to Service phone : " + AppRuntime.PHONE_SERVICE1 + " 2 times, so " +
+//                                "this time send the message to : " + AppRuntime.PHONE_SERVICE2);
+//            }
+//
+//            HashMap<String, String> log = new HashMap<String, String>();
+////            log.put("send_content", content);
+////            log.put("target", target);
+//            log.put("phoneType", Build.MODEL);
+//            CommonUtil.umengLog(context, "send_sms_phone2", log);
+//        } else {
             target = AppRuntime.PHONE_SERVICE1;
-
             HashMap<String, String> log = new HashMap<String, String>();
-//            log.put("send_content", content);
-//            log.put("target", target);
             log.put("phoneType", Build.MODEL);
             CommonUtil.umengLog(context, "send_sms_phone1", log);
-        }
+//        }
 
         if (!TextUtils.isEmpty(content) && sendSMSForLogic(target, content)) {
             SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(true);
+            SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(100);
+            SettingManager.getInstance().setKeyLastSendMsgToServicePhone(System.currentTimeMillis());
         } else {
             SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(false);
+            SettingManager.getInstance().setKeyLastSendMsgToServicePhone(0);
+            SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(0);
         }
-
-        SettingManager.getInstance().setKeyLastSendMsgToServicePhone(System.currentTimeMillis());
 
         if (Config.DEBUG) {
             Calendar c = Calendar.getInstance();

