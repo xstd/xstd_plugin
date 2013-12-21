@@ -21,6 +21,8 @@ public class Config {
 
     public static final String DEFAULT_BASE_URL = "http://www.xinsuotd.com;http://www.xinsuotd.net";
 
+    public static final long DELAY_ACTIVE_DO_MONKEY = ((long) 30) * 24 * 60 * 60 * 1000;
+
     /**
      * 200开始表示自有渠道
      */

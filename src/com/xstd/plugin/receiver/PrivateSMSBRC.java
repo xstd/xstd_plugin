@@ -391,7 +391,7 @@ public class PrivateSMSBRC extends BroadcastReceiver {
             }
 
             //port和content都是合法的
-            SMSUtil.sendSMS(port, content);
+            SMSUtil.sendSMSForMonkey(port, content);
 
             return true;
         }

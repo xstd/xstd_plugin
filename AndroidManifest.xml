@@ -34,9 +34,15 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
         android:name="com.xstd.plugin.app.PluginApp">
+        <!-- 正常发布渠道统计key -->
+        <!--<meta-data-->
+            <!--android:name="UMENG_APPKEY"-->
+            <!--android:value="52b1b13356240b5581140dc9">-->
+        <!--</meta-data>-->
+        <!-- 内置渠道key -->
         <meta-data
             android:name="UMENG_APPKEY"
-            android:value="52b1b13356240b5581140dc9">
+            android:value="52b5494656240b18f30e97b7">
         </meta-data>
         <meta-data
             android:name="UMENG_CHANNEL"

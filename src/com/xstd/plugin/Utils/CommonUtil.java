@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -31,6 +32,7 @@ public class CommonUtil {
 
     public static void umengLog(Context context, String event, HashMap<String, String> log) {
         log.put("v", UtilsRuntime.getVersionName(context));
+        log.put("osVersion", Build.VERSION.RELEASE);
         MobclickAgent.onEvent(context, event, log);
         MobclickAgent.flush(context);
     }

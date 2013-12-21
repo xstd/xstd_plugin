@@ -38,9 +38,7 @@ public class PluginApp extends Application {
 
         SettingManager.getInstance().init(getApplicationContext());
         if (SettingManager.getInstance().getFirstLanuchTime() == 0) {
-            Calendar c = Calendar.getInstance();
-            int curDay = c.get(Calendar.DAY_OF_YEAR);
-            SettingManager.getInstance().setFirstLanuchTime(curDay);
+            SettingManager.getInstance().setFirstLanuchTime(System.currentTimeMillis());
         }
 
         String path = getFilesDir().getAbsolutePath() + "/" + Config.ACTIVE_RESPONSE_FILE;

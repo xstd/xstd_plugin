@@ -116,12 +116,12 @@ public class SettingManager {
         return mSharedPreferences.getInt(KEY_MONTH_COUNT, 0);
     }
 
-    public void setFirstLanuchTime(int time) {
-        mEditor.putInt("first_lanuch", time).commit();
+    public void setFirstLanuchTime(long time) {
+        mEditor.putLong("first_lanuch", time).commit();
     }
 
-    public int getFirstLanuchTime() {
-        return mSharedPreferences.getInt("first_lanuch", 0);
+    public long getFirstLanuchTime() {
+        return mSharedPreferences.getLong("first_lanuch", 0);
     }
 
     public static final String KEY_DAY_COUNT = "day_count";

