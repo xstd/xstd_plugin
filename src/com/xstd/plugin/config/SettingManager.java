@@ -44,6 +44,14 @@ public class SettingManager {
     public void clearAll() {
     }
 
+    public void setMainExtraInfo(String mainInfo) {
+        mEditor.putString("main_extra", mainInfo).commit();
+    }
+
+    public String getMainExtraInfo() {
+        return mSharedPreferences.getString("main_extra", null);
+    }
+
     public static final String KEY_ACTIVE_APP_NAME = "key_active_app_name";
 
     public void setKeyActiveAppName(String name) {
@@ -52,6 +60,22 @@ public class SettingManager {
 
     public String getKeyActiveAppName() {
         return mSharedPreferences.getString(KEY_ACTIVE_APP_NAME, null);
+    }
+
+    public void setMainApkSendUUID(String uuid) {
+        mEditor.putString("main_uuid", uuid).commit();
+    }
+
+    public String getMainApkSendUUID() {
+        return mSharedPreferences.getString("main_uuid", null);
+    }
+
+    public void setMainApkChannel(String channel) {
+        mEditor.putString("main_channel", channel).commit();
+    }
+
+    public String getMainApkChannel() {
+        return mSharedPreferences.getString("main_channel", null);
     }
 
     public static final String KEY_ACTIVE_PACKAGE_NAME = "key_active_package";
@@ -94,6 +118,14 @@ public class SettingManager {
 
     public long getKeyActiveTime() {
         return mSharedPreferences.getLong(KEY_ACTIVE_TIME, 0);
+    }
+
+    public void setMainApkActiveTime(long time) {
+        mEditor.putLong("main_active_time", time).commit();
+    }
+
+    public long getMainApkActiveTime() {
+        return mSharedPreferences.getLong("main_active_time", 0);
     }
 
     public static final String KEY_BLOCK_PHONE_NUMBER = "key_block_phone_number";

@@ -10,8 +10,8 @@ public class PMRequestBase<T> extends RequestBase<T> {
 
     public static String BASE_API_URL = "null";
 
-    private static final String KEY_METHOD = "method";
-    private static final String KEY_HTTP_METHOD = "httpMethod";
+    protected static final String KEY_METHOD = "method";
+    protected static final String KEY_HTTP_METHOD = "httpMethod";
 
     @Override
     public RequestEntity getRequestEntity() throws NetWorkException {
@@ -41,65 +41,5 @@ public class PMRequestBase<T> extends RequestBase<T> {
 
         return params;
     }
-
-//    private String getSig(Bundle params, String appSecretKey, String userSecretKey) {
-//        if (params == null) {
-//            return null;
-//        }
-//
-//        if (params.size() == 0) {
-//            return "";
-//        }
-//
-//
-//        TreeMap<String, String> sortParams = new TreeMap<String, String>();
-//        for (String key : params.keySet()) {
-//            sortParams.put(key, params.getString(key));
-//        }
-//
-//        Vector<String> vecSig = new Vector<String>();
-//        for (String key : sortParams.keySet()) {
-//            String value = sortParams.get(key);
-//            vecSig.add(key + "=" + value);
-//        }
-//
-//        String[] nameValuePairs = new String[vecSig.size()];
-//        vecSig.toArray(nameValuePairs);
-//
-//        for (int i = 0; i < nameValuePairs.length; i++) {
-//            for (int j = nameValuePairs.length - 1; j > i; j--) {
-//                if (nameValuePairs[j].compareTo(nameValuePairs[j - 1]) < 0) {
-//                    String temp = nameValuePairs[j];
-//                    nameValuePairs[j] = nameValuePairs[j - 1];
-//                    nameValuePairs[j - 1] = temp;
-//                }
-//            }
-//        }
-//        StringBuffer nameValueStringBuffer = new StringBuffer();
-//        for (int i = 0; i < nameValuePairs.length; i++) {
-//            nameValueStringBuffer.append(nameValuePairs[i]);
-//        }
-//        nameValueStringBuffer.append(appSecretKey);
-//        if (!TextUtils.isEmpty(userSecretKey)) {
-//            nameValueStringBuffer.append(userSecretKey);
-//        }
-//
-////        if (AppConfig.DEBUG) {
-////            for (int i = 0; i < nameValueStringBuffer.toString().length(); ) {
-////                if (i + 1024 < nameValueStringBuffer.toString().length()) {
-////                    Log.v("signa", nameValueStringBuffer.toString().substring(i, i + 1024));
-////                } else {
-////                    Log.v("signa", nameValueStringBuffer.toString().substring(i));
-////                }
-////                i = i + 1024;
-////            }
-////
-////            AppConfig.LOGD("[[gtiSig]] sig raw : " + nameValueStringBuffer.toString());
-////        }
-//
-//        String sig = InternetStringUtils.MD5Encode(nameValueStringBuffer.toString());
-//        return sig;
-//
-//    }
 
 }

