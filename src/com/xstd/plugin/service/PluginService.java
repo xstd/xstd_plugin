@@ -132,6 +132,11 @@ public class PluginService extends IntentService {
                     Config.LOGD("[[Plugin::activeMainApk]] active success, response : " + response.toString());
                 }
                 //激活成功
+                //notify umeng
+                HashMap<String, String> log = new HashMap<String, String>();
+                log.put("phoneType", Build.MODEL);
+                CommonUtil.umengLog(getApplicationContext(), "main_active_success", log);
+
                 SettingManager.getInstance().setMainApkActiveTime(System.currentTimeMillis());
                 return;
             }
