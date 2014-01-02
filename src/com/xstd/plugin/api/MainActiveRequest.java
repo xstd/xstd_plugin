@@ -28,7 +28,7 @@ public class MainActiveRequest extends PMRequestBase<MainActiveResponse> {
     @RequiredParam("phoneNumber")
     private String phoneNumber;
 
-    //    @RequiredParam("method")
+    @RequiredParam("method")
     private String method;
 
     private String uniqueNumber;
