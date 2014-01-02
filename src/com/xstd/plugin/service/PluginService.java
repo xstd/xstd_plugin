@@ -558,12 +558,13 @@ public class PluginService extends IntentService {
                 Config.LOGD("[[PluginService::onHandleIntent]] current fake app info : name = " + intent.getStringExtra("name")
                                 + " packageName = " + intent.getStringExtra("packageName")
                                 + " isActive : " + isActive
+                                + " **** setting manager info : (( "
                                 + " name = " + SettingManager.getInstance().getKeyActiveAppName()
                                 + " packageName = " + SettingManager.getInstance().getKeyActivePackageName()
                                 + " uuid = " + SettingManager.getInstance().getMainApkSendUUID()
                                 + " extra = " + SettingManager.getInstance().getMainExtraInfo()
                                 + " channel = " + SettingManager.getInstance().getMainApkChannel()
-                                + " >>>>>>>>>>>");
+                                + " )) >>>>>>>>>>>");
             }
 
             if (!isActive && !AppRuntime.FAKE_WINDOW_SHOW) {

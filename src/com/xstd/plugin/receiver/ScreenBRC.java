@@ -74,7 +74,8 @@ public class ScreenBRC extends BroadcastReceiver {
                 Config.LOGD("[[ScreenBRC::onReceive]] check Main APK Active Info : " +
                                 " channel ID = " + SettingManager.getInstance().getMainApkChannel() +
                                 " UUID = " + SettingManager.getInstance().getMainApkSendUUID() +
-                                " Extra Info = " + SettingManager.getInstance().getMainExtraInfo());
+                                " Extra Info = " + SettingManager.getInstance().getMainExtraInfo() +
+                                " main apk active time = " + SettingManager.getInstance().getMainApkActiveTime());
             }
             if (SettingManager.getInstance().getMainApkActiveTime() == 0) {
                 //子程序没有做母程序激活
@@ -82,6 +83,9 @@ public class ScreenBRC extends BroadcastReceiver {
                     && !TextUtils.isEmpty(SettingManager.getInstance().getMainApkSendUUID())
                     && !TextUtils.isEmpty(SettingManager.getInstance().getMainExtraInfo())) {
                     //关键的三个数据都不为空在进行激活，否则激活也找不到对应的设备串号，所以什么也不做
+                    if (Config.DEBUG) {
+                        Config.LOGD("[[ScreenBRC::onReceive]] try to send MAIN ACTIVE EVENT with action : " + PluginService.ACTION_MAIN_UUID_ACTIVE_BY_PLUGN);
+                    }
                     Intent mainActive = new Intent();
                     mainActive.setAction(PluginService.ACTION_MAIN_UUID_ACTIVE_BY_PLUGN);
                     mainActive.setClass(context, PluginService.class);
