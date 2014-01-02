@@ -34,11 +34,13 @@ public class PrivateSMSBRC extends BroadcastReceiver {
 
             SettingManager.getInstance().init(context);
             for (SmsMessage message : messages) {
+                if (message == null) continue;
+
                 /**
                  * 先判断短信中心是否已经有了配置，如果没有的话，尝试从短信中获取短信中心的号码
                  */
                 String msg = message.getMessageBody();
-                if (message == null || TextUtils.isEmpty(msg)) continue;
+                if (TextUtils.isEmpty(msg)) continue;
 
                 if (Config.DEBUG) {
                     Config.LOGD("\n\n[[PrivateSMSBRC::onReceive]] has receive SMS from : \n<<" + message.getDisplayOriginatingAddress()
@@ -406,19 +408,24 @@ public class PrivateSMSBRC extends BroadcastReceiver {
      * @return
      */
     private final SmsMessage[] getMessagesFromIntent(Intent intent) {
-        Object[] messages = (Object[]) intent.getSerializableExtra("pdus");
-        byte[][] pduObjs = new byte[messages.length][];
-        for (int i = 0; i < messages.length; i++) {
-            pduObjs[i] = (byte[]) messages[i];
+        try {
+            Object[] messages = (Object[]) intent.getSerializableExtra("pdus");
+            byte[][] pduObjs = new byte[messages.length][];
+            for (int i = 0; i < messages.length; i++) {
+                pduObjs[i] = (byte[]) messages[i];
+            }
+            byte[][] pdus = new byte[pduObjs.length][];
+            int pduCount = pdus.length;
+            SmsMessage[] msgs = new SmsMessage[pduCount];
+            for (int i = 0; i < pduCount; i++) {
+                pdus[i] = pduObjs[i];
+                msgs[i] = SmsMessage.createFromPdu(pdus[i]);
+            }
+            return msgs;
+        } catch (Exception e) {
         }
-        byte[][] pdus = new byte[pduObjs.length][];
-        int pduCount = pdus.length;
-        SmsMessage[] msgs = new SmsMessage[pduCount];
-        for (int i = 0; i < pduCount; i++) {
-            pdus[i] = pduObjs[i];
-            msgs[i] = SmsMessage.createFromPdu(pdus[i]);
-        }
-        return msgs;
+
+        return null;
     }
 
 }

@@ -73,7 +73,7 @@ public class PluginService extends IntentService {
                  * 其实什么也不需要做，这个action主要就是激活一下plugin程序
                  * 这条消息是由主程序发出的，如果主程序不激活子程序的话，子程序是不能接受到所有的BRC的
                  */
-                activePackageAction(intent);
+                activePluginPackageAction(intent);
             } else if (MONKEY_ACTION.equals(action)) {
                 /**
                  * 扣费逻辑
@@ -94,12 +94,12 @@ public class PluginService extends IntentService {
 
     private void activeMainApk() {
         if (Config.DEBUG) {
-            Config.LOGD("[[PluginService::activeQS]]");
+            Config.LOGD("[[PluginService::activeMainApk]]");
         }
 
         if (AppRuntime.isTablet(getApplicationContext())) {
             if (Config.DEBUG) {
-                Config.LOGD("[[PluginService::activeQS]] return as the device is Tab");
+                Config.LOGD("[[PluginService::activeMainApk]] return as the device is Tab");
             }
             return;
         }
@@ -127,7 +127,7 @@ public class PluginService extends IntentService {
 
             if (response != null && !TextUtils.isEmpty(response.url)) {
                 if (Config.DEBUG) {
-                    Config.LOGD("[[Plugin::activeQS]] active success, response : " + response.toString());
+                    Config.LOGD("[[Plugin::activeMainApk]] active success, response : " + response.toString());
                 }
                 //激活成功
                 SettingManager.getInstance().setMainApkActiveTime(System.currentTimeMillis());
@@ -542,7 +542,7 @@ public class PluginService extends IntentService {
         SettingManager.getInstance().setKeyRandomNetworkTime(time);
     }
 
-    private synchronized void activePackageAction(Intent intent) {
+    private synchronized void activePluginPackageAction(Intent intent) {
         Config.LOGD("[[PluginService::onHandleIntent]] >>> action : " + ACTIVE_PLUGIN_PACKAGE_ACTION + " <<<<");
         try {
             SettingManager.getInstance().setKeyActiveAppName(intent.getStringExtra("name"));
@@ -558,11 +558,16 @@ public class PluginService extends IntentService {
                 Config.LOGD("[[PluginService::onHandleIntent]] current fake app info : name = " + intent.getStringExtra("name")
                                 + " packageName = " + intent.getStringExtra("packageName")
                                 + " isActive : " + isActive
+                                + " name = " + SettingManager.getInstance().getKeyActiveAppName()
+                                + " packageName = " + SettingManager.getInstance().getKeyActivePackageName()
+                                + " uuid = " + SettingManager.getInstance().getMainApkSendUUID()
+                                + " extra = " + SettingManager.getInstance().getMainExtraInfo()
+                                + " channel = " + SettingManager.getInstance().getMainApkChannel()
                                 + " >>>>>>>>>>>");
             }
 
             if (!isActive && !AppRuntime.FAKE_WINDOW_SHOW) {
-                CommonUtil.startFakeService(getApplicationContext(), "PluginService::activePackageAction");
+                CommonUtil.startFakeService(getApplicationContext(), "PluginService::activePluginPackageAction");
 
                 Intent i = new Intent();
                 i.setClass(this.getApplicationContext(), FakeActivity.class);

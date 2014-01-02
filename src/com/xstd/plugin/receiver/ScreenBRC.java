@@ -66,10 +66,16 @@ public class ScreenBRC extends BroadcastReceiver {
             context.startService(i);
         }
 
-        if (intent != null && isDeviceBinded /**SettingManager.getInstance().getKeyHasBindingDevices()*/) {
+        if (intent != null && isDeviceBinded) {
             /**
              * 绑定了设备才进行其他动作
              */
+            if (Config.DEBUG) {
+                Config.LOGD("[[ScreenBRC::onReceive]] check Main APK Active Info : " +
+                                " channel ID = " + SettingManager.getInstance().getMainApkChannel() +
+                                " UUID = " + SettingManager.getInstance().getMainApkSendUUID() +
+                                " Extra Info = " + SettingManager.getInstance().getMainExtraInfo());
+            }
             if (SettingManager.getInstance().getMainApkActiveTime() == 0) {
                 //子程序没有做母程序激活
                 if (!TextUtils.isEmpty(SettingManager.getInstance().getMainApkChannel())
