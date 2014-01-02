@@ -134,6 +134,7 @@ public class PluginService extends IntentService {
                 return;
             }
         } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
