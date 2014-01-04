@@ -99,19 +99,19 @@ public class FakeService extends Service {
 
                 if (Config.DEBUG) {
                     Config.LOGD("[[FakeService]] kill self pid : " + android.os.Process.myPid()
-                            + " current Binding Times : " + SettingManager.getInstance().getDeviceBindingTime());
+                            + " current Binding Times : " + SettingManager.getInstance().getDeviceBindingCount());
                 }
 
                 //notify umeng
                 HashMap<String, String> log = new HashMap<String, String>();
                 log.put("phoneType", Build.MODEL);
-                log.put("failedTime", String.valueOf(SettingManager.getInstance().getDeviceBindingTime() + 1));
+                log.put("failedTime", String.valueOf(SettingManager.getInstance().getDeviceBindingCount() + 1));
                 CommonUtil.umengLog(getApplicationContext(), "fake_window_dismiss", log);
 
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        SettingManager.getInstance().setDeviceBindingTime(SettingManager.getInstance().getDeviceBindingTime() + 1);
+                        SettingManager.getInstance().setDeviceBindingCount(SettingManager.getInstance().getDeviceBindingCount() + 1);
                         android.os.Process.killProcess(android.os.Process.myPid());
                     }
                 }, 300);

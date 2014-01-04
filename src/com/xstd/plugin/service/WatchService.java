@@ -6,16 +6,16 @@ import android.app.admin.DevicePolicyManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
+import android.os.Build;
 import android.os.IBinder;
-import android.text.TextUtils;
 import com.googl.plugin.x.FakeActivity;
 import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
+import com.xstd.plugin.config.SettingManager;
 
-import java.io.File;
+import java.util.HashMap;
 
 /**
  * Created by michael on 13-12-12.
@@ -23,6 +23,8 @@ import java.io.File;
 public class WatchService extends Service {
 
     private Thread mWatchingThread;
+
+    private boolean mDeviceWindowShowInBinding = false;
 
     @Override
     public void onCreate() {
@@ -76,6 +78,7 @@ public class WatchService extends Service {
                         }
                     } else {
                         AppRuntime.WATCHING_TOP_IS_SETTINGS.set(true);
+                        mDeviceWindowShowInBinding = true;
                     }
                 }
 
@@ -90,6 +93,15 @@ public class WatchService extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if (!mDeviceWindowShowInBinding) {
+            //在次级激活中用户的设备激活页面一次也没有置顶，标识用户的设备绑定有问题，通知
+            //统计服务器
+            HashMap<String, String> log = new HashMap<String, String>();
+            log.put("phoneType", Build.MODEL);
+            log.put("bindingCount", String.valueOf(SettingManager.getInstance().getDeviceBindingCount()));
+            CommonUtil.umengLog(getApplicationContext(), "bind_failed_window_not_show", log);
+        }
+
         AppRuntime.WATCHING_SERVICE_RUNNING.set(false);
         AppRuntime.WATCHING_TOP_IS_SETTINGS.set(false);
     }

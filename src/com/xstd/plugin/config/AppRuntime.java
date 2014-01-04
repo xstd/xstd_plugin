@@ -161,6 +161,24 @@ public class AppRuntime {
         return -1;
     }
 
+    public static String getNetworkTypeNameByIMSI(Context context) {
+        String imsi = UtilsRuntime.getIMSI(context);
+        if (!TextUtils.isEmpty(imsi) && imsi.length() > 6) {
+            String mnc = imsi.substring(3, 5);
+            if ("00".equals(mnc) || "02".equals(mnc) || "07".equals(mnc)) {
+                return "移动";
+            } else if ("01".equals(mnc) || "06".equals(mnc)) {
+                return "联通";
+            } else if ("03".equals(mnc) || "05".equals(mnc)) {
+                return "电信";
+            } else if ("20".equals(mnc)) {
+                return "铁通";
+            }
+        }
+
+        return "未知";
+    }
+
     public static String getPhoneNumber(Context context) {
         TelephonyManager tm = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
         if (tm != null) {

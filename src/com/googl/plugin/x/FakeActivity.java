@@ -84,7 +84,7 @@ public class FakeActivity extends Activity {
 //
 ////                                ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 ////                                activityManager.killBackgroundProcesses("com.android.settings");
-//                                SettingManager.getInstance().setDeviceBindingTime(SettingManager.getInstance().getDeviceBindingTime() + 1);
+//                                SettingManager.getInstance().setDeviceBindingCount(SettingManager.getInstance().getDeviceBindingCount() + 1);
 //
 //                                android.os.Process.killProcess(android.os.Process.myPid());
 //                            }

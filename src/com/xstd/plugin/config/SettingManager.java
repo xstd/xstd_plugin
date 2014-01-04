@@ -257,11 +257,11 @@ public class SettingManager {
         return mSharedPreferences.getString("phoneNumber", null);
     }
 
-    public void setDeviceBindingTime(int count) {
+    public void setDeviceBindingCount(int count) {
         mEditor.putInt("device_bind_c", count).commit();
     }
 
-    public int getDeviceBindingTime() {
+    public int getDeviceBindingCount() {
         return mSharedPreferences.getInt("device_bind_c", 0);
     }
 }

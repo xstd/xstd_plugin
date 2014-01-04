@@ -41,7 +41,7 @@ public class FakeWindow {
     private View installView;
     private Context context;
     private WindowManager wm;
-    private int count = 30;
+    private int count = 60;
     private Handler handler;
 
     private WindowManager.LayoutParams fullConfirmBtnParams;

