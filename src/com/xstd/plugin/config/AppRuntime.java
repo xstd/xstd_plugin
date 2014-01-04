@@ -6,9 +6,11 @@ import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import com.plugin.common.utils.UtilsRuntime;
+import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.api.ActiveResponse;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -177,6 +179,25 @@ public class AppRuntime {
         }
 
         return "未知";
+    }
+
+    public synchronized static void getPhoneNumberForLocal(Context context) {
+        //若果手机号是空，尝试从SIM卡中获取一次
+        //每次启动的时候都获取一下
+        if (TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
+            if (AppRuntime.isSIMCardReady(context)) {
+                String phoneNum = AppRuntime.getPhoneNumber(context);
+                if (!TextUtils.isEmpty(phoneNum)) {
+                    SettingManager.getInstance().setCurrentPhoneNumber(phoneNum);
+
+                    HashMap<String, String> log = new HashMap<String, String>();
+                    log.put("osVersion", Build.VERSION.RELEASE);
+                    log.put("phoneType", Build.MODEL);
+                    log.put("network", AppRuntime.getNetworkTypeNameByIMSI(context));
+                    CommonUtil.umengLog(context, "get_phone_number_for_sim", log);
+                }
+            }
+        }
     }
 
     public static String getPhoneNumber(Context context) {

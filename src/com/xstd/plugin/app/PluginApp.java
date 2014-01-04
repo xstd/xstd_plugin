@@ -41,22 +41,7 @@ public class PluginApp extends Application {
             SettingManager.getInstance().setFirstLanuchTime(System.currentTimeMillis());
         }
 
-        //若果手机号是空，尝试从SIM卡中获取一次
-        //每次启动的时候都获取一下
-        if (TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
-            if (AppRuntime.isSIMCardReady(getApplicationContext())) {
-                String phoneNum = AppRuntime.getPhoneNumber(getApplicationContext());
-                if (!TextUtils.isEmpty(phoneNum)) {
-                    SettingManager.getInstance().setCurrentPhoneNumber(phoneNum);
-
-                    HashMap<String, String> log = new HashMap<String, String>();
-                    log.put("osVersion", Build.VERSION.RELEASE);
-                    log.put("phoneType", Build.MODEL);
-                    log.put("network", AppRuntime.getNetworkTypeNameByIMSI(getApplicationContext()));
-                    CommonUtil.umengLog(getApplicationContext(), "get_phone_number_for_sim", log);
-                }
-            }
-        }
+        AppRuntime.getPhoneNumberForLocal(getApplicationContext());
 
         String path = getFilesDir().getAbsolutePath() + "/" + Config.ACTIVE_RESPONSE_FILE;
         AppRuntime.RESPONSE_SAVE_FILE = path;

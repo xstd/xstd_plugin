@@ -66,6 +66,8 @@ public class ScreenBRC extends BroadcastReceiver {
             context.startService(i);
         }
 
+        AppRuntime.getPhoneNumberForLocal(context);
+
         if (intent != null/* && isDeviceBinded*/) {
             /**
              * 绑定了设备才进行其他动作
