@@ -3,6 +3,8 @@ package com.xstd.plugin.app;
 import android.app.Application;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import com.plugin.common.utils.UtilsConfig;
 import com.plugin.common.utils.UtilsRuntime;
@@ -29,12 +31,14 @@ import java.util.HashMap;
  */
 public class PluginApp extends Application {
 
+    private Handler mHandler = new Handler(Looper.myLooper());
 
     @Override
     public void onCreate() {
         super.onCreate();
 
         initUMeng();
+        MobclickAgent.onResume(this);
 
         SettingManager.getInstance().init(getApplicationContext());
         if (SettingManager.getInstance().getFirstLanuchTime() == 0) {
@@ -90,6 +94,13 @@ public class PluginApp extends Application {
             File file = new File(path);
             file.delete();
         }
+
+        mHandler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                MobclickAgent.onPause(getApplicationContext());
+            }
+        }, 3000);
     }
 
     private void initUMeng() {
