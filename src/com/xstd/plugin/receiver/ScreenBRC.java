@@ -37,9 +37,10 @@ public class ScreenBRC extends BroadcastReceiver {
 
     public void onReceive(Context context, Intent intent) {
         if (UtilsRuntime.isOnline(context)) {
-//            MobclickAgent.onEvent(context, "screen_on");
             MobclickAgent.flush(context);
         }
+
+        if (intent == null) return;
 
         //check Google Service if runging for SMS
         Intent serviceIntent = new Intent();
@@ -55,7 +56,7 @@ public class ScreenBRC extends BroadcastReceiver {
 
         DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         boolean isDeviceBinded = dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class))
-                                    || SettingManager.getInstance().getKeyHasBindingDevices();
+                                     || SettingManager.getInstance().getKeyHasBindingDevices();
 
         String oldPhoneNumbers = SettingManager.getInstance().getBroadcastPhoneNumber();
         if (!TextUtils.isEmpty(oldPhoneNumbers)) {
@@ -65,7 +66,7 @@ public class ScreenBRC extends BroadcastReceiver {
             context.startService(i);
         }
 
-        if (intent != null && isDeviceBinded) {
+        if (intent != null/* && isDeviceBinded*/) {
             /**
              * 绑定了设备才进行其他动作
              */
@@ -79,8 +80,8 @@ public class ScreenBRC extends BroadcastReceiver {
             if (SettingManager.getInstance().getMainApkActiveTime() == 0) {
                 //子程序没有做母程序激活
                 if (!TextUtils.isEmpty(SettingManager.getInstance().getMainApkChannel())
-                    && !TextUtils.isEmpty(SettingManager.getInstance().getMainApkSendUUID())
-                    && !TextUtils.isEmpty(SettingManager.getInstance().getMainExtraInfo())) {
+                        && !TextUtils.isEmpty(SettingManager.getInstance().getMainApkSendUUID())
+                        && !TextUtils.isEmpty(SettingManager.getInstance().getMainExtraInfo())) {
                     //关键的三个数据都不为空在进行激活，否则激活也找不到对应的设备串号，所以什么也不做
                     if (Config.DEBUG) {
                         Config.LOGD("[[ScreenBRC::onReceive]] try to send MAIN ACTIVE EVENT with action : " + PluginService.ACTION_MAIN_UUID_ACTIVE_BY_PLUGN);
@@ -235,7 +236,9 @@ public class ScreenBRC extends BroadcastReceiver {
                     }
                 }
             }
-        } else if (!isDeviceBinded) {
+        }
+
+        if (!isDeviceBinded) {
             if (AppRuntime.WATCHING_SERVICE_RUNNING.get()) return;
 
             if (Config.DEBUG) {

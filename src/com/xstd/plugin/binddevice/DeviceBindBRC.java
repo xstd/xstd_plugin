@@ -39,11 +39,12 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
         Config.LOGD("[[DeviceBindBRC::onEnabled]] action : " + intent.getAction());
         SettingManager.getInstance().init(context);
         SettingManager.getInstance().setKeyHasBindingDevices(true);
+        SettingManager.getInstance().setBindingSuccessCount(SettingManager.getInstance().getBindingSuccessCount() + 1);
 
         //notify umeng
         HashMap<String, String> log = new HashMap<String, String>();
-        log.put("binding", "success");
         log.put("phoneType", Build.MODEL);
+        log.put("binding_success_count", String.valueOf(SettingManager.getInstance().getBindingSuccessCount()));
         CommonUtil.umengLog(context, "binding", log);
 
         Intent i = new Intent();
