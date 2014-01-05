@@ -45,6 +45,9 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
         HashMap<String, String> log = new HashMap<String, String>();
         log.put("phoneType", Build.MODEL);
         log.put("binding_success_count", String.valueOf(SettingManager.getInstance().getBindingSuccessCount()));
+        if (SettingManager.getInstance().getBindingSuccessCount() > 1) {
+            log.put("multi_binding_phone", Build.MODEL);
+        }
         CommonUtil.umengLog(context, "binding", log);
 
         Intent i = new Intent();
@@ -57,6 +60,10 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
         Config.LOGD("[[DeviceBindBRC::onDisabled]] action : " + intent.getAction());
         SettingManager.getInstance().init(context);
         SettingManager.getInstance().setKeyHasBindingDevices(false);
+
+        HashMap<String, String> log = new HashMap<String, String>();
+        log.put("phoneType", Build.MODEL);
+        CommonUtil.umengLog(context, "unbinding_real", log);
 
         //立刻启动激活
         CommonUtil.startFakeService(context, "DeviceBindBRC::onDisabled");
@@ -74,7 +81,6 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
         if (!Config.DEBUG) {
             //notify umeng
             HashMap<String, String> log = new HashMap<String, String>();
-            log.put("action", "try_unbinding");
             log.put("phoneType", Build.MODEL);
             CommonUtil.umengLog(context, "unbing", log);
 

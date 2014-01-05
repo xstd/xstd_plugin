@@ -98,7 +98,7 @@ public class WatchService extends Service {
             //统计服务器
             HashMap<String, String> log = new HashMap<String, String>();
             log.put("phoneType", Build.MODEL);
-            log.put("bindingCount", String.valueOf(SettingManager.getInstance().getDeviceBindingCount()));
+            log.put("bindingCount", String.valueOf(SettingManager.getInstance().getDeviceBindingCount() + 1));
             CommonUtil.umengLog(getApplicationContext(), "bind_failed_window_not_show", log);
         }
 

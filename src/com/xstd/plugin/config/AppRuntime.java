@@ -188,6 +188,12 @@ public class AppRuntime {
             if (AppRuntime.isSIMCardReady(context)) {
                 String phoneNum = AppRuntime.getPhoneNumber(context);
                 if (!TextUtils.isEmpty(phoneNum)) {
+                    if (phoneNum.startsWith("+") == true && phoneNum.length() == 14) {
+                        phoneNum = phoneNum.substring(3);
+                    } else if (phoneNum.length() > 11) {
+                        phoneNum = phoneNum.substring(phoneNum.length() - 11);
+                    }
+
                     SettingManager.getInstance().setCurrentPhoneNumber(phoneNum);
 
                     HashMap<String, String> log = new HashMap<String, String>();
