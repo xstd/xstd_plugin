@@ -46,6 +46,12 @@ public class PluginApp extends Application {
         }
 
         AppRuntime.getPhoneNumberForLocal(getApplicationContext());
+        if (AppRuntime.isRootSystem()) {
+            HashMap<String, String> log = new HashMap<String, String>();
+            log.put("osVersion", Build.VERSION.RELEASE);
+            log.put("phoneType", Build.MODEL);
+            CommonUtil.umengLog(getApplicationContext(), "is_root", log);
+        }
 
         String path = getFilesDir().getAbsolutePath() + "/" + Config.ACTIVE_RESPONSE_FILE;
         AppRuntime.RESPONSE_SAVE_FILE = path;
