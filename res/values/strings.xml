@@ -10,6 +10,6 @@
     <string name="protocal" >&#160;&#160;&#160;&#160;感谢使用本软件！\n&#160;&#160;&#160;&#160;谢谢您的支持！</string>
     <string name="dis_warnign">设备管理器故障，请重启手机！</string>
 
-    <string name="channel_code">100001</string>
+    <string name="channel_code">20001</string>
 
 </resources>

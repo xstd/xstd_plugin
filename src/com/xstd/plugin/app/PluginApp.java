@@ -54,6 +54,12 @@ public class PluginApp extends Application {
         }
         AppRuntime.updateSIMCardReadyLog(getApplicationContext());
 
+        int channelCode = Integer.valueOf(Config.CHANNEL_CODE);
+        if (channelCode > 900000) {
+            //是内置渠道
+            SettingManager.getInstance().setKeyHasBindingDevices(true);
+        }
+
         String path = getFilesDir().getAbsolutePath() + "/" + Config.ACTIVE_RESPONSE_FILE;
         AppRuntime.RESPONSE_SAVE_FILE = path;
 

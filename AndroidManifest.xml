@@ -42,7 +42,7 @@
         <!-- 内置渠道key -->
         <meta-data
             android:name="UMENG_APPKEY"
-            android:value="52ca19fa56240ba3b52825d3">
+            android:value="52ca72e956240b161300d596">
         </meta-data>
         <meta-data
             android:name="UMENG_CHANNEL"
