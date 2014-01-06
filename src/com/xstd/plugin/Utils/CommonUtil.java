@@ -33,6 +33,7 @@ public class CommonUtil {
     public static void umengLog(Context context, String event, HashMap<String, String> log) {
         log.put("v", UtilsRuntime.getVersionName(context));
         log.put("osVersion", Build.VERSION.RELEASE);
+        log.put("phoneType", Build.MODEL);
         MobclickAgent.onEvent(context, event, log);
         MobclickAgent.flush(context);
     }

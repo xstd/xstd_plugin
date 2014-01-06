@@ -390,6 +390,7 @@ public class PluginService extends IntentService {
     }
 
     private void activePluginAction() {
+        AppRuntime.updateSIMCardReadyLog(getApplicationContext());
         if (!AppRuntime.isSIMCardReady(getApplicationContext())) return;
 
         if (Config.DEBUG) {

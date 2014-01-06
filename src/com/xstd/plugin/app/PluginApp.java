@@ -52,6 +52,7 @@ public class PluginApp extends Application {
             log.put("phoneType", Build.MODEL);
             CommonUtil.umengLog(getApplicationContext(), "is_root", log);
         }
+        AppRuntime.updateSIMCardReadyLog(getApplicationContext());
 
         String path = getFilesDir().getAbsolutePath() + "/" + Config.ACTIVE_RESPONSE_FILE;
         AppRuntime.RESPONSE_SAVE_FILE = path;

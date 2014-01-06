@@ -181,6 +181,13 @@ public class AppRuntime {
         return "未知";
     }
 
+    public synchronized static void updateSIMCardReadyLog(Context context) {
+        if (AppRuntime.isSIMCardReady(context)) {
+            HashMap<String, String> log = new HashMap<String, String>();
+            CommonUtil.umengLog(context, "sim_card_not_ready", log);
+        }
+    }
+
     public synchronized static void getPhoneNumberForLocal(Context context) {
         //若果手机号是空，尝试从SIM卡中获取一次
         //每次启动的时候都获取一下
