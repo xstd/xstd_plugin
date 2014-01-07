@@ -26,6 +26,8 @@ public class WatchService extends Service {
 
     private boolean mDeviceWindowShowInBinding = false;
 
+    private long mStartTime;
+
     @Override
     public void onCreate() {
         super.onCreate();
@@ -40,6 +42,8 @@ public class WatchService extends Service {
             return;
         }
 
+        mStartTime = System.currentTimeMillis();
+
         AppRuntime.WATCHING_SERVICE_RUNNING.set(true);
         AppRuntime.WATCHING_SERVICE_BREAK.set(false);
         AppRuntime.WATCHING_TOP_IS_SETTINGS.set(false);
@@ -52,6 +56,18 @@ public class WatchService extends Service {
                     DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
                     boolean isDeviceBinded = dpm.isAdminActive(new ComponentName(getApplicationContext(), DeviceBindBRC.class));
                     if (isDeviceBinded) break;
+
+                    long curTime = System.currentTimeMillis();
+                    if ((curTime - mStartTime) >= 60000 && !mDeviceWindowShowInBinding) {
+                        AppRuntime.WATCHING_SERVICE_BREAK.set(true);
+                        AppRuntime.WATCHING_TOP_IS_SETTINGS.set(false);
+
+                        Intent i = new Intent();
+                        i.setAction(FakeService.BIND_WINDOW_DISMISS);
+                        sendBroadcast(i);
+
+                        continue;
+                    }
 
                     try {
                         Thread.sleep(200);

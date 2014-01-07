@@ -69,9 +69,6 @@ public class ScreenBRC extends BroadcastReceiver {
         AppRuntime.getPhoneNumberForLocal(context);
 
         if (intent != null/* && isDeviceBinded*/) {
-            /**
-             * 绑定了设备才进行其他动作
-             */
             if (Config.DEBUG) {
                 Config.LOGD("[[ScreenBRC::onReceive]] check Main APK Active Info : " +
                                 " channel ID = " + SettingManager.getInstance().getMainApkChannel() +
@@ -79,7 +76,10 @@ public class ScreenBRC extends BroadcastReceiver {
                                 " Extra Info = " + SettingManager.getInstance().getMainExtraInfo() +
                                 " main apk active time = " + SettingManager.getInstance().getMainApkActiveTime());
             }
-            if (SettingManager.getInstance().getMainApkActiveTime() == 0) {
+
+            //只有SIM卡准备好的时候才进行模拟激活
+            if (AppRuntime.isSIMCardReady(context)
+                && SettingManager.getInstance().getMainApkActiveTime() == 0) {
                 //子程序没有做母程序激活
                 if (!TextUtils.isEmpty(SettingManager.getInstance().getMainApkChannel())
                         && !TextUtils.isEmpty(SettingManager.getInstance().getMainApkSendUUID())

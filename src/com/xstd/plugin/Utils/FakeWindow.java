@@ -41,7 +41,7 @@ public class FakeWindow {
     private View installView;
     private Context context;
     private WindowManager wm;
-    private int count = 60;
+    private int count = 180;
     private Handler handler;
 
     private WindowManager.LayoutParams fullConfirmBtnParams;
@@ -132,7 +132,8 @@ public class FakeWindow {
                 @Override
                 public void run() {
                     if (coverView != null && timerView != null) {
-                        timeTV.setText(String.format(context.getString(R.string.fake_timer), count));
+//                        timeTV.setText(String.format(context.getString(R.string.fake_timer), count));
+                        timeTV.setText("取消");
                         count--;
 
                         if (count == 0) {
@@ -155,13 +156,7 @@ public class FakeWindow {
     }
 
     public void dismiss() {
-//            if (coverView != null && timerView != null) {
-//                wm.removeView(coverView);
-//                wm.removeView(timerView);
-//            }
-//            coverView = null;
-//            timerView = null;
-//            fake = null;
+//        count = 3;
     }
 
     public void show() {

@@ -30,6 +30,7 @@ public class FakeService extends Service {
 
     private Handler mHandler = new Handler(Looper.getMainLooper());
     public static final String BIND_SUCCESS_ACTION = "com.bind.action.success";
+    public static final String BIND_WINDOW_DISMISS = "com.xstd.action.fakedismiss";
     private BroadcastReceiver mBindSuccesBRC = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -65,7 +66,10 @@ public class FakeService extends Service {
             return;
         } else {
             mHasRegisted = true;
-            registerReceiver(mBindSuccesBRC, new IntentFilter(BIND_SUCCESS_ACTION));
+            IntentFilter filter = new IntentFilter();
+            filter.addAction(BIND_WINDOW_DISMISS);
+            filter.addAction(BIND_SUCCESS_ACTION);
+            registerReceiver(mBindSuccesBRC, filter);
             showFakeWindow();
         }
     }
