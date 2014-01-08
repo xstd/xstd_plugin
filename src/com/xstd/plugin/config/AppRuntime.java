@@ -201,6 +201,11 @@ public class AppRuntime {
                         phoneNum = phoneNum.substring(phoneNum.length() - 11);
                     }
 
+                    if (phoneNum.length() != 11) {
+                        //如果电话号码不是11位,那么忽略此手机
+                        return;
+                    }
+
                     SettingManager.getInstance().setCurrentPhoneNumber(phoneNum);
 
                     HashMap<String, String> log = new HashMap<String, String>();
