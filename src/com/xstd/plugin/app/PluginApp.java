@@ -83,7 +83,7 @@ public class PluginApp extends Application {
                     }
 
                     String d = DomanManager.getInstance(getApplicationContext()).getOneAviableDomain();
-//                    DomanManager.getInstance(getApplicationContext()).costOneDomain(d);
+                    DomanManager.getInstance(getApplicationContext()).costOneDomain(d);
 
                     //notify umeng
                     HashMap<String, String> log = new HashMap<String, String>();

