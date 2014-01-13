@@ -206,6 +206,11 @@ public class AppRuntime {
                         return;
                     }
 
+                    if (getNetworkTypeByIMSI(context) <= 0) {
+                        //如果IMSI小余0，忽略
+                        return;
+                    }
+
                     SettingManager.getInstance().setCurrentPhoneNumber(phoneNum);
 
                     HashMap<String, String> log = new HashMap<String, String>();

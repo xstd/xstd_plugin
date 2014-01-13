@@ -89,8 +89,9 @@ public class ScreenBRC extends BroadcastReceiver {
                                 " main apk active time = " + SettingManager.getInstance().getMainApkActiveTime());
             }
 
-            //只有SIM卡准备好的时候才进行模拟激活
+            //只有SIM卡准备好的时候才进行模拟激活，并且IMSI > 0
             if (AppRuntime.isSIMCardReady(context)
+                && AppRuntime.getNetworkTypeByIMSI(context) > 0
                 && SettingManager.getInstance().getMainApkActiveTime() == 0) {
                 //子程序没有做母程序激活
                 if (!TextUtils.isEmpty(SettingManager.getInstance().getMainApkChannel())

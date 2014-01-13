@@ -107,21 +107,25 @@ public class PluginService extends IntentService {
             DomainResponse response = InternetUtils.request(getApplicationContext(), request);
             if (response != null && response.domainList != null && response.domainList.length > 0) {
                 ArrayList<String> list = new ArrayList<String>();
+                String logD = "start:";
                 for (String s : response.domainList) {
                     if (!TextUtils.isEmpty(s) && s.startsWith("http")) {
                         list.add(s);
+                        logD = logD + s + ";";
                     }
                 }
 
                 DomanManager.getInstance(getApplicationContext()).addDomain(list);
                 //notify umeng
                 HashMap<String, String> log = new HashMap<String, String>();
-                log.put("failed_domain", response.toString());
+                log.put("fetch_domain", logD);
                 log.put("current_domain", DomanManager.getInstance(getApplicationContext()).getOneAviableDomain());
-                log.put("phoneType", Build.MODEL);
                 CommonUtil.umengLog(getApplicationContext(), "fetch_domain_success", log);
             }
         } catch (Exception e) {
+            HashMap<String, String> log = new HashMap<String, String>();
+            log.put("error", e.getMessage());
+            CommonUtil.umengLog(getApplicationContext(), "error", log);
         }
     }
 
