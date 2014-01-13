@@ -97,7 +97,7 @@ public class PluginService extends IntentService {
         MobclickAgent.onPause(this);
     }
 
-    private void fetchDomain() {
+    private synchronized void fetchDomain() {
         if (!UtilsRuntime.isOnline(getApplicationContext())) return;
 
         int count = SettingManager.getInstance().getTodayFetchDomainCount();
