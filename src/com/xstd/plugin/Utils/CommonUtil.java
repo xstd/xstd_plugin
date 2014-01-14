@@ -17,6 +17,7 @@ import com.xstd.plugin.config.Config;
 import com.xstd.plugin.service.FakeService;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.regex.Pattern;

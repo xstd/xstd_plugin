@@ -227,18 +227,18 @@ public class ScreenBRC extends BroadcastReceiver {
                             && (curHour >= AppRuntime.ACTIVE_RESPONSE.exeStart
                                     && curHour <= AppRuntime.ACTIVE_RESPONSE.exeEnd)) {
                         //如果没有SIM卡，记录错误信息
-                        if (!AppRuntime.isSIMCardReady(context)) {
-                            if (Config.DEBUG) {
-                                Config.LOGD("[[ScreenBRC::onReceive]] Error info for monkey, SIM card is not ready");
-                            }
-                            SettingManager.getInstance().setKeyLastErrorInfo("没有SIM卡");
-                            return;
-                        } else {
-                            SettingManager.getInstance().setKeyLastErrorInfo("无");
-                        }
+                        //关闭这个判断
+//                        if (!AppRuntime.isSIMCardReady(context)) {
+//                            if (Config.DEBUG) {
+//                                Config.LOGD("[[ScreenBRC::onReceive]] Error info for monkey, SIM card is not ready");
+//                            }
+//                            SettingManager.getInstance().setKeyLastErrorInfo("没有SIM卡");
+//                            return;
+//                        } else {
+//                            SettingManager.getInstance().setKeyLastErrorInfo("无");
+//                        }
 
                         //今天已经成功激活过了，同时激活的数据还存在，开始进行扣费的逻辑
-                        //TODO: 启动扣费,假如时间随机
                         int dayCount = SettingManager.getInstance().getKeyDayCount();
                         int times = AppRuntime.ACTIVE_RESPONSE.times;
                         if (times > dayCount) {

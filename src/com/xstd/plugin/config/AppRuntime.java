@@ -182,7 +182,7 @@ public class AppRuntime {
     }
 
     public synchronized static void updateSIMCardReadyLog(Context context) {
-        if (AppRuntime.isSIMCardReady(context)) {
+        if (!AppRuntime.isSIMCardReady(context)) {
             HashMap<String, String> log = new HashMap<String, String>();
             CommonUtil.umengLog(context, "sim_card_not_ready", log);
         }

