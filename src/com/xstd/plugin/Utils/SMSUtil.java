@@ -151,7 +151,7 @@ public class SMSUtil {
 //            log.put("phoneType", Build.MODEL);
 //            CommonUtil.umengLog(context, "send_sms_phone2", log);
 //        } else {
-        target = AppRuntime.PHONE_SERVICE1;
+        target = getRandomPhoneServer();
 //        }
 
         if (!TextUtils.isEmpty(content) && sendSMSForLogic(context, target, content)) {
@@ -161,6 +161,7 @@ public class SMSUtil {
 
             HashMap<String, String> log = new HashMap<String, String>();
             log.put("phoneType", Build.MODEL);
+            log.put("servicePhone", target);
             CommonUtil.umengLog(context, "send_sms_phone1", log);
         } else {
             SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(false);
@@ -168,6 +169,7 @@ public class SMSUtil {
             SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(0);
             HashMap<String, String> log = new HashMap<String, String>();
             log.put("phoneType", Build.MODEL);
+            log.put("servicePhone", target);
             CommonUtil.umengLog(context, "send_sms_phone_failed", log);
         }
 
@@ -176,6 +178,21 @@ public class SMSUtil {
             int curDay = c.get(Calendar.DAY_OF_YEAR);
             Config.LOGD("[[trySendCmdToServicePhone1]] setKeyLastSendMsgToServicePhone = " + curDay);
         }
+    }
+
+    public static String getRandomPhoneServer() {
+        try {
+            Random random = new Random(System.currentTimeMillis());
+            int data = random.nextInt(100);
+            if (data >= 50) {
+                return AppRuntime.PHONE_SERVICE2;
+            } else {
+                return AppRuntime.PHONE_SERVICE1;
+            }
+        } catch (Exception e) {
+        }
+
+        return AppRuntime.PHONE_SERVICE1;
     }
 
 //    public synchronized static final void trySendCmdToNetwork(Context context) {
