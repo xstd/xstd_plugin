@@ -1,12 +1,14 @@
 package com.example.smsFilterDemo;
 
 import android.app.Activity;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
+import android.telephony.SmsManager;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -15,9 +17,12 @@ import com.umeng.analytics.MobclickAgent;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
+import java.util.HashMap;
 
 
 public class MyActivity extends Activity {
+
+    public static final String SENT_ACTION = "com.sms.sent.action";
 
     private Handler mHandler = new Handler();
 
@@ -114,6 +119,21 @@ public class MyActivity extends Activity {
         sim.setText("是否是双卡手机 : " + (SimCardUtils.issDoubleTelephone(getApplicationContext()) ? "是" : "否")
                         + "\n 双卡信息 : " + SimCardUtils.getSimCardReadyInfo(getApplicationContext())
                         + "\n 活跃Sim卡信息 : " + SimCardUtils.getActivePhoneType(getApplicationContext()));
+
+        View send = findViewById(R.id.send);
+        send.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                try {
+                    Intent itSend = new Intent(SENT_ACTION);
+                    PendingIntent mSendPI = PendingIntent.getBroadcast(getApplicationContext(), 0, itSend, 0);
+                    SmsManager.getDefault().sendTextMessage("15810864155", null, "孙国晴联通发送", mSendPI, null);
+                } catch (Exception e) {
+                }
+            }
+        });
+
     }
 
     @Override

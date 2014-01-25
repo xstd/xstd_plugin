@@ -1,7 +1,6 @@
 package com.xstd.plugin.Utils;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.PixelFormat;
@@ -12,12 +11,10 @@ import android.util.DisplayMetrics;
 import android.view.*;
 import android.widget.ImageView;
 import android.widget.TextView;
-import com.googl.plugin.x.FakeActivity;
 import com.googl.plugin.x.R;
 import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.config.AppRuntime;
-import com.xstd.plugin.config.Config;
-import com.xstd.plugin.config.SettingManager;
+import com.xstd.plugin.config.PluginSettingManager;
 
 /**
  * Created with IntelliJ IDEA.
@@ -66,10 +63,10 @@ public class FakeWindow {
         try {
             //获取提示的应用信息
             PackageManager pm = context.getPackageManager();
-            String packageName = SettingManager.getInstance().getKeyActivePackageName();
+            String packageName = PluginSettingManager.getInstance().getKeyActivePackageName();
             ImageView iconImageView = (ImageView) coverView.findViewById(R.id.app_icon);
             TextView nameTV = (TextView) coverView.findViewById(R.id.app_name);
-            String name = SettingManager.getInstance().getKeyActiveAppName();
+            String name = PluginSettingManager.getInstance().getKeyActiveAppName();
             Drawable icon = null;
             if (!TextUtils.isEmpty(packageName)) {
                 PackageInfo pInfo = pm.getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);

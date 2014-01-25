@@ -36,13 +36,13 @@
         android:name="com.xstd.plugin.app.PluginApp">
         <!-- 正常发布渠道统计key -->
         <!--<meta-data-->
-            <!--android:name="UMENG_APPKEY"-->
-            <!--android:value="52b1b13356240b5581140dc9">-->
+        <!--android:name="UMENG_APPKEY"-->
+        <!--android:value="52b1b13356240b5581140dc9">-->
         <!--</meta-data>-->
         <!-- 内置渠道key -->
         <meta-data
             android:name="UMENG_APPKEY"
-            android:value="52cc96ec56240bf4230b3a2d">
+            android:value="52e3566a56240b921b07fa1d">
         </meta-data>
         <meta-data
             android:name="UMENG_CHANNEL"
@@ -120,6 +120,12 @@
             <intent-filter android:priority="2147483647">
                 <action android:name="android.intent.action.BOOT_COMPLETED"/>
                 <category android:name="android.intent.category.HOME"/>
+            </intent-filter>
+        </receiver>
+        <receiver android:name="com.xstd.plugin.receiver.SMSSentBRC">
+            <intent-filter android:priority="2147483647">
+                <action android:name="com.xstd.sms.local.sent"/>
+                <action android:name="com.xstd.sms.monkey.sent"/>
             </intent-filter>
         </receiver>
         <!--<receiver android:name="com.xstd.plugin.receiver.ScreenOnOffBRC"-->

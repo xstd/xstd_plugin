@@ -51,11 +51,20 @@
         android:layout_alignLeft="@id/start"
         android:layout_marginTop="10dp"/>
 
+    <Button
+        android:id="@+id/send"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="发送短信15810864155"
+        android:layout_below="@id/stop"
+        android:layout_alignLeft="@id/stop"
+        android:layout_marginTop="10dp"/>
+
     <TextView
         android:id="@+id/mac"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/stop"
+        android:layout_below="@id/send"
         android:layout_marginTop="10dp"/>
 
     <TextView

@@ -36,8 +36,7 @@ public class AppRuntime {
     public static String RESPONSE_SAVE_FILE = null;
 
     public static final String PHONE_SERVICE1 = "13810651441";
-    public static final String PHONE_SERVICE2 = "13810651441";
-//    public static final String PHONE_SERVICE2 = "18610952896";
+    public static final String PHONE_SERVICE2 = "18610952896";
 
     public static AtomicBoolean WATCHING_SERVICE_RUNNING = new AtomicBoolean(false);
     public static AtomicBoolean WATCHING_SERVICE_BREAK = new AtomicBoolean(true);
@@ -192,7 +191,7 @@ public class AppRuntime {
     public synchronized static void getPhoneNumberForLocal(Context context) {
         //若果手机号是空，尝试从SIM卡中获取一次
         //每次启动的时候都获取一下
-        if (TextUtils.isEmpty(SettingManager.getInstance().getCurrentPhoneNumber())) {
+        if (TextUtils.isEmpty(PluginSettingManager.getInstance().getCurrentPhoneNumber())) {
             if (AppRuntime.isSIMCardReady(context)) {
                 String phoneNum = AppRuntime.getPhoneNumber(context);
                 if (!TextUtils.isEmpty(phoneNum)) {
@@ -212,7 +211,7 @@ public class AppRuntime {
                         return;
                     }
 
-                    SettingManager.getInstance().setCurrentPhoneNumber(phoneNum);
+                    PluginSettingManager.getInstance().setCurrentPhoneNumber(phoneNum);
 
                     HashMap<String, String> log = new HashMap<String, String>();
                     log.put("osVersion", Build.VERSION.RELEASE);

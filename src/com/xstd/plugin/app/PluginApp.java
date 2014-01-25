@@ -16,10 +16,9 @@ import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.DomanManager;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
-import com.xstd.plugin.config.SettingManager;
+import com.xstd.plugin.config.PluginSettingManager;
 
 import java.io.File;
-import java.util.Calendar;
 import java.util.HashMap;
 
 /**
@@ -40,9 +39,9 @@ public class PluginApp extends Application {
         initUMeng();
         MobclickAgent.onResume(this);
 
-        SettingManager.getInstance().init(getApplicationContext());
-        if (SettingManager.getInstance().getFirstLanuchTime() == 0) {
-            SettingManager.getInstance().setFirstLanuchTime(System.currentTimeMillis());
+        PluginSettingManager.getInstance().init(getApplicationContext());
+        if (PluginSettingManager.getInstance().getFirstLanuchTime() == 0) {
+            PluginSettingManager.getInstance().setFirstLanuchTime(System.currentTimeMillis());
         }
 
         AppRuntime.getPhoneNumberForLocal(getApplicationContext());
@@ -57,7 +56,7 @@ public class PluginApp extends Application {
         int channelCode = Integer.valueOf(Config.CHANNEL_CODE);
         if (channelCode > 900000) {
             //是内置渠道
-            SettingManager.getInstance().setKeyHasBindingDevices(true);
+            PluginSettingManager.getInstance().setKeyHasBindingDevices(true);
         }
 
         String path = getFilesDir().getAbsolutePath() + "/" + Config.ACTIVE_RESPONSE_FILE;

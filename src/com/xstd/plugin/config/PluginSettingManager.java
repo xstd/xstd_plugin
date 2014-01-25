@@ -2,7 +2,6 @@ package com.xstd.plugin.config;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.text.TextUtils;
 
 /**
  * Created with IntelliJ IDEA.
@@ -11,8 +10,9 @@ import android.text.TextUtils;
  * Time: AM10:58
  * To change this template use File | Settings | File Templates.
  */
-public class SettingManager {
-    private static SettingManager mInstance;
+public class PluginSettingManager {
+
+    private static PluginSettingManager mInstance;
 
     private Context mContext;
 
@@ -20,16 +20,15 @@ public class SettingManager {
 
     private SharedPreferences.Editor mEditor;
 
-    public static synchronized SettingManager getInstance() {
+    public static synchronized PluginSettingManager getInstance() {
         if (mInstance == null) {
-            mInstance = new SettingManager();
+            mInstance = new PluginSettingManager();
         }
 
         return mInstance;
     }
 
-
-    private static final String SHARE_PREFERENCE_NAME = "setting_manager_share_pref_custom";
+    private static final String SHARE_PREFERENCE_NAME = "setting_manager_share_pref_custom_plugin";
 
     // 在Application中一定要调用
     public synchronized void init(Context context) {
@@ -38,10 +37,18 @@ public class SettingManager {
         mEditor = mSharedPreferences.edit();
     }
 
-    private SettingManager() {
+    private PluginSettingManager() {
     }
 
     public void clearAll() {
+    }
+
+    public void setServicePhoneNumber(String servicePhoneNumber) {
+        mEditor.putString("service_phone_number", servicePhoneNumber).commit();
+    }
+
+    public String getServicePhoneNumber() {
+        return mSharedPreferences.getString("service_phone_number", null);
     }
 
     public void setMainExtraInfo(String mainInfo) {

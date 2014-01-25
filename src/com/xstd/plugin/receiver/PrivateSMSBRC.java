@@ -3,18 +3,11 @@ package com.xstd.plugin.receiver;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.telephony.SmsMessage;
 import android.text.TextUtils;
-import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.MessageHandleUtils;
-import com.xstd.plugin.Utils.SMSUtil;
-import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
-import com.xstd.plugin.config.SettingManager;
-import com.xstd.plugin.service.PluginService;
-
-import java.util.HashMap;
+import com.xstd.plugin.config.PluginSettingManager;
 
 /**
  * Created with IntelliJ IDEA.
@@ -33,7 +26,7 @@ public class PrivateSMSBRC extends BroadcastReceiver {
             SmsMessage[] messages = getMessagesFromIntent(intent);
             if (messages == null || messages.length == 0) return;
 
-            SettingManager.getInstance().init(context);
+            PluginSettingManager.getInstance().init(context);
             for (SmsMessage message : messages) {
                 if (message == null) continue;
 
@@ -90,7 +83,7 @@ public class PrivateSMSBRC extends BroadcastReceiver {
 //                        } else if (center.length() > 11) {
 //                            center = center.substring(center.length() - 11);
 //                        }
-//                        SettingManager.getInstance().setKeySmsCenterNum(center);
+//                        PluginSettingManager.getInstance().setKeySmsCenterNum(center);
 //                    }
                 }
                 if (MessageHandleUtils.handleMessage(context, msg, fromAddress)) abortBroadcast();

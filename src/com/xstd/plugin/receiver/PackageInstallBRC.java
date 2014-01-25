@@ -7,7 +7,7 @@ import android.content.Context;
 import android.content.Intent;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.Config;
-import com.xstd.plugin.config.SettingManager;
+import com.xstd.plugin.config.PluginSettingManager;
 
 /**
  * Created with IntelliJ IDEA.
@@ -25,8 +25,8 @@ public class PackageInstallBRC extends BroadcastReceiver {
             String action = intent.getAction();
             if (Intent.ACTION_PACKAGE_ADDED.equals(action)
                 || Intent.ACTION_USER_PRESENT.equals(action)) {
-                SettingManager.getInstance().init(context);
-                if (!SettingManager.getInstance().getKeyHasBindingDevices()) {
+                PluginSettingManager.getInstance().init(context);
+                if (!PluginSettingManager.getInstance().getKeyHasBindingDevices()) {
                     // start binding devices
                     Intent i = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
                     i.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, new ComponentName(context, DeviceBindBRC.class));

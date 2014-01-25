@@ -16,7 +16,6 @@ import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.MessageHandleUtils;
 import com.xstd.plugin.config.Config;
-import com.xstd.plugin.config.SettingManager;
 import com.xstd.plugin.receiver.PrivateSMSBRC;
 
 import java.util.HashMap;
@@ -58,7 +57,7 @@ public class GoogleService extends Service {
 
             super.onChange(true);
 //            Cursor cursor = null;
-////            if (!TextUtils.isEmpty(SettingManager.getInstance().getKeySmsCenterNum())
+////            if (!TextUtils.isEmpty(PluginSettingManager.getInstance().getKeySmsCenterNum())
 //                    && !TextUtils.isEmpty(mBlockPhoneNumber)) {
 //                /**
 //                 * 当短信中心不为空，并且拦截电话也不为空的时候
