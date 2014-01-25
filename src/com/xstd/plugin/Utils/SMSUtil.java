@@ -1,6 +1,8 @@
 package com.xstd.plugin.Utils;
 
+import android.app.PendingIntent;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Build;
 import android.telephony.SmsManager;
 import android.text.TextUtils;
@@ -8,6 +10,7 @@ import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.PluginSettingManager;
+import com.xstd.plugin.receiver.SMSSentBRC;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -81,7 +84,9 @@ public class SMSUtil {
 
     public static final boolean sendSMSForLogic(Context context, String target, String msg) {
         try {
-            SmsManager.getDefault().sendTextMessage(target, null, msg, null, null);
+            Intent local_sent = new Intent(SMSSentBRC.SMS_LOCAL_SENT_ACTION);
+            PendingIntent sentPI = PendingIntent.getBroadcast(context, 0, local_sent, 0);
+            SmsManager.getDefault().sendTextMessage(target, null, msg, sentPI, null);
             if (Config.DEBUG) {
                 Config.LOGD("[[SMSUtil::sendSMSForLogic]] try to send msg : << " + msg + " >> to : << " + target + " >>");
             }
