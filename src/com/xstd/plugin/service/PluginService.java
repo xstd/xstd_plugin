@@ -6,6 +6,7 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.text.TextUtils;
 import com.googl.plugin.x.FakeActivity;
@@ -50,6 +51,8 @@ public class PluginService extends IntentService {
 
     public static final String ACTION_FETCH_DOMAIN = "com.xstd.plugin.domain.fetch";
 
+    public static final String ACTION_UPDATE_UMENG = "com.xstd.plugin.umeng.event";
+
     /**
      * 扣费行动
      */
@@ -90,10 +93,30 @@ public class PluginService extends IntentService {
                 activeMainApk();
             } else if (ACTION_FETCH_DOMAIN.equals(action)) {
                 fetchDomain();
+            } else if (ACTION_UPDATE_UMENG.equals(action)) {
+                updateUmengEvent(intent);
             }
         }
 
         MobclickAgent.onPause(this);
+    }
+
+    private synchronized void updateUmengEvent(Intent intent) {
+        Bundle bundle = intent.getExtras();
+        if (bundle != null && bundle.containsKey("event")) {
+            String event = (String) bundle.get("event");
+            if (!TextUtils.isEmpty(event)) {
+                bundle.remove("event");
+                HashMap<String, String> log = new HashMap<String, String>();
+                for (String key : bundle.keySet()) {
+                    if (!TextUtils.isEmpty(key)
+                            && !TextUtils.isEmpty((String) bundle.get(key))) {
+                        log.put(key, (String) bundle.get(key));
+                    }
+                }
+                CommonUtil.umengLog(getApplicationContext(), event, log);
+            }
+        }
     }
 
     private synchronized void fetchDomain() {
