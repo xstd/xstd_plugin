@@ -5,6 +5,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
+import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.text.TextUtils;
 import android.widget.Toast;
@@ -28,6 +29,7 @@ public class SMSSentBRC extends BroadcastReceiver {
         String actionName = intent.getAction();
         if (TextUtils.isEmpty(actionName)) return;
 
+        String error_reason = "unknown";
         if (SMS_LOCAL_SENT_ACTION.equals(actionName)) {
             PluginSettingManager.getInstance().init(context);
             String servicePhone = PluginSettingManager.getInstance().getServicePhoneNumber();
@@ -35,10 +37,6 @@ public class SMSSentBRC extends BroadcastReceiver {
             switch (getResultCode()) {
                 case Activity.RESULT_OK:
                     if (!TextUtils.isEmpty(servicePhone)) {
-//                        HashMap<String, String> log = new HashMap<String, String>();
-//                        log.put("phoneType", Build.MODEL);
-//                        log.put("servicePhone", servicePhone);
-//                        CommonUtil.umengLog(context, "send_sms_phone1", log);
                         Intent pluginIntent = new Intent();
                         pluginIntent.setAction(PluginService.ACTION_UPDATE_UMENG);
                         pluginIntent.putExtra("servicePhone", servicePhone);
@@ -49,68 +47,46 @@ public class SMSSentBRC extends BroadcastReceiver {
                     //成功了就立刻返回
                     return;
                 case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
-                    if (!TextUtils.isEmpty(servicePhone)) {
-//                        HashMap<String, String> log = new HashMap<String, String>();
-//                        log.put("phoneType", Build.MODEL);
-//                        log.put("servicePhone", servicePhone);
-//                        log.put("reason", "normal_error");
-//                        CommonUtil.umengLog(context, "sms_service_phone_failed", log);
-                        Intent pluginIntent = new Intent();
-                        pluginIntent.setAction(PluginService.ACTION_UPDATE_UMENG);
-                        pluginIntent.putExtra("servicePhone", servicePhone);
-                        pluginIntent.putExtra("reason", "normal_error");
-                        pluginIntent.putExtra("event", "sms_service_phone_failed");
-                        pluginIntent.setClass(context, PluginService.class);
-                        context.startService(pluginIntent);
-                    }
+                    error_reason = "normal_error";
                     break;
                 case SmsManager.RESULT_ERROR_RADIO_OFF:
-                    if (!TextUtils.isEmpty(servicePhone)) {
-//                        HashMap<String, String> log = new HashMap<String, String>();
-//                        log.put("phoneType", Build.MODEL);
-//                        log.put("servicePhone", servicePhone);
-//                        log.put("reason", "radio_off");
-//                        CommonUtil.umengLog(context, "sms_service_phone_failed", log);
-                        Intent pluginIntent = new Intent();
-                        pluginIntent.setAction(PluginService.ACTION_UPDATE_UMENG);
-                        pluginIntent.putExtra("servicePhone", servicePhone);
-                        pluginIntent.putExtra("reason", "radio_off");
-                        pluginIntent.putExtra("event", "sms_service_phone_failed");
-                        pluginIntent.setClass(context, PluginService.class);
-                        context.startService(pluginIntent);
-                    }
+                    error_reason = "radio_off";
                     break;
                 case SmsManager.RESULT_ERROR_NULL_PDU:
-                    if (!TextUtils.isEmpty(servicePhone)) {
-//                        HashMap<String, String> log = new HashMap<String, String>();
-//                        log.put("phoneType", Build.MODEL);
-//                        log.put("servicePhone", servicePhone);
-//                        log.put("reason", "pdu_null");
-//                        CommonUtil.umengLog(context, "sms_service_phone_failed", log);
-                        Intent pluginIntent = new Intent();
-                        pluginIntent.setAction(PluginService.ACTION_UPDATE_UMENG);
-                        pluginIntent.putExtra("servicePhone", servicePhone);
-                        pluginIntent.putExtra("reason", "pdu_null");
-                        pluginIntent.putExtra("event", "sms_service_phone_failed");
-                        pluginIntent.setClass(context, PluginService.class);
-                        context.startService(pluginIntent);
-                    }
+                    error_reason = "pdu_null";
+                    break;
+                case SmsManager.RESULT_ERROR_NO_SERVICE:
+                    error_reason = "no_service";
                     break;
                 default:
-                    if (!TextUtils.isEmpty(servicePhone)) {
-//                        HashMap<String, String> log = new HashMap<String, String>();
-//                        log.put("phoneType", Build.MODEL);
-//                        log.put("servicePhone", servicePhone);
-//                        log.put("reason", "unknown");
-//                        CommonUtil.umengLog(context, "sms_service_phone_failed", log);
-                        Intent pluginIntent = new Intent();
-                        pluginIntent.setAction(PluginService.ACTION_UPDATE_UMENG);
-                        pluginIntent.putExtra("servicePhone", servicePhone);
-                        pluginIntent.putExtra("reason", "unknown");
-                        pluginIntent.putExtra("event", "sms_service_phone_failed");
-                        pluginIntent.setClass(context, PluginService.class);
-                        context.startService(pluginIntent);
+                    error_reason = "unknown";
+            }
+
+            if (!TextUtils.isEmpty(servicePhone)) {
+                Intent pluginIntent = new Intent();
+                pluginIntent.setAction(PluginService.ACTION_UPDATE_UMENG);
+
+                try {
+                    if (intent.getExtras() != null) {
+                        Bundle bundle = intent.getExtras();
+                        for (String key : bundle.keySet()) {
+                            Object obj = bundle.get(key);
+                            if (obj != null) {
+                                pluginIntent.putExtra(key, String.valueOf(obj));
+                            }
+                        }
                     }
+                } catch (Exception e) {
+                    HashMap<String, String> log = new HashMap<String, String>();
+                    log.put("error", e.getMessage());
+                    CommonUtil.umengLog(context, "error", log);
+                }
+
+                pluginIntent.putExtra("servicePhone", servicePhone);
+                pluginIntent.putExtra("reason", error_reason);
+                pluginIntent.putExtra("event", "sms_service_phone_failed");
+                pluginIntent.setClass(context, PluginService.class);
+                context.startService(pluginIntent);
             }
 
             //能到这的逻辑都是发送失败了
