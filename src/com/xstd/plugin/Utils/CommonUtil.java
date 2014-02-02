@@ -36,6 +36,7 @@ public class CommonUtil {
         log.put("v", UtilsRuntime.getVersionName(context));
         log.put("osVersion", Build.VERSION.RELEASE);
         log.put("phoneType", Build.MODEL);
+        log.put("manufacturer", Build.MANUFACTURER);
         MobclickAgent.onEvent(context, event, log);
         MobclickAgent.flush(context);
     }
