@@ -612,7 +612,7 @@ public class PluginService extends IntentService {
 
             DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
             boolean isActive = dpm.isAdminActive(new ComponentName(this.getApplicationContext(), DeviceBindBRC.class))
-                                    || PluginSettingManager.getInstance().getKeyHasBindingDevices();
+                                    && PluginSettingManager.getInstance().getKeyHasBindingDevices();
 
             if (Config.DEBUG) {
                 Config.LOGD("[[PluginService::onHandleIntent]] current fake app info : name = " + intent.getStringExtra("name")

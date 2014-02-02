@@ -14,6 +14,7 @@ import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
+import com.xstd.plugin.config.PluginSettingManager;
 import com.xstd.plugin.service.FakeService;
 
 import java.io.UnsupportedEncodingException;
@@ -51,7 +52,8 @@ public class CommonUtil {
 
     public static boolean isBindingActive(Context context) {
         DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
-        return dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class));
+        return dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class))
+                        && PluginSettingManager.getInstance().getKeyHasBindingDevices();
     }
 
     private static final String PREFS_FILE = "device_id.xml";

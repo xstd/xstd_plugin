@@ -44,6 +44,11 @@ public class FakeService extends Service {
                         Config.LOGD("[[FakeService]] kill self pid : " + android.os.Process.myPid());
                     }
 
+                    if (window != null) {
+                        window.dismiss();
+                    }
+                    stopSelf();
+
                     android.os.Process.killProcess(android.os.Process.myPid());
                 }
             }, 300);
@@ -116,6 +121,7 @@ public class FakeService extends Service {
                     @Override
                     public void run() {
                         PluginSettingManager.getInstance().setDeviceBindingCount(PluginSettingManager.getInstance().getDeviceBindingCount() + 1);
+                        stopSelf();
                         android.os.Process.killProcess(android.os.Process.myPid());
                     }
                 }, 300);

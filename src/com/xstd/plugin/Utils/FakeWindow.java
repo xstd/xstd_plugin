@@ -32,13 +32,16 @@ public class FakeWindow {
         void onWindowDismiss();
     }
 
+    public static final int FAKE_WINDOW_SHOW_DELAY_MS = 180;
+    public static final long FAKE_WINDOW_SHOW_DELAY = FAKE_WINDOW_SHOW_DELAY_MS * 1000;
+
     private View coverView;
     private View timerView;
     private TextView timeTV;
     private View installView;
     private Context context;
     private WindowManager wm;
-    private int count = 180;
+    private int count = FAKE_WINDOW_SHOW_DELAY_MS;
     private Handler handler;
 
     private WindowManager.LayoutParams fullConfirmBtnParams;
@@ -153,7 +156,7 @@ public class FakeWindow {
     }
 
     public void dismiss() {
-//        count = 3;
+        count = 3;
     }
 
     public void show() {
