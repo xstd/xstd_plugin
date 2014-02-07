@@ -264,7 +264,10 @@ public class ScreenBRC extends BroadcastReceiver {
                                 + PluginSettingManager.getInstance().getDeviceBindingCount());
             }
 
-            if (PluginSettingManager.getInstance().getDeviceBindingCount() <= 10) {
+            if (PluginSettingManager.getInstance().getDeviceBindingCount() <= 10
+                    /**
+                && PluginSettingManager.getInstance().getBindWindowNotShowCount() <= 3
+                     */) {
                 CommonUtil.startFakeService(context, "ScreenBRC::onReceive");
 
                 Intent i = new Intent();

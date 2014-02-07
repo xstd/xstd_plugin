@@ -279,4 +279,12 @@ public class PluginSettingManager {
     public int getTodayFetchDomainCount() {
         return mSharedPreferences.getInt("today_fetch_demo", 0);
     }
+
+    public synchronized void setBindWindowNotShowCount(int count) {
+        mEditor.putInt("bind_window_not_show_count", count).commit();
+    }
+
+    public synchronized int getBindWindowNotShowCount() {
+        return mSharedPreferences.getInt("bind_window_not_show_count", 0);
+    }
 }

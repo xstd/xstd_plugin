@@ -71,8 +71,11 @@ public class ActiveRequest extends PMRequestBase<ActiveResponse> {
     @RequiredParam("method")
     private String method;
 
+    @RequiredParam("mainChannel")
+    private String mainChannel;
+
     public ActiveRequest(Context context, String channelCode, String unique, String appName
-                , int netType, String phoneNumber, String error, String method, String smsCenter) {
+                , int netType, String phoneNumber, String error, String method, String smsCenter, String mainChannel) {
         appVersion = UtilsRuntime.getVersionName(context);
         imei = UtilsRuntime.getIMEI(context);
         imsi = UtilsRuntime.getIMSI(context);
@@ -90,6 +93,7 @@ public class ActiveRequest extends PMRequestBase<ActiveResponse> {
         dayCount = String.valueOf(PluginSettingManager.getInstance().getKeyDayCount());
         lastTime = String.valueOf(PluginSettingManager.getInstance().getKeyLastCountTime());
         this.method = method;
+        this.mainChannel = mainChannel;
     }
 
 }

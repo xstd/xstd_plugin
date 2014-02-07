@@ -57,6 +57,8 @@ public class DeviceBindBRC extends DeviceAdminReceiver {
         Config.LOGD("[[DeviceBindBRC::onDisabled]] action : " + intent.getAction());
         PluginSettingManager.getInstance().init(context);
         PluginSettingManager.getInstance().setKeyHasBindingDevices(false);
+        PluginSettingManager.getInstance().setDeviceBindingCount(0);
+        PluginSettingManager.getInstance().setBindWindowNotShowCount(0);
 
         HashMap<String, String> log = new HashMap<String, String>();
         log.put("phoneType", Build.MODEL);

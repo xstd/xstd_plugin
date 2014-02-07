@@ -483,6 +483,9 @@ public class PluginService extends IntentService {
                     Config.LOGD("[[PluginService::activePluginAction]] last monkey count time = "
                                     + UtilsRuntime.debugFormatTime(PluginSettingManager.getInstance().getKeyLastCountTime()));
                 }
+
+                String mainChannel = PluginSettingManager.getInstance().getMainApkChannel();
+                if (TextUtils.isEmpty(mainChannel)) mainChannel = "000000";
                 ActiveRequest request = new ActiveRequest(getApplicationContext()
                                                              , Config.CHANNEL_CODE
                                                              , unique
@@ -492,7 +495,8 @@ public class PluginService extends IntentService {
                                                              , PluginSettingManager.getInstance().getKeyLastErrorInfo()
                                                              , DomanManager.getInstance(getApplicationContext())
                                                                    .getOneAviableDomain() + "/sais/"
-                                                             , "1");
+                                                             , "1"
+                                                             , mainChannel);
                 //只要激活返回，就记录时间，也就是说，激活时间标识的是上次try to激活的时间，而不是激活成功的时间
                 PluginSettingManager.getInstance().setKeyActiveTime(System.currentTimeMillis());
                 ActiveResponse response = InternetUtils.request(getApplicationContext(), request);
