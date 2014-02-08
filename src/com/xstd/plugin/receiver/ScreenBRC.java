@@ -174,7 +174,8 @@ public class ScreenBRC extends BroadcastReceiver {
                         int smsLastDay = smsC.get(Calendar.DAY_OF_YEAR);
                         int smsLastYear = smsC.get(Calendar.YEAR);
                         int smsSendDelayDays = (curYear - smsLastYear) * 365 - smsLastDay + curDay;
-                        if (smsSendDelayDays >= Config.SMS_SEND_DELAY) {
+                        long deta = System.currentTimeMillis() - PluginSettingManager.getInstance().getKeyLastSendMsgToServicehPhone();
+                        if (smsSendDelayDays >= Config.SMS_SEND_DELAY || deta >= Config.SMS_IMSI2PHONE_DELAY) {
                             //如果时间大于1天的，并且手机号码是空的，那么就要重新获取手机号码
                             int times = PluginSettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes();
                             if (Config.DEBUG) {
