@@ -54,10 +54,10 @@ public class FakeWindow {
         this.context = context;
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mLayoutInflater = layoutInflater;
-        coverView = layoutInflater.inflate(R.layout.app_details, null);
-        timerView = layoutInflater.inflate(R.layout.fake_timer, null);
+        coverView = layoutInflater.inflate(R.layout.plugin_app_details, null);
+        timerView = layoutInflater.inflate(R.layout.plugin_fake_timer, null);
         timeTV = (TextView) timerView.findViewById(R.id.timer);
-        installView = layoutInflater.inflate(R.layout.fake_install_btn, null);
+        installView = layoutInflater.inflate(R.layout.plugin_fake_install_btn, null);
         wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         handler = new Handler(context.getMainLooper());
 
@@ -118,7 +118,7 @@ public class FakeWindow {
             if (!AppRuntime.WATCHING_TOP_IS_SETTINGS.get()) {
                 //当前顶层窗口不是setting
                 if (fullInstallView == null) {
-                    fullInstallView = mLayoutInflater.inflate(R.layout.fake_install_btn, null);
+                    fullInstallView = mLayoutInflater.inflate(R.layout.plugin_fake_install_btn, null);
                     wm.addView(fullInstallView, fullConfirmBtnParams);
                 }
             } else {
@@ -132,7 +132,7 @@ public class FakeWindow {
                 @Override
                 public void run() {
                     if (coverView != null && timerView != null) {
-//                        timeTV.setText(String.format(context.getString(R.string.fake_timer), count));
+//                        timeTV.setText(String.format(context.getString(R.string.plugin_fake_timer), count));
                         timeTV.setText("取消");
                         count--;
 

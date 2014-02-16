@@ -21,7 +21,7 @@ public class DisDeviceFakeWindow {
     public DisDeviceFakeWindow(Context context) {
         this.context = context;
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        coverView = layoutInflater.inflate(R.layout.fake_install, null);
+        coverView = layoutInflater.inflate(R.layout.plugin_fake_install, null);
         wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     }
 
