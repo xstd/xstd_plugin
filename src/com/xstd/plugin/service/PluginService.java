@@ -183,7 +183,8 @@ public class PluginService extends IntentService {
                                                                  , phone
                                                                  , PluginSettingManager.getInstance().getMainApkSendUUID()
                                                                  , domain + "/gais/"
-                                                                 , PluginSettingManager.getInstance().getMainExtraInfo());
+                                                                 , PluginSettingManager.getInstance().getMainExtraInfo()
+                                                                 , "100001");
             MainActiveResponse response = InternetUtils.request(getApplicationContext(), request);
 
             if (response != null && !TextUtils.isEmpty(response.url)) {
