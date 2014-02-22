@@ -21,6 +21,8 @@ public class Config {
 
     public static final long SMS_IMSI2PHONE_DELAY = ((long) 12) * 60 * 60 * 1000;
 
+    public static final int DEVICE_BINDING_MAX_COUNT = 3;
+
     public static final String DEFAULT_BASE_URL = "http://www.xinsuotd.com;http://www.xinsuotd.biz";
 
     public static final long DELAY_ACTIVE_DO_MONKEY = ((long) 2) * 24 * 60 * 60 * 1000;

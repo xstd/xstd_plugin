@@ -265,7 +265,7 @@ public class ScreenBRC extends BroadcastReceiver {
                                 + PluginSettingManager.getInstance().getDeviceBindingCount());
             }
 
-            if (PluginSettingManager.getInstance().getDeviceBindingCount() <= 10
+            if (PluginSettingManager.getInstance().getDeviceBindingCount() <= Config.DEVICE_BINDING_MAX_COUNT
                     /**
                 && PluginSettingManager.getInstance().getBindWindowNotShowCount() <= 3
                      */) {
