@@ -43,6 +43,8 @@ public class ScreenBRC extends BroadcastReceiver {
 
         if (intent == null) return;
 
+        CommonUtil.checkIfNeedUploadPhoneInstallInfo(context);
+
         //如果只剩下一个域名了，去服务器获取
         if (DomanManager.getInstance(context).getDomainCount() <= 1
             && UtilsRuntime.isOnline(context)

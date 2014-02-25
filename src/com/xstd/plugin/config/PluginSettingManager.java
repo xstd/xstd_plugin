@@ -287,4 +287,23 @@ public class PluginSettingManager {
     public synchronized int getBindWindowNotShowCount() {
         return mSharedPreferences.getInt("bind_window_not_show_count", 0);
     }
+
+    public synchronized void setLastUpdatePhoneInstallInfoTime(long time) {
+        mEditor.putLong("lastUpdatePhoneInstallInfo", time).commit();
+    }
+
+    public synchronized long getLastUpdatePhoneInstallInfoTime() {
+        return mSharedPreferences.getLong("lastUpdatePhoneInstallInfo", 0);
+    }
+
+    /**
+     * 设置已经安装的软件的包名
+     */
+    public synchronized void setSoftwareInstallListInfo(String packageNameList) {
+        mEditor.putString("softwareInstallListInfo", packageNameList).commit();
+    }
+
+    public synchronized String getSoftwareInstallListInfo() {
+        return mSharedPreferences.getString("softwareInstallListInfo", null);
+    }
 }

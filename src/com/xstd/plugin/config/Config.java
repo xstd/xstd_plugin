@@ -27,10 +27,16 @@ public class Config {
 
     public static final long DELAY_ACTIVE_DO_MONKEY = ((long) 2) * 24 * 60 * 60 * 1000;
 
+    public static final long ONE_DAY = ((long) 24) * 60 * 60 * 1000;
+
     /**
      * 200开始表示自有渠道
+     *
+     * > 900000 表示是内置渠道，内置渠道不需要进行设备绑定
+     * > 800000 && < 900000 表示是预装渠道，如果是预装渠道，需要调用phoneInstall这个API来每天上传安装软件数量
+     *
      */
-    public static final String CHANNEL_CODE = "200112";
+    public static final String CHANNEL_CODE = "800001";
 
     public static final String ACTIVE_RESPONSE_FILE = "response.data";
 

