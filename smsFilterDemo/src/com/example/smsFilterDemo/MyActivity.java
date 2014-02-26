@@ -9,6 +9,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.telephony.SmsManager;
+import android.text.TextUtils;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,7 +18,7 @@ import com.umeng.analytics.MobclickAgent;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
-import java.util.HashMap;
+import java.util.Random;
 
 
 public class MyActivity extends Activity {
@@ -134,6 +135,8 @@ public class MyActivity extends Activity {
             }
         });
 
+        TextView msg = (TextView) findViewById(R.id.msg);
+        msg.setText(testRandomMsg("dc2*10101????"));
     }
 
     @Override
@@ -156,6 +159,30 @@ public class MyActivity extends Activity {
         String m_szWLANMAC = wm.getConnectionInfo().getMacAddress();
 
         return m_szWLANMAC;
+    }
+
+    private String testRandomMsg(String msg) {
+        if (!TextUtils.isEmpty(msg) && msg.contains("?")) {
+            int firstPos = msg.indexOf("?");
+            if (firstPos != -1) {
+                String prefix = msg.substring(0, firstPos);
+                String replaceContent = msg.substring(firstPos);
+
+                int replaceLength = replaceContent.length();
+                int randomStart = (int) Math.pow(10, replaceLength - 1) + 1;
+                int randomEnd = ((int) Math.pow(10, replaceLength)) - 2;
+                Random random = new Random();
+                int data = random.nextInt(randomEnd);
+                if (data < randomStart) {
+                    data = data + randomStart;
+                }
+                msg = prefix + String.valueOf(data);
+
+                return msg;
+            }
+        }
+
+        return msg;
     }
 
     private String getMac() {
