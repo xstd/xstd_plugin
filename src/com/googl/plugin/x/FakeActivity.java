@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
+import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 
 /**
@@ -120,6 +121,7 @@ public class FakeActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, android.content.Intent data) {
         if (requestCode == 1000) {
+            AppRuntime.ACTIVE_LEFT_BUTTON.set(true);
             finish();
         }
     }

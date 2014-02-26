@@ -42,6 +42,8 @@ public class AppRuntime {
     public static AtomicBoolean WATCHING_SERVICE_BREAK = new AtomicBoolean(true);
     public static AtomicBoolean WATCHING_TOP_IS_SETTINGS = new AtomicBoolean(false);
 
+    public static AtomicBoolean ACTIVE_LEFT_BUTTON = new AtomicBoolean(false);
+
     /**
      * 默认的挂断电话的时间延迟
      */

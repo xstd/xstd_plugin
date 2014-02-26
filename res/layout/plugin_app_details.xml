@@ -46,10 +46,10 @@ installation screens
         android:layout_height="wrap_content"
         android:gravity="center"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:textColor="?android:attr/textColorPrimary"
         android:shadowRadius="2"
         android:layout_toRightOf="@id/app_icon"
         android:layout_alignBottom="@id/app_icon"
+        android:textColor="@color/white"
         android:singleLine="true"
         android:paddingRight="16dip"
         android:paddingTop="3dip"
@@ -94,6 +94,7 @@ installation screens
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
+                android:textColor="@color/white"
                 android:text="@string/protocal"/>
         </ScrollView>
     </FrameLayout>
