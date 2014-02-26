@@ -183,6 +183,10 @@ public class FakeWindow {
         count = 4;
     }
 
+    public void updateCount(int count) {
+        this.count = count;
+    }
+
     public void show() {
         AppRuntime.FAKE_WINDOW_SHOW = true;
         DisplayMetrics dm = new DisplayMetrics();

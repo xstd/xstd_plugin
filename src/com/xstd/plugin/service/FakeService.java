@@ -50,8 +50,14 @@ public class FakeService extends Service {
                         Config.LOGD("[[FakeService]] kill self pid : " + android.os.Process.myPid());
                     }
 
-                    if (window != null) {
-                        window.dismiss();
+                    if (BIND_WINDOW_DISMISS.equals(intent.getAction())) {
+                        if (window != null) {
+                            window.updateCount(60 * 60);
+                        }
+                    } else {
+                        if (window != null) {
+                            window.dismiss();
+                        }
                     }
 
 //                    if (BIND_SUCCESS_ACTION.equals(intent.getAction())) {
