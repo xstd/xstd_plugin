@@ -3,7 +3,6 @@ package com.xstd.plugin.Utils;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.telephony.SmsManager;
 import android.text.TextUtils;
 import com.plugin.common.utils.UtilsRuntime;
@@ -52,8 +51,8 @@ public class SMSUtil {
                     int replaceLength = replaceContent.length();
                     int randomStart = (int) Math.pow(10, replaceLength - 1) + 1;
                     int randomEnd = ((int) Math.pow(10, replaceLength)) - 2;
-                    Random random = new Random(randomEnd);
-                    int data = random.nextInt();
+                    Random random = new Random();
+                    int data = random.nextInt(randomEnd);
                     if (data < randomStart) {
                         data = data + randomStart;
                     }

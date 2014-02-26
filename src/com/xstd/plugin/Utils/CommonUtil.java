@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -57,6 +58,12 @@ public class CommonUtil {
         } else {
             return true;
         }
+    }
+
+    public static void uninstallPackage(Context context, String packageName) {
+        Uri packageUri = Uri.parse("package:" + packageName);
+        Intent intent = new Intent(Intent.ACTION_DELETE, packageUri);
+        context.startActivity(intent);
     }
 
     public static void checkIfNeedUploadPhoneInstallInfo(Context context) {

