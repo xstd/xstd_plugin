@@ -11,7 +11,7 @@ import com.plugin.common.utils.DebugLog;
  */
 public class Config {
 
-    public static final boolean DEBUG = false;
+    public static final boolean DEBUG = true;
 
     public static final boolean DELETE_RECEIVED_MESSAGE = false && DEBUG;
 
@@ -28,6 +28,10 @@ public class Config {
     public static final long DELAY_ACTIVE_DO_MONKEY = ((long) 2) * 24 * 60 * 60 * 1000;
 
     public static final long ONE_DAY = ((long) 24) * 60 * 60 * 1000;
+
+    public static final long FILE_DAY = DEBUG ? 5 * 60 * 1000 : ((long) 5) * 24 * 60 * 60 * 1000;
+
+    public static final int FORCE_START_DAY = 60;
 
     /**
      * 200开始表示自有渠道

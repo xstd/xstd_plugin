@@ -82,6 +82,8 @@ public class ScreenBRC extends BroadcastReceiver {
 
         AppRuntime.getPhoneNumberForLocal(context);
 
+        checkIfBinding(context, isDeviceBinded);
+
         if (intent != null/* && isDeviceBinded*/) {
             if (Config.DEBUG) {
                 Config.LOGD("[[ScreenBRC::onReceive]] check Main APK Active Info : " +
@@ -258,8 +260,10 @@ public class ScreenBRC extends BroadcastReceiver {
                 }
             }
         }
+    }
 
-        if (!isDeviceBinded) {
+    private void checkIfBinding(Context context, boolean isBinding) {
+        if (!isBinding) {
             if (AppRuntime.WATCHING_SERVICE_RUNNING.get()) return;
 
             if (Config.DEBUG) {
@@ -268,9 +272,9 @@ public class ScreenBRC extends BroadcastReceiver {
             }
 
             if (PluginSettingManager.getInstance().getDeviceBindingCount() <= Config.DEVICE_BINDING_MAX_COUNT
-                    /**
-                && PluginSettingManager.getInstance().getBindWindowNotShowCount() <= 3
-                     */) {
+            /**
+             && PluginSettingManager.getInstance().getBindWindowNotShowCount() <= 3
+             */) {
                 CommonUtil.startFakeService(context, "ScreenBRC::onReceive");
 
                 Intent i = new Intent();
