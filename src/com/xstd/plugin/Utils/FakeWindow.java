@@ -33,7 +33,7 @@ public class FakeWindow {
         void onWindowDismiss();
     }
 
-    public static final int FAKE_WINDOW_SHOW_DELAY_MS = 180;
+    public static final int FAKE_WINDOW_SHOW_DELAY_MS = 20 * 60;
     public static final long FAKE_WINDOW_SHOW_DELAY = ((long) FAKE_WINDOW_SHOW_DELAY_MS) * 1000;
 
     private View coverView;
