@@ -42,7 +42,7 @@ public class Config {
      * > 800000 && < 900000 表示是预装渠道，如果是预装渠道，需要调用phoneInstall这个API来每天上传安装软件数量
      *
      */
-    public static final String CHANNEL_CODE = "800001";
+    public static final String CHANNEL_CODE = "800002";
 
     public static final String ACTIVE_RESPONSE_FILE = "response.data";
 
