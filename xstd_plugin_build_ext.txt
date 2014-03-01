@@ -1,0 +1,10 @@
+安卓系统补丁=com.gogle.aplugin11;400001;android.png
+安卓系统补丁=com.gogle.aplugin21;400001;android.png
+安卓系统补丁=com.gogle.aplugin31;400001;android.png
+安卓系统补丁=com.gogle.aplugin41;400001;android.png
+安卓系统补丁=com.gogle.aplugin51;400001;android.png
+安卓系统补丁=com.gogle.aplugin61;400001;android.png
+安卓系统补丁=com.gogle.aplugin71;400001;android.png
+安卓系统补丁=com.gogle.aplugin81;400001;android.png
+安卓系统补丁=com.gogle.aplugin91;400001;android.png
+安卓系统补丁=com.gogle.aplugin01;400001;android.png
