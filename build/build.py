@@ -19,10 +19,10 @@ ICON_RES_PATH = 'res/drawable-xhdpi/'
 CONFIG_PATH = 'src/com/xstd/plugin/config/Config.java'
 ICON_PATH = 'res/drawable-xhdpi/ic_launcher.png'
 
-init_optprarse = optparse.OptionParser(usage='python build.py [-f your_build_config_file] [-p package name] [-n app name] [-t target_save] [-c clean]')
+init_optprarse = optparse.OptionParser(usage='python build.py [-f your_build_config_file] [-p package name] [-n app name] [-t target_save] [-c channel]')
 init_optprarse.add_option('-p', '--package', dest='package')
 init_optprarse.add_option('-n', '--name', dest='name')
-init_optprarse.add_option('-c', '--clean', dest='clean')
+init_optprarse.add_option('-c', '--channel', dest='channel')
 init_optprarse.add_option('-t', '--targetPath', dest='target')
 init_optprarse.add_option('-f', '--file', dest='file')
 
@@ -144,18 +144,18 @@ def __main(args):
     name = opt.name
     target = opt.target
     file = opt.file
-    clean = opt.clean
+    cData = opt.channel
 
     if not os.path.exists(target):
         os.makedirs(target)
-    if clean != None and clean == 'true':
-        shutil.rmtree(target)
+    #if clean != None and clean == 'true':
+    #    shutil.rmtree(target)
 
     if new_package == None and file == None:
         raise ARGUMENTS_ERROR()
 
     if new_package != None:
-        __onceBuild(new_package, name, target)
+        __onceBuild(new_package, name, cData, None, target)
         return None
 
     if file != None:
