@@ -14,7 +14,6 @@ import android.text.TextUtils;
 import com.plugin.common.utils.UtilsRuntime;
 import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
-import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.PluginSettingManager;
 import com.xstd.plugin.service.FakeService;
@@ -111,19 +110,23 @@ public class CommonUtil {
         if (uuid == null) {
             synchronized (CommonUtil.class) {
                 if (uuid == null) {
-                    SharedPreferences prefs = context.getSharedPreferences(PREFS_FILE, 0);
-                    String id = prefs.getString(PREFS_DEVICE_ID, null);
+                    final SharedPreferences prefs = context.getSharedPreferences(PREFS_FILE, 0);
+                    final String id = prefs.getString(PREFS_DEVICE_ID, null);
                     if (id != null) {
+                        // Use the ids previously computed and stored in the prefs file
                         uuid = UUID.fromString(id);
                     } else {
-                        //应该和SIM卡绑定，如果不能和SIM卡绑定的话，就和设备绑定
-                        String androidId = null;
-                        if (AppRuntime.isSIMCardReady(context)) {
-                            androidId = UtilsRuntime.getIMSI(context);
-                        }
+                        //首先获取MAC地址
+                        String androidId = UtilsRuntime.getLocalMacAddress(context);
                         if (TextUtils.isEmpty(androidId)) {
-                            androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                            //尝试获取IMSI号
+                            androidId = UtilsRuntime.getIMSI(context);
+                            if (TextUtils.isEmpty(androidId)) {
+                                //尝试获取Android_ID
+                                androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                            }
                         }
+
                         try {
                             if (!"9774d56d682e549c".equals(androidId)) {
                                 uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8"));
@@ -134,7 +137,7 @@ public class CommonUtil {
                         } catch (UnsupportedEncodingException e) {
                             throw new RuntimeException(e);
                         }
-
+                        // Write the value out to the prefs file
                         if (uuid != null) {
                             prefs.edit().putString(PREFS_DEVICE_ID, uuid.toString()).commit();
                         }
