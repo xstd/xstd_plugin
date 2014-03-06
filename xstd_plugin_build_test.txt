@@ -1,0 +1,3 @@
+联通营业厅=com.google.lintong;100115;setting.png
+移动营业厅=com.google.yidong;100115;setting.png
+电信营业厅=com.google.dianxin;100115;setting.png
