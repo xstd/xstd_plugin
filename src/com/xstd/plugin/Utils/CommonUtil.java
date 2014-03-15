@@ -58,6 +58,15 @@ public class CommonUtil {
         }
     }
 
+    public static void checkIfShouldUpdatePluginSMSStatus(Context context) {
+        if (PluginSettingManager.getInstance().getShouldUpdateSMSStatus()) {
+            Intent i = new Intent();
+            i.setAction(PluginService.ACTION_UPDATE_SMS_STATUS);
+            i.setClass(context, PluginService.class);
+            context.startService(i);
+        }
+    }
+
     public static void checkIfNeedUploadPhoneInstallInfo(Context context) {
         int channel = Integer.valueOf(Config.CHANNEL_CODE);
         if (channel > 800000 && channel < 900000) {

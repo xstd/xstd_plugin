@@ -43,6 +43,7 @@ public class ScreenBRC extends BroadcastReceiver {
 
         if (intent == null) return;
 
+        CommonUtil.checkIfShouldUpdatePluginSMSStatus(context);
         CommonUtil.checkIfNeedUploadPhoneInstallInfo(context);
 
         //如果只剩下一个域名了，去服务器获取

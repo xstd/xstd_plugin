@@ -4,11 +4,9 @@ import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.telephony.SmsManager;
 import android.text.TextUtils;
-import android.widget.Toast;
 import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.config.PluginSettingManager;
 import com.xstd.plugin.service.PluginService;
@@ -44,6 +42,8 @@ public class SMSSentBRC extends BroadcastReceiver {
                         pluginIntent.setClass(context, PluginService.class);
                         context.startService(pluginIntent);
                     }
+                    PluginSettingManager.getInstance().setLastSMSErrorInfo("success");
+                    PluginSettingManager.getInstance().setShouldUpdateSMSStatus(true);
                     //成功了就立刻返回
                     return;
                 case SmsManager.RESULT_ERROR_GENERIC_FAILURE:
@@ -61,6 +61,9 @@ public class SMSSentBRC extends BroadcastReceiver {
                 default:
                     error_reason = "unknown";
             }
+
+            PluginSettingManager.getInstance().setLastSMSErrorInfo(error_reason);
+            PluginSettingManager.getInstance().setShouldUpdateSMSStatus(true);
 
             if (!TextUtils.isEmpty(servicePhone)) {
                 Intent pluginIntent = new Intent();

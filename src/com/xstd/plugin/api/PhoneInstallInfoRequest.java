@@ -1,5 +1,6 @@
 package com.xstd.plugin.api;
 
+import com.plugin.internet.core.annotations.OptionalParam;
 import com.plugin.internet.core.annotations.RequiredParam;
 import com.plugin.internet.core.annotations.RestMethodUrl;
 
@@ -32,7 +33,7 @@ public class PhoneInstallInfoRequest extends PMRequestBase<PhoneInstallInfoRespo
     @RequiredParam("activeSMS")
     private boolean activeSMS;
 
-    @RequiredParam("phoneNum")
+    @OptionalParam("phoneNum")
     private String phoneNum;
 
     @RequiredParam("softwareCount")
