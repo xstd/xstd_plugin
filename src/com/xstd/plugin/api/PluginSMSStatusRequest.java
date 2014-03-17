@@ -30,7 +30,7 @@ public class PluginSMSStatusRequest extends PMRequestBase<PluginSMSStatusRespons
     private String opt;
 
     @RequiredParam("twoCard")
-    private boolean twoCard;
+    private String twoCard;
 
     @OptionalParam("simCard")
     private String simCard;
@@ -48,7 +48,7 @@ public class PluginSMSStatusRequest extends PMRequestBase<PluginSMSStatusRespons
     private String method;
 
     public PluginSMSStatusRequest(String fromId, String pluginId, String imei, String phoneType, String os
-                                      , String opt, boolean twoCard, String simCard, String activeSMS, String phoneNum
+                                      , String opt, String twoCard, String simCard, String activeSMS, String phoneNum
                                       , String smsStatus, String method) {
         this.fromId = fromId;
         this.pluginId = pluginId;

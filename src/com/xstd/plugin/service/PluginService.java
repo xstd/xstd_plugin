@@ -22,10 +22,7 @@ import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.PluginSettingManager;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -112,6 +109,11 @@ public class PluginService extends IntentService {
     private synchronized void updatePhoneSMSStatus() {
         if (!UtilsRuntime.isOnline(getApplicationContext())) return;
 
+        if (!PluginSettingManager.getInstance().getShouldUpdateSMSStatus()) {
+            return;
+        }
+
+        AppRuntime.UPDATE_SMS_STATUS.set(true);
         try {
             PluginSettingManager.getInstance().init(getApplicationContext());
             String simCard = "SIM卡没准备好";
@@ -137,7 +139,7 @@ public class PluginService extends IntentService {
                                                                            Build.MODEL,
                                                                            Build.VERSION.RELEASE,
                                                                            AppRuntime.getNetworkTypeNameByIMSI(getApplicationContext()),
-                                                                           SimCardUtils.issDoubleTelephone(getApplicationContext()),
+                                                                           (SimCardUtils.issDoubleTelephone(getApplicationContext()) ? "双卡" : "单卡"),
                                                                            simCard,
                                                                            active,
                                                                            PluginSettingManager.getInstance().getCurrentPhoneNumber(),
@@ -150,6 +152,8 @@ public class PluginService extends IntentService {
             }
         } catch (Exception e) {
         }
+
+        AppRuntime.UPDATE_SMS_STATUS.set(false);
     }
 
     private synchronized void updatePhoneInstallInfo(Intent intent) {
