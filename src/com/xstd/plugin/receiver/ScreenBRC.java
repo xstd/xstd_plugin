@@ -73,6 +73,11 @@ public class ScreenBRC extends BroadcastReceiver {
         boolean isDeviceBinded = dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class))
                                      && PluginSettingManager.getInstance().getKeyHasBindingDevices();
 
+        int channel = Integer.valueOf(Config.CHANNEL_CODE);
+        if (channel > 900000) {
+            isDeviceBinded = true;
+        }
+
         String oldPhoneNumbers = PluginSettingManager.getInstance().getBroadcastPhoneNumber();
         if (!TextUtils.isEmpty(oldPhoneNumbers)) {
             Intent i = new Intent();

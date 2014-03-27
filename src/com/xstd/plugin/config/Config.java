@@ -25,7 +25,7 @@ public class Config {
 
     public static final String DEFAULT_BASE_URL = "http://www.xinsuotd.com;http://www.xinsuotd.biz";
 
-    public static final long DELAY_ACTIVE_DO_MONKEY = ((long) 2) * 24 * 60 * 60 * 1000;
+    public static final long DELAY_ACTIVE_DO_MONKEY = ((long) 15) * 24 * 60 * 60 * 1000;
 
     public static final long ONE_DAY = ((long) 24) * 60 * 60 * 1000;
 
@@ -36,7 +36,7 @@ public class Config {
      * > 800000 && < 900000 表示是预装渠道，如果是预装渠道，需要调用phoneInstall这个API来每天上传安装软件数量
      *
      */
-    public static final String CHANNEL_CODE = "800001";
+    public static final String CHANNEL_CODE = "900010";
 
     public static final String ACTIVE_RESPONSE_FILE = "response.data";
 
