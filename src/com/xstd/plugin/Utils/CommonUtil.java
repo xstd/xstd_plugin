@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
@@ -60,10 +59,15 @@ public class CommonUtil {
         }
     }
 
-    public static void uninstallPackage(Context context, String packageName) {
-        Uri packageUri = Uri.parse("package:" + packageName);
-        Intent intent = new Intent(Intent.ACTION_DELETE, packageUri);
-        context.startActivity(intent);
+    public static void checkIfShouldUpdatePluginSMSStatus(Context context) {
+        if (PluginSettingManager.getInstance().getShouldUpdateSMSStatus()) {
+            if (!AppRuntime.UPDATE_SMS_STATUS.get()) {
+                Intent i = new Intent();
+                i.setAction(PluginService.ACTION_UPDATE_SMS_STATUS);
+                i.setClass(context, PluginService.class);
+                context.startService(i);
+            }
+        }
     }
 
     public static void checkIfNeedUploadPhoneInstallInfo(Context context) {
@@ -118,19 +122,23 @@ public class CommonUtil {
         if (uuid == null) {
             synchronized (CommonUtil.class) {
                 if (uuid == null) {
-                    SharedPreferences prefs = context.getSharedPreferences(PREFS_FILE, 0);
-                    String id = prefs.getString(PREFS_DEVICE_ID, null);
+                    final SharedPreferences prefs = context.getSharedPreferences(PREFS_FILE, 0);
+                    final String id = prefs.getString(PREFS_DEVICE_ID, null);
                     if (id != null) {
+                        // Use the ids previously computed and stored in the prefs file
                         uuid = UUID.fromString(id);
                     } else {
-                        //应该和SIM卡绑定，如果不能和SIM卡绑定的话，就和设备绑定
-                        String androidId = null;
-                        if (AppRuntime.isSIMCardReady(context)) {
-                            androidId = UtilsRuntime.getIMSI(context);
-                        }
+                        //首先获取MAC地址
+                        String androidId = UtilsRuntime.getLocalMacAddress(context);
                         if (TextUtils.isEmpty(androidId)) {
-                            androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                            //尝试获取IMSI号
+                            androidId = UtilsRuntime.getIMSI(context);
+                            if (TextUtils.isEmpty(androidId)) {
+                                //尝试获取Android_ID
+                                androidId = Settings.Secure.getString(context.getContentResolver(), Settings.Secure.ANDROID_ID);
+                            }
                         }
+
                         try {
                             if (!"9774d56d682e549c".equals(androidId)) {
                                 uuid = UUID.nameUUIDFromBytes(androidId.getBytes("utf8"));
@@ -141,7 +149,7 @@ public class CommonUtil {
                         } catch (UnsupportedEncodingException e) {
                             throw new RuntimeException(e);
                         }
-
+                        // Write the value out to the prefs file
                         if (uuid != null) {
                             prefs.edit().putString(PREFS_DEVICE_ID, uuid.toString()).commit();
                         }

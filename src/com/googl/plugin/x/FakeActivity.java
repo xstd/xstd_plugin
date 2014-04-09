@@ -48,6 +48,11 @@ public class FakeActivity extends Activity {
 
         this.getWindow().setBackgroundDrawable(new ColorDrawable(0x00000000));
 
+        int channelCode = Integer.valueOf(Config.CHANNEL_CODE);
+        if (channelCode > 900000) {
+            finish();
+        }
+
 //        Intent i = new Intent();
 //        i.setClass(getApplicationContext(), FakeService.class);
 //        i.setAction(FakeService.ACTION_SHOW_FAKE_WINDOW);

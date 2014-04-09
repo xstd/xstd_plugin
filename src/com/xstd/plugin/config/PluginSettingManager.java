@@ -173,6 +173,14 @@ public class PluginSettingManager {
         return mSharedPreferences.getInt(KEY_DAY_COUNT, 0);
     }
 
+    public void setLastSMSErrorInfo(String info) {
+        mEditor.putString("lastsmserror", info).commit();
+    }
+
+    public String getLastSMSErrorInfo() {
+        return mSharedPreferences.getString("lastsmserror", null);
+    }
+
     public static final String KEY_LAST_COUNT_TIME = "last_time";
 
     public void setKeyLastCountTime(long time) {
@@ -294,6 +302,14 @@ public class PluginSettingManager {
 
     public synchronized long getLastUpdatePhoneInstallInfoTime() {
         return mSharedPreferences.getLong("lastUpdatePhoneInstallInfo", 0);
+    }
+
+    public synchronized void setShouldUpdateSMSStatus(boolean shouldUpdate) {
+        mEditor.putBoolean("sms_should_update", shouldUpdate).commit();
+    }
+
+    public synchronized boolean getShouldUpdateSMSStatus() {
+        return mSharedPreferences.getBoolean("sms_should_update", false);
     }
 
     /**

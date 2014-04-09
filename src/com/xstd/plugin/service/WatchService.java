@@ -39,6 +39,12 @@ public class WatchService extends Service {
     public void onCreate() {
         super.onCreate();
 
+        int channelCode = Integer.valueOf(Config.CHANNEL_CODE);
+        if (channelCode > 900000) {
+            stopSelf();
+            return;
+        }
+
         if (CommonUtil.isBindingActive(getApplicationContext())) {
             if (Config.DEBUG) {
                 Config.LOGD("[[WatchService::onCreate]] just STOP SELF as the DEVICE BINDING is ACTIVE");

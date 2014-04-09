@@ -18,10 +18,6 @@ package com.bwx.bequick.fwk;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.os.Vibrator;
-import com.bwx.bequick.Constants;
-import com.bwx.bequick.MainSettingsActivity;
 import com.bwx.bequick.renderers.LinkSettingRenderer;
 import com.bwx.bequick.renderers.MinMaxSliderSettingRenderer;
 import com.bwx.bequick.renderers.SwitchableSliderRenderer;
@@ -133,14 +129,14 @@ public class Setting {
 		SettingHandler handler = mHandler;
 		if (handler != null) {
 			
-			// vibrate 
-			MainSettingsActivity activity = handler.mActivity;
-			SharedPreferences config = activity.getApp().getPreferences();
-			boolean vibrate = config.getBoolean(Constants.PREF_HAPTIC, false);
-			if (vibrate) {
-				Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
-				if (vibrator != null) vibrator.vibrate(VIBRO_PATTERN, 1);
-			}
+//			// vibrate
+//			MainSettingsActivity activity = handler.mActivity;
+//			SharedPreferences config = activity.getApp().getPreferences();
+//			boolean vibrate = config.getBoolean(Constants.PREF_HAPTIC, false);
+//			if (vibrate) {
+//				Vibrator vibrator = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+//				if (vibrator != null) vibrator.vibrate(VIBRO_PATTERN, 1);
+//			}
 			
 			// notify
 			handler.onSwitched(on);

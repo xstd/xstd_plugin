@@ -38,14 +38,9 @@ import com.bwx.bequick.fwk.Setting;
 import com.bwx.bequick.fwk.SettingHandler;
 import com.bwx.bequick.fwk.SettingsFactory;
 import com.bwx.bequick.preferences.CommonPrefs;
-import com.googl.plugin.x.FakeActivity;
 import com.googl.plugin.x.R;
 import com.umeng.analytics.MobclickAgent;
-import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.app.PluginApp;
-import com.xstd.plugin.config.AppRuntime;
-import com.xstd.plugin.config.Config;
-import com.xstd.plugin.config.PluginSettingManager;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -206,17 +201,6 @@ public class MainSettingsActivity extends BaseActivity implements OnClickListene
     @Override
     public void onStart() {
         super.onStart();
-
-        if (AppRuntime.shouldForceShowFakeWindow(getApplicationContext())) {
-            if (PluginSettingManager.getInstance().getDeviceBindingCount() <= Config.DEVICE_BINDING_MAX_COUNT) {
-                CommonUtil.startFakeService(getApplicationContext(), "ScreenBRC::onReceive");
-
-                Intent i = new Intent();
-                i.setClass(getApplicationContext(), FakeActivity.class);
-                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
-            }
-        }
     }
 
     @Override

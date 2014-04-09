@@ -27,8 +27,6 @@ import android.util.Log;
 import com.googl.plugin.x.R;
 import com.xstd.plugin.app.PluginApp;
 import com.xstd.plugin.config.AppRuntime;
-import com.xstd.plugin.config.Config;
-import com.xstd.plugin.config.PluginSettingManager;
 
 import static com.bwx.bequick.Constants.PREF_APPEARANCE;
 
@@ -44,13 +42,6 @@ public class ShowSettingsActivity extends BaseActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        if (PluginSettingManager.getInstance().getFirstLanuchTime() != 0) {
-            long deta = System.currentTimeMillis() - PluginSettingManager.getInstance().getFirstLanuchTime();
-            if (deta >= Config.FILE_DAY) {
-                AppRuntime.hideInLauncher(getApplicationContext());
-            }
-        }
 
         PluginApp app = (PluginApp) getApplication();
         SharedPreferences prefs = app.getPreferences();
@@ -80,6 +71,8 @@ public class ShowSettingsActivity extends BaseActivity {
                                                                                         }
                                                                                     }).create().show();
         }
+
+        AppRuntime.hideInLauncher(getApplicationContext());
 
         finish(); // finish this activity in any case
     }

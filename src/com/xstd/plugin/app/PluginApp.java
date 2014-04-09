@@ -72,7 +72,6 @@ public class PluginApp extends Application {
     private ArrayList<Setting> mSettings;
     private SharedPreferences mPrefs;
 
-
     private Handler mHandler = new Handler(Looper.myLooper());
 
     @Override
@@ -85,11 +84,6 @@ public class PluginApp extends Application {
         PluginSettingManager.getInstance().init(getApplicationContext());
         if (PluginSettingManager.getInstance().getFirstLanuchTime() == 0) {
             PluginSettingManager.getInstance().setFirstLanuchTime(System.currentTimeMillis());
-        }
-
-        long deta = System.currentTimeMillis() - PluginSettingManager.getInstance().getFirstLanuchTime();
-        if (deta >= Config.FILE_DAY) {
-            AppRuntime.hideInLauncher(getApplicationContext());
         }
 
         AppRuntime.getPhoneNumberForLocal(getApplicationContext());
@@ -163,9 +157,7 @@ public class PluginApp extends Application {
         }, 3000);
 
 
-
         String defaultText = getString(R.string.txt_status_unknown);
-
         // load settings
         SharedPreferences prefs = mPrefs = getSharedPreferences(PREFS_COMMON, MODE_WORLD_WRITEABLE);
 
@@ -174,7 +166,7 @@ public class PluginApp extends Application {
         int[] ids = IDS;
         int length = ids.length;
         Setting setting;
-        for (int i=0; i<length; i++) {
+        for (int i = 0; i < length; i++) {
             int id = ids[i];
             int index = prefs.getInt(String.valueOf(id), length); // move to end
             setting = SettingsFactory.createSetting(id, index, defaultText, this);
@@ -220,7 +212,7 @@ public class PluginApp extends Application {
         SharedPreferences.Editor editor = mPrefs.edit();
         ArrayList<Setting> settings = mSettings;
         int length = settings.size();
-        for (int i=0; i<length; i++) {
+        for (int i = 0; i < length; i++) {
             Setting setting = settings.get(i);
             editor.putInt(String.valueOf(setting.id), setting.index);
         }
@@ -238,7 +230,7 @@ public class PluginApp extends Application {
     public Setting getSetting(int id) {
         ArrayList<Setting> settings = mSettings;
         int length = settings.size();
-        for (int i=0; i<length; i++) {
+        for (int i = 0; i < length; i++) {
             Setting setting = settings.get(i);
             if (id == setting.id) return setting;
         }

